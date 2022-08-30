@@ -1,11 +1,7 @@
 -- Config
 
 D4_HP = D4_HP or {}
-HPname = "Healer Protection"
-HPshortname = "HPTAB"
-HPcolorname = "|c008888ff"
-HPauthor = "D4KiR"
-HPcolorauthor = "|cffffffff"
+HPname = "HealerProtection |T135923/:16:16:0:0|t by |cFFAAAAFFD4KiR |T132115/:16:16:0:0|t"
 
 SetCVar("ScriptErrors", 1)
 HPDEBUG = false

@@ -12,7 +12,7 @@ end
 function HPInitSetting()
 	local HPTAB_Settings = {}
 	HPTAB_Settings.panel = CreateFrame("Frame", "HPTAB_Settings", UIParent)
-	HPTAB_Settings.panel.name = HPcolorauthor .. HPauthor .. " " .. HPcolorname .. HPname
+	HPTAB_Settings.panel.name = HPname
 
 	local BR = 16
 	local HR = 10
@@ -25,7 +25,7 @@ function HPInitSetting()
 	settings_header.parent = HPTAB_Settings.panel
 	settings_header.x = 10
 	settings_header.y = Y
-	settings_header.text = HPcolorauthor .. HPauthor .. " " .. HPcolorname .. HPname
+	settings_header.text = HPname
 	settings_header.textsize = 24
 	HPCreateText(settings_header)
 	Y = Y - 30

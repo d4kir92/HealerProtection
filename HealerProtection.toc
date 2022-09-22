@@ -1,6 +1,6 @@
 ## Interface: 90207
-## Version: 1.0.2
-## Title: HealerProtection |T135923/:16:16:0:0|t by |cff3FC7EBD4KiR |T132115/:16:16:0:0|t 
+## Version: 1.0.3
+## Title: HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
 ## Author: D4KiR
 ## DefaultState: enabled

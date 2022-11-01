@@ -1,7 +1,7 @@
 -- By D4KiR
 
 HPBUILD = "CLASSIC"
-if select(4, GetBuildInfo()) > 90000 then
+if select(4, GetBuildInfo()) >= 100000 then
 	HPBUILD = "RETAIL"
 elseif select(4, GetBuildInfo()) > 29999 then
 	HPBUILD = "WRATH"

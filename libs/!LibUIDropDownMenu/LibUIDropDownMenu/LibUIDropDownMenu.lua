@@ -1,4 +1,4 @@
--- $Id: LibUIDropDownMenu.lua 106 2022-11-03 14:48:24Z arithmandar $
+-- $Id: LibUIDropDownMenu.lua 109 2022-11-04 08:25:19Z arithmandar $
 -- ----------------------------------------------------------------------------
 -- Localized Lua globals.
 -- ----------------------------------------------------------------------------
@@ -18,7 +18,7 @@ local GameTooltip_SetTitle, GameTooltip_AddInstructionLine, GameTooltip_AddNorma
 
 -- ----------------------------------------------------------------------------
 local MAJOR_VERSION = "LibUIDropDownMenu-4.0"
-local MINOR_VERSION = 90000 + tonumber(("$Rev: 106 $"):match("%d+"))
+local MINOR_VERSION = 90000 + tonumber(("$Rev: 109 $"):match("%d+"))
 
 
 local LibStub = _G.LibStub
@@ -242,7 +242,7 @@ local function create_MenuButton(name, parent)
 		if not button then
 			return
 		end
-		button_OnClick(button, button)
+		button_OnClick(self, button)
 	end
 	
 	local function icon_OnEnter(self)
@@ -429,8 +429,8 @@ local function create_MenuButton(name, parent)
 	end)
 	f.invisibleButton = fib
 
-	f:SetScript("OnClick", function(self, button, down)
-		button_OnClick(self, button, down)
+	f:SetScript("OnClick", function(self, button)
+		button_OnClick(self, button)
 	end)
 	f:SetScript("OnEnter", function(self, motion)
 		button_OnEnter(self)

@@ -1,5 +1,5 @@
 ## Interface: 11403
-## Version: 1.0.6
+## Version: 1.0.7
 ## Title: HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
 ## Author: D4KiR
@@ -10,8 +10,8 @@
 ## X-Wago-ID: LvNAy9No
 
 # External Libs
-libs\LibStub\LibStub.lua
-libs\LibUIDropDownMenu\LibUIDropDownMenu.xml
+libs\!LibUIDropDownMenu\LibStub\LibStub.lua
+libs\!LibUIDropDownMenu\LibUIDropDownMenu\LibUIDropDownMenu.xml
 
 libs/LIB_output.lua
 libs/LIB_math.lua

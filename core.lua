@@ -146,6 +146,9 @@ function pChat()
 				ugra = UnitGroupRolesAssigned("PLAYER")
 			end
 		end
+		if UnitGroupRolesAssigned then
+			roleToken = UnitGroupRolesAssigned( "PLAYER" )
+		end
 
 		if (ugra == "HEALER" or roleToken == "HEALER") and not HPGetConfig("printnothing", false) then
 			if not UnitIsDead("player") then

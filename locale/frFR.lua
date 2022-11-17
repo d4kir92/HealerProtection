@@ -1,6 +1,10 @@
 -- frFR French
 
-function HPLang_frFR()
+local AddOnName, HealerProtection = ...
+
+function HealerProtection:LangfrFR()
+	local lang = HealerProtection:GetLangTab()
+
 	lang.aggro = "AGGRO"
 	lang.showaggrochat = "AGGRO Message dans le Chat"
 	lang.showaggroemote = "AGGRO Emote"

@@ -1,8 +1,11 @@
 -- enUS English
 
-elang = elang or {}
+local AddOnName, HealerProtection = ...
 
-function HPLang_enUS()
+function HealerProtection:LangenUS()
+	local lang = HealerProtection:GetLangTab()
+	local elang = HealerProtection:GetELangTab()
+
 	lang.aggro = "AGGRO"
 	lang.showaggrochat = "AGGRO Chat-Message"
 	lang.showaggroemote = "AGGRO Emote"
@@ -44,4 +47,4 @@ function HPLang_enUS()
 		elang[i] = v
 	end
 end
-HPLang_enUS()
+HealerProtection:LangenUS()

@@ -1,6 +1,10 @@
 -- zhCN Simplified Chinese
 
-function HPLang_zhCN()
+local AddOnName, HealerProtection = ...
+
+function HealerProtection:LangzhCN()
+	local lang = HealerProtection:GetLangTab()
+
 	lang.aggro = "仇恨"
 	lang.showaggrochat = "仇恨 聊天消息"
 	lang.showaggroemote = "仇恨 表情"

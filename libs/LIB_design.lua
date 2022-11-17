@@ -1,23 +1,25 @@
 -- LIB Design
 
+local AddOnName, HealerProtection = ...
+
 local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 
 local CBS = {}
-function HPCreateText(tab)
+function HealerProtection:CreateText(tab)
 	tab.textsize = tab.textsize or 12
 	local text = tab.frame:CreateFontString(nil, "ARTWORK")
 	text:SetFont(STANDARD_TEXT_FONT, tab.textsize, "OUTLINE")
 	text:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
-	text:SetText(HPGT(tab.text, nil, true))
+	text:SetText(HealerProtection:GT(tab.text, nil, true))
 
-	hooksecurefunc("UpdateLanguage", function()
-		text:SetText(HPGT(tab.text, nil, true))
+	hooksecurefunc( HealerProtection, "UpdateLanguage", function()
+		text:SetText(HealerProtection:GT(tab.text, nil, true))
 	end)
 
 	return text
 end
 
-function HPCreateTextBox(tab)
+function HealerProtection:CreateTextBox(tab)
 	tab = tab or {}
 	tab.parent = tab.parent or UIParent
 	tab.x = tab.x or 0
@@ -31,7 +33,7 @@ function HPCreateTextBox(tab)
 	tab.x = 4
 	tab.y = -4
 	tab.text = tab.text
-	f.header = HPCreateText(tab)
+	f.header = HealerProtection:CreateText(tab)
 
 	f.Text = CreateFrame("EditBox", nil, f)
 	f.Text:SetPoint("TOPRIGHT", -2, -25)
@@ -49,13 +51,13 @@ function HPCreateTextBox(tab)
 		self:SetText(text)
 		HPTABPC[tab.dbvalue] = text
 
-		SetupHP()
+		HealerProtection:SetupHP()
 	end)
 
 	return f
 end
 
-function HPCreateCheckBox(tab)
+function HealerProtection:CreateCheckBox(tab)
 	tab = tab or {}
 	tab.parent = tab.parent or UIParent
 	tab.tooltip = tab.tooltip or ""
@@ -70,7 +72,7 @@ function HPCreateCheckBox(tab)
 		self:SetChecked(status)
 		HPTABPC[tab.dbvalue] = status
 
-		SetupHP()
+		HealerProtection:SetupHP()
 	end)
 	local entry = {}
 	entry.ele = CB
@@ -80,12 +82,12 @@ function HPCreateCheckBox(tab)
 	tab.frame = CB
 	tab.x = tab.x + 26
 	tab.y = tab.y - 6
-	CB.text = HPCreateText(tab)
+	CB.text = HealerProtection:CreateText(tab)
 
 	return CB
 end
 
-function HPCreateComboBox(tab)
+function HealerProtection:CreateComboBox(tab)
 	tab = tab or {}
 	tab.parent = tab.parent or UIParent
 	tab.tooltip = tab.tooltip or ""
@@ -117,9 +119,7 @@ function HPCreateComboBox(tab)
 	return CB
 end
 
-
-
-function HPCreateSlider(tab)
+function HealerProtection:CreateSlider(tab)
 	tab = tab or {}
 	tab.parent = tab.parent or UIParent
 	tab.x = tab.x or 0
@@ -137,27 +137,27 @@ function HPCreateSlider(tab)
 	SL:SetValueStep(tab.steps)
 	SL.decimals = tab.decimals or 0
 	SL:SetScript("OnValueChanged", function(self, val)
-		val = HPMathR(val, self.decimals)
+		val = HealerProtection:MathR(val, self.decimals)
 		val = val - val % tab.steps
 		HPTABPC[tab.dbvalue] = val
 		local trans = {}
 		trans["VALUE"] = val
-		SL.Text:SetText(HPGT(tab.text, trans, true))
+		SL.Text:SetText(HealerProtection:GT(tab.text, trans, true))
 		if tab.func ~= nil then
 			tab:func()
 		end
 	end)
 
-	hooksecurefunc("UpdateLanguage", function()
+	hooksecurefunc( HealerProtection, "UpdateLanguage", function()
 		local trans = {}
 		trans["VALUE"] = SL:GetValue()
-		SL.Text:SetText(HPGT(tab.text, trans, true))
-	end)
+		SL.Text:SetText(HealerProtection:GT(tab.text, trans, true))
+	end )
 
 	return SL
 end
 
-function HPCTexture(frame, tab)
+function HealerProtection:CTexture(frame, tab)
 	tab.layer = tab.layer or "BACKGROUND"
 	local texture = frame:CreateTexture(nil, tab.layer)
 	tab.texture = tab.texture or ""
@@ -193,7 +193,7 @@ function HPCTexture(frame, tab)
 	return texture
 end
 
-function HPcreateF(tab)
+function HealerProtection:CreateF(tab)
 	tab.w = tab.w or 2
 	tab.h = tab.h or 2
 	tab.x = tab.x or 0
@@ -210,7 +210,7 @@ function HPcreateF(tab)
 	frame:SetPoint(tab.align, tab.parent, tab.align, tab.x, tab.y)
 
 	tab.layer = tab.layer or "BACKGROUND"
-	frame.texture = HPCTexture(frame, tab)
+	frame.texture = HealerProtection:CTexture(frame, tab)
 
 	tab.textlayer = tab.textlayer or "ARTWORK"
 	frame.text = frame:CreateFontString(nil, tab.textlayer)
@@ -225,9 +225,9 @@ function HPcreateF(tab)
 	return frame
 end
 
-function HPCreateBar(tab)
+function HealerProtection:CreateBar(tab)
 	tab.w = 800
-	tab.h = HPGetConfig("barheight") --13
+	tab.h = HealerProtection:GetConfig("barheight") --13
 	tab.alpha = 0.7
 	tab.text = ""
 	tab.bgcolor = tab.bgcolor or {}
@@ -239,7 +239,7 @@ function HPCreateBar(tab)
 	tab.texture = "Interface/TargetingFrame/UI-StatusBar"
 	local bar = {}
 	tab.autoresize = true
-	bar.background = HPcreateF(tab)
+	bar.background = HealerProtection:CreateF(tab)
 
 	tab.parent = bar.background
 	tab.barcolor = tab.barcolor or {}
@@ -252,14 +252,14 @@ function HPCreateBar(tab)
 	tab.align = "LEFT"
 	tab.texture = "Interface/TargetingFrame/UI-StatusBar"
 	tab.autoresize = true
-	bar.bar = HPcreateF(tab)
+	bar.bar = HealerProtection:CreateF(tab)
 	--tab.autoresize = false
 
 	tab.align = "CENTER"
 	tab.texture = ""
 	tab.color.a = 0
 	tab.text = ""
-	bar.overlay = HPcreateF(tab)
+	bar.overlay = HealerProtection:CreateF(tab)
 	local bars = {}
 	bars.layer = "BORDER"
 	bars.color = {}
@@ -271,24 +271,24 @@ function HPCreateBar(tab)
 	bars.w = tab.w
 	bars.h = bars.thickness
 	bars.align = "TOP"
-	bar.overlay.t = HPCTexture(bar.overlay, bars)
+	bar.overlay.t = HealerProtection:CTexture(bar.overlay, bars)
 	bars.y = 0
 	bars.align = "BOTTOM"
-	bar.overlay.b = HPCTexture(bar.overlay, bars)
+	bar.overlay.b = HealerProtection:CTexture(bar.overlay, bars)
 	bars.w = bars.thickness
 	bars.h = tab.h
 	bars.y = 0
 	bars.align = "LEFT"
-	bar.overlay.l = HPCTexture(bar.overlay, bars)
+	bar.overlay.l = HealerProtection:CTexture(bar.overlay, bars)
 	bars.x = 0
 	bars.align = "RIGHT"
-	bar.overlay.r = HPCTexture(bar.overlay, bars)
+	bar.overlay.r = HealerProtection:CTexture(bar.overlay, bars)
 	local perc = 10
 	local amount = 100 / perc
 	for i = 1, amount - 1 do
 		bars.x = tonumber(string.format("%.0f", (bar.overlay:GetWidth() / amount) * i) - (bars.thickness / 2))
 		bars.align = nil
-		bar.overlay[i] = HPCTexture(bar.overlay, bars)
+		bar.overlay[i] = HealerProtection:CTexture(bar.overlay, bars)
 	end
 
 	function bar:Hide()
@@ -321,7 +321,7 @@ function HPCreateBar(tab)
 	end
 
 	function bar:SetWidth(w)
-		w = HPMathR(w, 0)
+		w = HealerProtection:MathR(w, 0)
 		bar.background:SetWidth(w)
 
 		bar.overlay:SetWidth(w)
@@ -340,11 +340,11 @@ function HPCreateBar(tab)
 	return bar
 end
 
-function HPUpdateOptions()
+function HealerProtection:UpdateOptions()
 	-- CHECKBOXES
 	for i, v in pairs(CBS) do
-		if HPGetConfig(v.dbvalue) ~= nil then
-			v.ele:SetChecked(HPGetConfig(v.dbvalue))
+		if HealerProtection:GetConfig(v.dbvalue) ~= nil then
+			v.ele:SetChecked(HealerProtection:GetConfig(v.dbvalue))
 		end
 	end
 end

@@ -1,6 +1,10 @@
 -- zhTW Traditional Chinese
 
-function HPLang_zhTW()
+local AddOnName, HealerProtection = ...
+
+function HealerProtection:LangzhTW()
+	local lang = HealerProtection:GetLangTab()
+
 	lang.aggro = "獲得仇恨"
 	lang.showaggrochat = "獲得仇恨聊天訊息"
 	lang.showaggroemote = "獲得仇恨表情動作"

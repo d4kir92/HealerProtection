@@ -1,6 +1,10 @@
 -- deDE German Deutsch
 
-function HPLang_deDE()
+local AddOnName, HealerProtection = ...
+
+function HealerProtection:LangdeDE()
+	local lang = HealerProtection:GetLangTab()
+
 	lang.aggro = "AGGRO"
 	lang.showaggrochat = "AGGRO Chat-Nachricht"
 	lang.showaggroemote = "AGGRO Emote"

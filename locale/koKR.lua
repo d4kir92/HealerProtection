@@ -1,6 +1,10 @@
 -- koKR Korean
 
-function HPLang_koKR()
+local AddOnName, HealerProtection = ...
+
+function HealerProtection:LangkoKR()
+	local lang = HealerProtection:GetLangTab()
+
 	lang.aggro = "어그로"
 	lang.showaggrochat = "어그로 채팅 메세지"
 	lang.showaggroemote = "어그로 이모티"

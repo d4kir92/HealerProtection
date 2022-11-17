@@ -1,6 +1,10 @@
 -- esMX Spain
 
-function HPLang_esMX()
+local AddOnName, HealerProtection = ...
+
+function HealerProtection:LangesMX()
+	local lang = HealerProtection:GetLangTab()
+
 	lang.aggro = "AGGRO"
 	lang.showaggrochat = "Aggro Mensaje de Chat"
 	lang.showaggroemote = "Aggri Emote"

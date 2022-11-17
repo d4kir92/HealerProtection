@@ -1,6 +1,10 @@
 -- ruRU Russian
 
-function HPLang_ruRU()
+local AddOnName, HealerProtection = ...
+
+function HealerProtection:LangruRU()
+	local lang = HealerProtection:GetLangTab()
+
 	lang.aggro = "АГРО"
 	lang.showaggrochat = "Сообщение в чате об АГРО"
 	lang.showaggroemote = "АГРО/эмоция"

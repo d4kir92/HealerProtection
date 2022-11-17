@@ -1,6 +1,10 @@
 -- esES Spain
 
-function HPLang_esES()
+local AddOnName, HealerProtection = ...
+
+function HealerProtection:LangesES()
+	local lang = HealerProtection:GetLangTab()
+
 	lang.aggro = "AGGRO"
 	lang.showaggrochat = "AGGRO Mensaje de chat"
 	lang.showaggroemote = "AGGRO Emote"

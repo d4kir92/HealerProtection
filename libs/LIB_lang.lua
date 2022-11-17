@@ -1,9 +1,19 @@
 -- LIB Design
 
-lang = lang or {}
-elang = elang or {}
+local AddOnName, HealerProtection = ...
 
-function HPGT(str, tab, force)
+local lang = {}
+local elang = {}
+
+function HealerProtection:GetLangTab()
+	return lang
+end
+
+function HealerProtection:GetELangTab()
+	return elang
+end
+
+function HealerProtection:GT( str, tab, force )
 	local strid = string.lower(str)
 	local result = lang[strid]
 	local eng = elang[strid]
@@ -21,8 +31,8 @@ function HPGT(str, tab, force)
 		end
 		if force then
 			return result
-		elseif HPGetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
-			if HPGetConfig( "showonlytranslation", false ) then
+		elseif HealerProtection:GetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
+			if HealerProtection:GetConfig( "showonlytranslation", false ) then
 				return result
 			else
 				return eng .. " [" .. result .. "]"
@@ -35,6 +45,6 @@ function HPGT(str, tab, force)
 	end
 end
 
-function UpdateLanguage()
+function HealerProtection:UpdateLanguage()
 
 end

@@ -1,17 +1,19 @@
 -- By D4KiR
 
-function HPAllowedTo()
-	local _channel = HPGetConfig("channelchat", "AUTO")
-	if (GetNumGroupMembers() > 0 or GetNumSubgroupMembers() > 0 or _channel == "SAY" or _channel == "YELL") and HPGetConfig("printnothing", false) == false then
+local AddOnName, HealerProtection = ...
+
+function HealerProtection:AllowedTo()
+	local _channel = HealerProtection:GetConfig("channelchat", "AUTO")
+	if (GetNumGroupMembers() > 0 or GetNumSubgroupMembers() > 0 or _channel == "SAY" or _channel == "YELL") and HealerProtection:GetConfig("printnothing", false) == false then
 		return true
 	end
 	return false
 end
 
-function HPToCurrentChat(msg)
+function HealerProtection:ToCurrentChat(msg)
 	local _channel = "SAY"
 	
-	if HPGetConfig("channelchat", "AUTO") == "AUTO" then
+	if HealerProtection:GetConfig("channelchat", "AUTO") == "AUTO" then
 		if IsInRaid(LE_PARTY_CATEGORY_HOME) then
 			_channel = "RAID"
 		elseif IsInRaid(LE_PARTY_CATEGORY_INSTANCE) or IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
@@ -20,11 +22,11 @@ function HPToCurrentChat(msg)
 			_channel = "PARTY"
 		end
 	else
-		_channel = HPGetConfig("channelchat", "AUTO")
+		_channel = HealerProtection:GetConfig("channelchat", "AUTO")
 	end
 
-	local prefix = HPGetConfig("prefix", "[Healer Protection]")
-	local suffix = HPGetConfig("suffix", "")
+	local prefix = HealerProtection:GetConfig("prefix", "[Healer Protection]")
+	local suffix = HealerProtection:GetConfig("suffix", "")
 
 	if prefix ~= "" and prefix ~= " " then
 		prefix = prefix .. " "
@@ -39,11 +41,11 @@ function HPToCurrentChat(msg)
 
 	local inInstance, instanceType = IsInInstance()
 	if inInstance then
-		if HPGetConfig("printnothing", false) == true then
+		if HealerProtection:GetConfig("printnothing", false) == true then
 			-- print nothing
-		elseif UnitInBattleground("player") ~= nil and HPGetConfig("showinbgs", false) == false then
+		elseif UnitInBattleground("player") ~= nil and HealerProtection:GetConfig("showinbgs", false) == false then
 			-- dont print in bg
-		elseif UnitInRaid("player") ~= nil and HPGetConfig("showinraids", true) == false then
+		elseif UnitInRaid("player") ~= nil and HealerProtection:GetConfig("showinraids", true) == false then
 			-- dont print in raid
 		elseif (_channel == "SAY" or _channel == "YELL") and not inInstance then
 			-- ERROR: SAY and YELL only works in instance
@@ -58,10 +60,10 @@ end
 
 
 
-function SetupHP()
-	if HPSETUP then
+function HealerProtection:SetupHP()
+	if HealerProtection:IsSetup() then
 		if not InCombatLockdown() then
-			HPSETUP = false
+			HealerProtection:SetSetup( false )
 
 			warning_aggro = CreateFrame("Frame", nil, UIParent)
 			warning_aggro:SetFrameStrata("BACKGROUND")
@@ -71,58 +73,58 @@ function SetupHP()
 			warning_aggro.text = warning_aggro:CreateFontString(nil, "ARTWORK")
 			warning_aggro.text:SetFont(STANDARD_TEXT_FONT, 20, "OUTLINE")
 			warning_aggro.text:SetPoint("CENTER", 0, 300)
-			warning_aggro.text:SetText(HPGT("youhaveaggro", nil, true) .. "!")
+			warning_aggro.text:SetText(HealerProtection:GT("youhaveaggro", nil, true) .. "!")
 			warning_aggro.text:SetTextColor(1, 0, 0, 1)
 
-			hooksecurefunc("UpdateLanguage", function()
-				warning_aggro.text:SetText(HPGT("youhaveaggro", nil, true) .. "!")
-			end)
+			hooksecurefunc( HealerProtection, "UpdateLanguage", function()
+				warning_aggro.text:SetText(HealerProtection:GT("youhaveaggro", nil, true) .. "!")
+			end )
 
 			warning_aggro:SetPoint("CENTER", 0, 0)
 			warning_aggro:Hide()
 
-			HPInitSetting()
+			HealerProtection:InitSetting()
 		else
 			C_Timer.After(0.1, function()	
-				SetupHP()
+				HealerProtection:SetupHP()
 			end)
 		end
 	end
 
-	HPLang_enUS()
+	HealerProtection:LangenUS()
 	if GetLocale() == "enUS" then
-		--HPmsg("Language detected: enUS (English)")
-		HPLang_enUS()
+		--HealerProtection:MSG("Language detected: enUS (English)")
+		HealerProtection:LangenUS()
 	elseif GetLocale() == "deDE" then
-		--HPmsg("Language detected: deDE (Deutsch)")
-		HPLang_deDE()
+		--HealerProtection:MSG("Language detected: deDE (Deutsch)")
+		HealerProtection:LangdeDE()
 	elseif GetLocale() == "esES" then
-		--HPmsg("Language detected: esES (Spanish)")
-		HPLang_esES()
+		--HealerProtection:MSG("Language detected: esES (Spanish)")
+		HealerProtection:LangesES()
 	elseif GetLocale() == "esMX" then
-		--HPmsg("Language detected: esMX (Spanish)")
-		HPLang_esMX()
+		--HealerProtection:MSG("Language detected: esMX (Spanish)")
+		HealerProtection:LangesMX()
 	elseif GetLocale() == "frFR" then
-		--HPmsg("Language detected: frFR (French)")
-		HPLang_frFR()
+		--HealerProtection:MSG("Language detected: frFR (French)")
+		HealerProtection:LangfrFR()
 	elseif GetLocale() == "koKR" then
-		--HPmsg("Language detected: koKR (Korean)")
-		HPLang_koKR()
+		--HealerProtection:MSG("Language detected: koKR (Korean)")
+		HealerProtection:LangkoKR()
 	elseif GetLocale() == "ruRU" then
-		--HPmsg("Language detected: ruRU (Russian)")
-		HPLang_ruRU()
+		--HealerProtection:MSG("Language detected: ruRU (Russian)")
+		HealerProtection:LangruRU()
 	elseif GetLocale() == "zhCN" then
-		--HPmsg("Language detected: zhCN (Simplified Chinese)")
-		HPLang_zhCN()
+		--HealerProtection:MSG("Language detected: zhCN (Simplified Chinese)")
+		HealerProtection:LangzhCN()
 	elseif GetLocale() == "zhTW" then
-		--HPmsg("Language detected: zhTW (Traditional Chinese)")
-		HPLang_zhTW()
+		--HealerProtection:MSG("Language detected: zhTW (Traditional Chinese)")
+		HealerProtection:LangzhTW()
 	else
-		HPmsg("Language not found (" .. GetLocale() .. "), using English one!")
-		HPmsg("If you want your language, please visit the cursegaming site of this project!")
+		HealerProtection:MSG("Language not found (" .. GetLocale() .. "), using English one!")
+		HealerProtection:MSG("If you want your language, please visit the cursegaming site of this project!")
 	end
 
-	UpdateLanguage()
+	HealerProtection:UpdateLanguage()
 end
 
 local nearoom = false
@@ -130,13 +132,13 @@ local oom = false
 local aggro = false
 local isdead = false
 local neardeath = false
-function pChat()
-	if HPGetConfig("OOMPercentage", 10) > HPGetConfig("NEAROOMPercentage", 30) and SETOOMP ~= nil and not InCombatLockdown() then
-		HPTABPC["OOMPercentage"] = HPGetConfig("NEAROOMPercentage", 30)
+function HealerProtection:PrintChat()
+	if HealerProtection:GetConfig("OOMPercentage", 10) > HealerProtection:GetConfig("NEAROOMPercentage", 30) and SETOOMP ~= nil and not InCombatLockdown() then
+		HPTABPC["OOMPercentage"] = HealerProtection:GetConfig("NEAROOMPercentage", 30)
 		SETOOMP:SetValue(HPTABPC["OOMPercentage"])
 	end
 
-	if HPloaded and warning_aggro ~= nil then
+	if HealerProtection:IsLoaded() and warning_aggro ~= nil then
 		local roleToken = "HEALER"
 		local ugra = "HEALER"
 		if GetSpecialization then
@@ -150,12 +152,12 @@ function pChat()
 			roleToken = UnitGroupRolesAssigned( "PLAYER" )
 		end
 
-		if (ugra == "HEALER" or roleToken == "HEALER") and not HPGetConfig("printnothing", false) then
+		if (ugra == "HEALER" or roleToken == "HEALER") and not HealerProtection:GetConfig("printnothing", false) then
 			if not UnitIsDead("player") then
 				isdead = false
 
 				-- Aggro Logic
-				if HPGetConfig("AGGRO", true) then
+				if HealerProtection:GetConfig("AGGRO", true) then
 					local status = nil
 					status = UnitThreatSituation("player")
 					local hp = UnitHealth("player")
@@ -163,11 +165,11 @@ function pChat()
 					if hpmax > 0 then
 						local hpperc = hp / hpmax * 100
 						if status ~= nil then
-							if status > 0 and not aggro and hpperc < HPGetConfig("AGGROPercentage", 50) then
-								if HPGetConfig("showaggrochat", true) and HPAllowedTo() then
-									HPToCurrentChat("{rt8}" .. " " .. HPGT("ihaveaggro"))
+							if status > 0 and not aggro and hpperc < HealerProtection:GetConfig("AGGROPercentage", 50) then
+								if HealerProtection:GetConfig("showaggrochat", true) and HealerProtection:AllowedTo() then
+									HealerProtection:ToCurrentChat("{rt8}" .. " " .. HealerProtection:GT("ihaveaggro"))
 								end
-								if HPGetConfig("showaggroemote", true) and HPAllowedTo() then
+								if HealerProtection:GetConfig("showaggroemote", true) and HealerProtection:AllowedTo() then
 									DoEmote("helpme")
 								end
 								aggro = true
@@ -195,73 +197,73 @@ function pChat()
 				if powerToken == "MANA" then
 					local mana = UnitPower("player")
 					local manamax = UnitPowerMax("player")
-					local manaperc = HPMathR((mana / manamax) * 100, 1)
+					local manaperc = HealerProtection:MathR((mana / manamax) * 100, 1)
 
 					local health = UnitHealth("player")
 					local healthmax = UnitHealthMax("player")
-					local healthperc = HPMathR(health / healthmax * 100, 1)
+					local healthperc = HealerProtection:MathR(health / healthmax * 100, 1)
 
 					-- OOM
-					if HPGetConfig("OOM", true) then
-						if manaperc <= HPGetConfig("OOMPercentage", 10) and not oom then
+					if HealerProtection:GetConfig("OOM", true) then
+						if manaperc <= HealerProtection:GetConfig("OOMPercentage", 10) and not oom then
 							oom = true
 							local tab = {}
 							tab["MANA"] = manaperc
-							if HPGetConfig("showoomchat", true) and HPAllowedTo() then
-								HPToCurrentChat(HPGT("outofmana") .. " (" .. HPGT("xmana", tab) .. ").")
+							if HealerProtection:GetConfig("showoomchat", true) and HealerProtection:AllowedTo() then
+								HealerProtection:ToCurrentChat(HealerProtection:GT("outofmana") .. " (" .. HealerProtection:GT("xmana", tab) .. ").")
 							end
-							if HPGetConfig("showoomemote", true) and HPAllowedTo() then
+							if HealerProtection:GetConfig("showoomemote", true) and HealerProtection:AllowedTo() then
 								DoEmote("oom")
 							end
-						elseif manaperc > HPGetConfig("OOMPercentage", 10) + 20 and oom then
+						elseif manaperc > HealerProtection:GetConfig("OOMPercentage", 10) + 20 and oom then
 							oom = false
 						end
 					end
 
 					-- Near OOM
-					if HPGetConfig("NEAROOM", true) and not oom then
-						if manaperc <= HPGetConfig("NEAROOMPercentage", 30) and not nearoom then
+					if HealerProtection:GetConfig("NEAROOM", true) and not oom then
+						if manaperc <= HealerProtection:GetConfig("NEAROOMPercentage", 30) and not nearoom then
 							nearoom = true
 							local tab = {}
 							tab["MANA"] = manaperc
-							if HPGetConfig("shownearoomchat", true) and HPAllowedTo() then
-								HPToCurrentChat(HPGT("nearoutofmana") .. " (" .. HPGT("xmana", tab) .. ").")
+							if HealerProtection:GetConfig("shownearoomchat", true) and HealerProtection:AllowedTo() then
+								HealerProtection:ToCurrentChat(HealerProtection:GT("nearoutofmana") .. " (" .. HealerProtection:GT("xmana", tab) .. ").")
 							end
-							if HPGetConfig("shownearoomemote", true) and HPAllowedTo() then
+							if HealerProtection:GetConfig("shownearoomemote", true) and HealerProtection:AllowedTo() then
 								DoEmote("incoming")
 							end
-						elseif manaperc > HPGetConfig("NEAROOMPercentage", 30) + 20 and nearoom then
+						elseif manaperc > HealerProtection:GetConfig("NEAROOMPercentage", 30) + 20 and nearoom then
 							nearoom = false
 						end
 					end
 
 					-- Near Death
-					if HPGetConfig("NEARDEATH", true) then
-						if healthperc <= HPGetConfig("NEARDEATHPercentage", 30) and not neardeath then
+					if HealerProtection:GetConfig("NEARDEATH", true) then
+						if healthperc <= HealerProtection:GetConfig("NEARDEATHPercentage", 30) and not neardeath then
 							neardeath = true
 							local tab = {}
 							tab["HEALTH"] = healthperc
-							if HPGetConfig("showneardeathchat", true) and HPAllowedTo() then
-								HPToCurrentChat(HPGT("neardeath") .. " (" .. HPGT("xhealth", tab) .. ").")
+							if HealerProtection:GetConfig("showneardeathchat", true) and HealerProtection:AllowedTo() then
+								HealerProtection:ToCurrentChat(HealerProtection:GT("neardeath") .. " (" .. HealerProtection:GT("xhealth", tab) .. ").")
 							end
-							if HPGetConfig("showneardeathemote", true) and HPAllowedTo() then
+							if HealerProtection:GetConfig("showneardeathemote", true) and HealerProtection:AllowedTo() then
 								DoEmote("flee")
 							end
-						elseif healthperc > HPGetConfig("NEAROOMPercentage", 30) + 20 and neardeath then
+						elseif healthperc > HealerProtection:GetConfig("NEAROOMPercentage", 30) + 20 and neardeath then
 							neardeath = false
 						end
 					end
 				end
 			elseif not isdead then
 				isdead = true
-				if HPGetConfig("deathmessage", true) then
-					HPToCurrentChat(HPGT("healerisdead") .. ".")
+				if HealerProtection:GetConfig("deathmessage", true) then
+					HealerProtection:ToCurrentChat(HealerProtection:GT("healerisdead") .. ".")
 				end
 			end
 		end
 	end
 end
-C_Timer.NewTicker(1, pChat)
+C_Timer.NewTicker( 1, HealerProtection.PrintChat )
 
 local lasttarget = ""
 local delayrange = GetTime()
@@ -272,16 +274,16 @@ local function OnEvent(self, event)
 		delayrange = GetTime() + 1
 		lasttarget = TName
 		if eventtype == "SPELL_CAST_FAILED" and IsSpellInRange(mm) then
-			if HPGetConfig("notinsight", false) then
+			if HealerProtection:GetConfig("notinsight", false) then
 				local tex = "Target is not in the field of view (" .. TName .. ")"
-				if HPGetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
-					if HPGetConfig( "showonlytranslation", false ) then
+				if HealerProtection:GetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
+					if HealerProtection:GetConfig( "showonlytranslation", false ) then
 						tex = tex .. " [" .. reason .. " (" .. TName .. ")]"
 					else
 						tex = tex .. " [" .. reason .. " (" .. TName .. ")]"
 					end
 				end
-				HPToCurrentChat(tex)
+				HealerProtection:ToCurrentChat(tex)
 			end
 		end
 	end

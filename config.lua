@@ -2,8 +2,6 @@
 
 local AddOnName, HealerProtection = ...
 
-SetCVar("ScriptErrors", 1)
-
 function HealerProtection:GetConfig(str, val)
 	HPTABPC = HPTABPC or {}
 

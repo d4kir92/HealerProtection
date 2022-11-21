@@ -360,6 +360,9 @@ function HealerProtection:SetSetup( val )
 	HPSETUP = val
 end
 
+
+
+SetCVar( "ScriptErrors", 1 )
 local vars = false
 local addo = false
 local frame = CreateFrame("FRAME")
@@ -378,6 +381,9 @@ function frame:OnEvent(event)
 
 	if vars and addo and not HealerProtection:IsLoaded() then
 		HPloaded = true
+
+		SetCVar( "ScriptErrors", 1 )
+		
 		C_Timer.After( 0, function()
 			HealerProtection:SetSetup( true )
 

@@ -24,6 +24,7 @@ function HealerProtection:LangzhCN()
 	lang.undermanaprintmessage = "如果低于 VALUE% 法力值，发送聊天消息"
 
 	lang.xmana = "MANA% 法力值"
+	lang.xhealth = "HEALTH% 健康"
 
 	lang.prefix = "前缀"
 	lang.suffix = "后缀"
@@ -34,4 +35,10 @@ function HealerProtection:LangzhCN()
 
 	lang.healerisdead = "治疗死了"
 	lang.deathmessage = "死亡信息"
+
+	lang.neardeath = "接近死亡"
+	lang.showneardeathchat = "接近死亡的聊天信息"
+	lang.showneardeathemote = "接近死亡的表情"
+
+	lang.notinsight = "不在眼前"
 end

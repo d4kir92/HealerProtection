@@ -2,8 +2,6 @@
 
 local AddOnName, HealerProtection = ...
 
-local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
-
 local CBS = {}
 function HealerProtection:CreateText(tab)
 	tab.textsize = tab.textsize or 12
@@ -94,29 +92,21 @@ function HealerProtection:CreateComboBox(tab)
 	tab.x = tab.x or 0
 	tab.y = tab.y or 0
 
-	local CB = LibDD:Create_UIDropDownMenu(tab.name, tab.parent)
-	CB:SetPoint("TOPLEFT", tab.x, tab.y)
-
-	LibDD:UIDropDownMenu_SetWidth(CB, 120)
-	LibDD:UIDropDownMenu_SetText(CB, tab.value)
-
-	-- Create and bind the initialization function to the dropdown menu
-	LibDD:UIDropDownMenu_Initialize(CB, function(self, level, menuList)
-		for i, v in pairs(tab.tab) do
-			local info = LibDD:UIDropDownMenu_CreateInfo()
-			info.func = self.SetValue
-			info.text, info.arg1, info.checked = v, v, v == tab.value
-			LibDD:UIDropDownMenu_AddButton(info)
+	local rows = {
+		["name"] = tab.name,
+		["parent"]= tab.parent,
+		["title"] = tab.text,
+		["items"]= tab.tab,
+		["defaultVal"] = tab.value, 
+		["changeFunc"] = function( dropdown_frame, dropdown_val )
+			--dropdown_val = tonumber( dropdown_val )
+			HPTABPC[tab.dbvalue] = text
 		end
-	end)
+	}
+	local DD = HealerProtection:CreateDropdown( rows )
+	DD:SetPoint( "TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y )
 
-	function CB:SetValue(newValue)
-		HPTABPC[tab.dbvalue] = newValue
-		LibDD:UIDropDownMenu_SetText(CB, newValue)
-		LibDD:CloseDropDownMenus()
-	end
-
-	return CB
+	return DD
 end
 
 function HealerProtection:CreateSlider(tab)

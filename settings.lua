@@ -2,15 +2,6 @@
 
 local AddOnName, HealerProtection = ...
 
-HPBUILD = "CLASSIC"
-if select(4, GetBuildInfo()) >= 100000 then
-	HPBUILD = "RETAIL"
-elseif select(4, GetBuildInfo()) > 29999 then
-	HPBUILD = "WRATH"
-elseif select(4, GetBuildInfo()) > 19999 then
-	HPBUILD = "TBC"
-end
-
 function HealerProtection:InitSetting()
 	local HPTAB_Settings = {}
 	HPTAB_Settings.panel = CreateFrame("Frame", "HPTAB_Settings", UIParent)

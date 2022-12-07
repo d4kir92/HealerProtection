@@ -100,7 +100,7 @@ function HealerProtection:CreateComboBox(tab)
 		["defaultVal"] = tab.value, 
 		["changeFunc"] = function( dropdown_frame, dropdown_val )
 			--dropdown_val = tonumber( dropdown_val )
-			HPTABPC[tab.dbvalue] = text
+			HPTABPC[tab.dbvalue] = dropdown_val
 		end
 	}
 	local DD = HealerProtection:CreateDropdown( rows )

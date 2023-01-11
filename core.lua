@@ -140,19 +140,17 @@ function HealerProtection:PrintChat()
 
 	if HealerProtection:IsLoaded() and warning_aggro ~= nil then
 		local roleToken = "HEALER"
-		local ugra = "HEALER"
-		if GetSpecialization then
+		if GetSpecialization and GetSpecializationRole then
 			local id = GetSpecialization()
-			if id ~= nil and GetSpecializationRole and UnitGroupRolesAssigned then
-				roleToken = GetSpecializationRole(id)
-				ugra = UnitGroupRolesAssigned("PLAYER")
+			if id ~= nil then
+				roleToken = GetSpecializationRole( id )
 			end
 		end
 		if UnitGroupRolesAssigned then
 			roleToken = UnitGroupRolesAssigned( "PLAYER" )
 		end
 
-		if (ugra == "HEALER" or roleToken == "HEALER") and not HealerProtection:GetConfig("printnothing", false) then
+		if roleToken == "HEALER" and not HealerProtection:GetConfig("printnothing", false) then
 			if not UnitIsDead("player") then
 				isdead = false
 

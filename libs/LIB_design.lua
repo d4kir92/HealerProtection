@@ -1,8 +1,7 @@
 -- LIB Design
-
-local AddOnName, HealerProtection = ...
-
+local _, HealerProtection = ...
 local CBS = {}
+
 function HealerProtection:CreateText(tab)
 	tab.textsize = tab.textsize or 12
 	local text = tab.frame:CreateFontString(nil, "ARTWORK")
@@ -10,7 +9,7 @@ function HealerProtection:CreateText(tab)
 	text:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
 	text:SetText(HealerProtection:GT(tab.text, nil, true))
 
-	hooksecurefunc( HealerProtection, "UpdateLanguage", function()
+	hooksecurefunc(HealerProtection, "UpdateLanguage", function()
 		text:SetText(HealerProtection:GT(tab.text, nil, true))
 	end)
 
@@ -25,14 +24,12 @@ function HealerProtection:CreateTextBox(tab)
 	local f = CreateFrame("Button", nil, tab.parent)
 	f:SetPoint("TOPLEFT", tab.x, tab.y)
 	f:SetSize(250, 50)
-
 	tab.frame = f
 	tab.parent = f
 	tab.x = 4
 	tab.y = -4
 	tab.text = tab.text
 	f.header = HealerProtection:CreateText(tab)
-
 	f.Text = CreateFrame("EditBox", nil, f)
 	f.Text:SetPoint("TOPRIGHT", -2, -25)
 	f.Text:SetPoint("BOTTOMLEFT", 2, 2)
@@ -44,11 +41,11 @@ function HealerProtection:CreateTextBox(tab)
 	tab.value = string.gsub(tab.value, "\n", "")
 	f.Text:SetText(tab.value or "")
 	f.Text:SetCursorPosition(0)
-	f.Text:SetScript("OnTextChanged", function(self)
-		local text = self:GetText()
-		self:SetText(text)
-		HPTABPC[tab.dbvalue] = text
 
+	f.Text:SetScript("OnTextChanged", function(sel)
+		local text = sel:GetText()
+		sel:SetText(text)
+		HPTABPC[tab.dbvalue] = text
 		HealerProtection:SetupHP()
 	end)
 
@@ -65,18 +62,18 @@ function HealerProtection:CreateCheckBox(tab)
 	CB:SetPoint("TOPLEFT", tab.x, tab.y)
 	CB.tooltip = tab.tooltip
 	CB:SetChecked(tab.checked)
-	CB:SetScript("OnClick", function(self)
-		local status = CB:GetChecked()
-		self:SetChecked(status)
-		HPTABPC[tab.dbvalue] = status
 
+	CB:SetScript("OnClick", function(sel)
+		local status = CB:GetChecked()
+		sel:SetChecked(status)
+		HPTABPC[tab.dbvalue] = status
 		HealerProtection:SetupHP()
 	end)
+
 	local entry = {}
 	entry.ele = CB
 	entry.dbvalue = tab.dbvalue
 	table.insert(CBS, entry)
-
 	tab.frame = CB
 	tab.x = tab.x + 26
 	tab.y = tab.y - 6
@@ -94,17 +91,18 @@ function HealerProtection:CreateComboBox(tab)
 
 	local rows = {
 		["name"] = tab.name,
-		["parent"]= tab.parent,
+		["parent"] = tab.parent,
 		["title"] = tab.text,
-		["items"]= tab.tab,
-		["defaultVal"] = tab.value, 
-		["changeFunc"] = function( dropdown_frame, dropdown_val )
+		["items"] = tab.tab,
+		["defaultVal"] = tab.value,
+		["changeFunc"] = function(dropdown_frame, dropdown_val)
 			--dropdown_val = tonumber( dropdown_val )
 			HPTABPC[tab.dbvalue] = dropdown_val
 		end
 	}
-	local DD = HealerProtection:CreateDropdown( rows )
-	DD:SetPoint( "TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y )
+
+	local DD = HealerProtection:CreateDropdown(rows)
+	DD:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
 
 	return DD
 end
@@ -126,23 +124,25 @@ function HealerProtection:CreateSlider(tab)
 	tab.steps = tab.steps or 1
 	SL:SetValueStep(tab.steps)
 	SL.decimals = tab.decimals or 0
-	SL:SetScript("OnValueChanged", function(self, val)
-		val = HealerProtection:MathR(val, self.decimals)
+
+	SL:SetScript("OnValueChanged", function(sel, val)
+		val = HealerProtection:MathR(val, sel.decimals)
 		val = val - val % tab.steps
 		HPTABPC[tab.dbvalue] = val
 		local trans = {}
 		trans["VALUE"] = val
 		SL.Text:SetText(HealerProtection:GT(tab.text, trans, true))
+
 		if tab.func ~= nil then
 			tab:func()
 		end
 	end)
 
-	hooksecurefunc( HealerProtection, "UpdateLanguage", function()
+	hooksecurefunc(HealerProtection, "UpdateLanguage", function()
 		local trans = {}
 		trans["VALUE"] = SL:GetValue()
 		SL.Text:SetText(HealerProtection:GT(tab.text, trans, true))
-	end )
+	end)
 
 	return SL
 end
@@ -151,12 +151,13 @@ function HealerProtection:CTexture(frame, tab)
 	tab.layer = tab.layer or "BACKGROUND"
 	local texture = frame:CreateTexture(nil, tab.layer)
 	tab.texture = tab.texture or ""
+
 	if tab.texture ~= "" then
 		tab.color.r = tab.color.r or 1
 		tab.color.g = tab.color.g or 0
 		tab.color.b = tab.color.b or 0
 		tab.color.a = tab.color.a or 1
-	 	texture:SetTexture(tab.texture)
+		texture:SetTexture(tab.texture)
 		texture:SetVertexColor(tab.color.r, tab.color.g, tab.color.b, tab.color.a)
 	elseif tab.color ~= nil then
 		tab.color.r = tab.color.r or 1
@@ -174,7 +175,6 @@ function HealerProtection:CTexture(frame, tab)
 		tab.w = tab.w or frame:GetWidth()
 		tab.h = tab.h or frame:GetHeight()
 		texture:SetSize(tab.w, tab.h)
-
 		tab.x = tab.x or 0
 		tab.y = tab.y or 0
 		texture:SetPoint(tab.align or "TOPLEFT", frame, tab.x, tab.y)
@@ -198,10 +198,8 @@ function HealerProtection:CreateF(tab)
 	frame:SetHeight(tab.h)
 	frame:ClearAllPoints()
 	frame:SetPoint(tab.align, tab.parent, tab.align, tab.x, tab.y)
-
 	tab.layer = tab.layer or "BACKGROUND"
 	frame.texture = HealerProtection:CTexture(frame, tab)
-
 	tab.textlayer = tab.textlayer or "ARTWORK"
 	frame.text = frame:CreateFontString(nil, tab.textlayer)
 	frame.text:SetFont(STANDARD_TEXT_FONT, tab.textsize, "OUTLINE")
@@ -230,7 +228,6 @@ function HealerProtection:CreateBar(tab)
 	local bar = {}
 	tab.autoresize = true
 	bar.background = HealerProtection:CreateF(tab)
-
 	tab.parent = bar.background
 	tab.barcolor = tab.barcolor or {}
 	tab.barcolor.r = tab.barcolor.r or 0.3
@@ -244,7 +241,6 @@ function HealerProtection:CreateBar(tab)
 	tab.autoresize = true
 	bar.bar = HealerProtection:CreateF(tab)
 	--tab.autoresize = false
-
 	tab.align = "CENTER"
 	tab.texture = ""
 	tab.color.a = 0
@@ -275,6 +271,7 @@ function HealerProtection:CreateBar(tab)
 	bar.overlay.r = HealerProtection:CTexture(bar.overlay, bars)
 	local perc = 10
 	local amount = 100 / perc
+
 	for i = 1, amount - 1 do
 		bars.x = tonumber(string.format("%.0f", (bar.overlay:GetWidth() / amount) * i) - (bars.thickness / 2))
 		bars.align = nil
@@ -284,6 +281,7 @@ function HealerProtection:CreateBar(tab)
 	function bar:Hide()
 		bar.background:Hide()
 	end
+
 	function bar:Show()
 		bar.background:Show()
 	end
@@ -295,13 +293,14 @@ function HealerProtection:CreateBar(tab)
 	function bar:SetHeight(h)
 		bar.background:SetHeight(h)
 		bar.bar:SetHeight(h)
-
 		bar.overlay:SetHeight(h)
 		bar.overlay.l:SetHeight(h)
 		bar.overlay.r:SetHeight(h)
+
 		for i = 1, amount - 1 do
 			bar.overlay[i]:SetHeight(h)
 		end
+
 		bar.overlay.text:SetFont(STANDARD_TEXT_FONT, tonumber(string.format("%.0f", h * 0.69)), "OUTLINE")
 		--bar.overlay.text:SetTextHeight(tonumber(string.format("%.0f", h * 0.69)))
 	end
@@ -313,10 +312,10 @@ function HealerProtection:CreateBar(tab)
 	function bar:SetWidth(w)
 		w = HealerProtection:MathR(w, 0)
 		bar.background:SetWidth(w)
-
 		bar.overlay:SetWidth(w)
 		bar.overlay.t:SetWidth(w)
 		bar.overlay.b:SetWidth(w)
+
 		for i = 1, amount - 1 do
 			local x = tonumber(string.format("%.0f", (bar.overlay:GetWidth() / amount) * i) - (bars.thickness / 2))
 			bar.overlay[i]:SetPoint("TOPLEFT", bar.overlay, x, 0)
@@ -324,8 +323,14 @@ function HealerProtection:CreateBar(tab)
 	end
 
 	bar.overlay:EnableMouse()
-	bar.overlay:SetScript("OnEnter", function() bar.overlay.text:Hide() end)
-	bar.overlay:SetScript("OnLeave", function() bar.overlay.text:Show() end)
+
+	bar.overlay:SetScript("OnEnter", function()
+		bar.overlay.text:Hide()
+	end)
+
+	bar.overlay:SetScript("OnLeave", function()
+		bar.overlay.text:Show()
+	end)
 
 	return bar
 end

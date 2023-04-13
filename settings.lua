@@ -1,18 +1,15 @@
 -- By D4KiR
-
-local AddOnName, HealerProtection = ...
+local _, HealerProtection = ...
 
 function HealerProtection:InitSetting()
 	local HPTAB_Settings = {}
 	HPTAB_Settings.panel = CreateFrame("Frame", "HPTAB_Settings", UIParent)
 	HPTAB_Settings.panel.name = "HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
-
 	local BR = 16
 	local HR = 10
 	local DR = 22
 	local SR = 30
 	local Y = -10
-
 	local settings_header = {}
 	settings_header.frame = HPTAB_Settings.panel
 	settings_header.parent = HPTAB_Settings.panel
@@ -22,7 +19,6 @@ function HealerProtection:InitSetting()
 	settings_header.textsize = 24
 	HealerProtection:CreateText(settings_header)
 	Y = Y - 30
-
 	local settings_printnothing = {}
 	settings_printnothing.name = "printnothing"
 	settings_printnothing.parent = HPTAB_Settings.panel
@@ -33,7 +29,6 @@ function HealerProtection:InitSetting()
 	settings_printnothing.dbvalue = "printnothing"
 	HealerProtection:CreateCheckBox(settings_printnothing)
 	Y = Y - BR
-
 	local settings_showinraids = {}
 	settings_showinraids.name = "showinraids"
 	settings_showinraids.parent = HPTAB_Settings.panel
@@ -44,7 +39,6 @@ function HealerProtection:InitSetting()
 	settings_showinraids.dbvalue = "showinraids"
 	HealerProtection:CreateCheckBox(settings_showinraids)
 	Y = Y - BR
-
 	local settings_showinbgs = {}
 	settings_showinbgs.name = "showinbgs"
 	settings_showinbgs.parent = HPTAB_Settings.panel
@@ -55,7 +49,6 @@ function HealerProtection:InitSetting()
 	settings_showinbgs.dbvalue = "showinbgs"
 	HealerProtection:CreateCheckBox(settings_showinbgs)
 	Y = Y - DR
-
 	local settings_aggro = {}
 	settings_aggro.name = "aggro"
 	settings_aggro.parent = HPTAB_Settings.panel
@@ -65,7 +58,6 @@ function HealerProtection:InitSetting()
 	settings_aggro.y = Y
 	settings_aggro.dbvalue = "AGGRO"
 	HealerProtection:CreateCheckBox(settings_aggro)
-
 	local settings_deathmessage = {}
 	settings_deathmessage.name = "deathmessage"
 	settings_deathmessage.parent = HPTAB_Settings.panel
@@ -75,7 +67,6 @@ function HealerProtection:InitSetting()
 	settings_deathmessage.y = Y - 30
 	settings_deathmessage.dbvalue = "deathmessage"
 	HealerProtection:CreateCheckBox(settings_deathmessage)
-
 	local settings_notinsight = {}
 	settings_notinsight.name = "notinsight"
 	settings_notinsight.parent = HPTAB_Settings.panel
@@ -86,7 +77,6 @@ function HealerProtection:InitSetting()
 	settings_notinsight.dbvalue = "notinsight"
 	HealerProtection:CreateCheckBox(settings_notinsight)
 	Y = Y - BR
-
 	local settings_showaggrochat = {}
 	settings_showaggrochat.name = "showaggrochat"
 	settings_showaggrochat.parent = HPTAB_Settings.panel
@@ -97,7 +87,6 @@ function HealerProtection:InitSetting()
 	settings_showaggrochat.dbvalue = "showaggrochat"
 	HealerProtection:CreateCheckBox(settings_showaggrochat)
 	Y = Y - BR
-
 	local settings_showaggroemote = {}
 	settings_showaggroemote.name = "showaggroemote"
 	settings_showaggroemote.parent = HPTAB_Settings.panel
@@ -108,7 +97,6 @@ function HealerProtection:InitSetting()
 	settings_showaggroemote.dbvalue = "showaggroemote"
 	HealerProtection:CreateCheckBox(settings_showaggroemote)
 	Y = Y - SR
-
 	local settings_aggro_percentage = {}
 	settings_aggro_percentage.name = "underhealthprintmessage"
 	settings_aggro_percentage.parent = HPTAB_Settings.panel
@@ -121,9 +109,6 @@ function HealerProtection:InitSetting()
 	settings_aggro_percentage.dbvalue = "AGGROPercentage"
 	HealerProtection:CreateSlider(settings_aggro_percentage)
 	Y = Y - BR
-
-
-
 	Y = Y - HR
 	local settings_oom = {}
 	settings_oom.name = "outofmana"
@@ -135,7 +120,6 @@ function HealerProtection:InitSetting()
 	settings_oom.dbvalue = "OOM"
 	HealerProtection:CreateCheckBox(settings_oom)
 	Y = Y - BR
-
 	local settings_showoomchat = {}
 	settings_showoomchat.name = "showoomchat"
 	settings_showoomchat.parent = HPTAB_Settings.panel
@@ -146,7 +130,6 @@ function HealerProtection:InitSetting()
 	settings_showoomchat.dbvalue = "showoomchat"
 	HealerProtection:CreateCheckBox(settings_showoomchat)
 	Y = Y - BR
-
 	local settings_showoomemote = {}
 	settings_showoomemote.name = "showoomemote"
 	settings_showoomemote.parent = HPTAB_Settings.panel
@@ -157,7 +140,6 @@ function HealerProtection:InitSetting()
 	settings_showoomemote.dbvalue = "showoomemote"
 	HealerProtection:CreateCheckBox(settings_showoomemote)
 	Y = Y - SR
-
 	local settings_oom_percentage = {}
 	settings_oom_percentage.name = "undermanaprintmessage"
 	settings_oom_percentage.parent = HPTAB_Settings.panel
@@ -170,9 +152,6 @@ function HealerProtection:InitSetting()
 	settings_oom_percentage.dbvalue = "OOMPercentage"
 	SETOOMP = HealerProtection:CreateSlider(settings_oom_percentage)
 	Y = Y - BR
-
-
-
 	Y = Y - HR
 	local settings_nearoom = {}
 	settings_nearoom.name = "nearoutofmana"
@@ -184,7 +163,6 @@ function HealerProtection:InitSetting()
 	settings_nearoom.dbvalue = "NEAROOM"
 	HealerProtection:CreateCheckBox(settings_nearoom)
 	Y = Y - BR
-
 	local settings_shownearoomchat = {}
 	settings_shownearoomchat.name = "shownearoomchat"
 	settings_shownearoomchat.parent = HPTAB_Settings.panel
@@ -195,7 +173,6 @@ function HealerProtection:InitSetting()
 	settings_shownearoomchat.dbvalue = "shownearoomchat"
 	HealerProtection:CreateCheckBox(settings_shownearoomchat)
 	Y = Y - BR
-
 	local settings_shownearoomemote = {}
 	settings_shownearoomemote.name = "shownearoomemote"
 	settings_shownearoomemote.parent = HPTAB_Settings.panel
@@ -206,7 +183,6 @@ function HealerProtection:InitSetting()
 	settings_shownearoomemote.dbvalue = "shownearoomemote"
 	HealerProtection:CreateCheckBox(settings_shownearoomemote)
 	Y = Y - SR
-
 	local settings_nearoom_percentage = {}
 	settings_nearoom_percentage.name = "undermanaprintmessage"
 	settings_nearoom_percentage.parent = HPTAB_Settings.panel
@@ -219,9 +195,6 @@ function HealerProtection:InitSetting()
 	settings_nearoom_percentage.dbvalue = "NEAROOMPercentage"
 	SETNEAROOMP = HealerProtection:CreateSlider(settings_nearoom_percentage)
 	Y = Y - BR
-
-
-
 	Y = Y - HR
 	local settings_neardeath = {}
 	settings_neardeath.name = "neardeath"
@@ -233,7 +206,6 @@ function HealerProtection:InitSetting()
 	settings_neardeath.dbvalue = "NEARDEATH"
 	HealerProtection:CreateCheckBox(settings_neardeath)
 	Y = Y - BR
-
 	local settings_showneardeathchat = {}
 	settings_showneardeathchat.name = "showneardeathchat"
 	settings_showneardeathchat.parent = HPTAB_Settings.panel
@@ -244,7 +216,6 @@ function HealerProtection:InitSetting()
 	settings_showneardeathchat.dbvalue = "showneardeathchat"
 	HealerProtection:CreateCheckBox(settings_showneardeathchat)
 	Y = Y - BR
-
 	local settings_showneardeathemote = {}
 	settings_showneardeathemote.name = "showneardeathemote"
 	settings_showneardeathemote.parent = HPTAB_Settings.panel
@@ -255,7 +226,6 @@ function HealerProtection:InitSetting()
 	settings_showneardeathemote.dbvalue = "showneardeathemote"
 	HealerProtection:CreateCheckBox(settings_showneardeathemote)
 	Y = Y - SR
-
 	local settings_neardeath_percentage = {}
 	settings_neardeath_percentage.name = "underhealthprintmessage"
 	settings_neardeath_percentage.parent = HPTAB_Settings.panel
@@ -268,9 +238,6 @@ function HealerProtection:InitSetting()
 	settings_neardeath_percentage.dbvalue = "NEARDEATHPercentage"
 	SETNEARDEATHP = HealerProtection:CreateSlider(settings_neardeath_percentage)
 	Y = Y - BR
-
-
-
 	Y = Y - SR
 	local settings_channel = {}
 	settings_channel.name = "channelchat"
@@ -288,30 +255,25 @@ function HealerProtection:InitSetting()
 	settings_channel.tab[4] = "YELL"
 	settings_channel.tab[5] = "INSTANCE_CHAT"
 	HealerProtection:CreateComboBox(settings_channel)
-
 	local settings_showtranslation = {}
 	settings_showtranslation.name = "showtranslation"
 	settings_showtranslation.parent = HPTAB_Settings.panel
-	settings_showtranslation.checked = HealerProtection:GetConfig( "showtranslation", true )
+	settings_showtranslation.checked = HealerProtection:GetConfig("showtranslation", true)
 	settings_showtranslation.text = "Show Translation"
 	settings_showtranslation.x = 210
 	settings_showtranslation.y = Y
 	settings_showtranslation.dbvalue = "showtranslation"
 	HealerProtection:CreateCheckBox(settings_showtranslation)
-
 	local settings_showonlytranslation = {}
 	settings_showonlytranslation.name = "showonlytranslation"
 	settings_showonlytranslation.parent = HPTAB_Settings.panel
-	settings_showonlytranslation.checked = HealerProtection:GetConfig( "showonlytranslation", false )
+	settings_showonlytranslation.checked = HealerProtection:GetConfig("showonlytranslation", false)
 	settings_showonlytranslation.text = "Show Only Translation"
 	settings_showonlytranslation.x = 410
 	settings_showonlytranslation.y = Y
 	settings_showonlytranslation.dbvalue = "showonlytranslation"
 	HealerProtection:CreateCheckBox(settings_showonlytranslation)
 	Y = Y - SR
-
-
-
 	local settings_prefix = {}
 	settings_prefix.name = "prefix"
 	settings_prefix.parent = HPTAB_Settings.panel
@@ -321,7 +283,6 @@ function HealerProtection:InitSetting()
 	settings_prefix.y = Y
 	settings_prefix.dbvalue = "prefix"
 	HealerProtection:CreateTextBox(settings_prefix)
-
 	local settings_suffix = {}
 	settings_suffix.name = "suffix"
 	settings_suffix.parent = HPTAB_Settings.panel
@@ -332,7 +293,6 @@ function HealerProtection:InitSetting()
 	settings_suffix.dbvalue = "suffix"
 	HealerProtection:CreateTextBox(settings_suffix)
 	Y = Y - BR
-
 	InterfaceOptions_AddCategory(HPTAB_Settings.panel)
 end
 
@@ -347,7 +307,7 @@ function HealerProtection:IsSetup()
 	return HPSETUP
 end
 
-function HealerProtection:SetSetup( val )
+function HealerProtection:SetSetup(val)
 	HPSETUP = val
 end
 
@@ -357,11 +317,13 @@ local frame = CreateFrame("FRAME")
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("VARIABLES_LOADED")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+
 function frame:OnEvent(event)
 	if event == "VARIABLES_LOADED" then
 		vars = true
 		--HealerProtection:SetupHP()
 	end
+
 	if event == "ADDON_LOADED" then
 		addo = true
 		--HealerProtection:SetupHP()
@@ -369,12 +331,12 @@ function frame:OnEvent(event)
 
 	if vars and addo and not HealerProtection:IsLoaded() then
 		HPloaded = true
-		
-		C_Timer.After( 0, function()
-			HealerProtection:SetSetup( true )
 
+		C_Timer.After(0, function()
+			HealerProtection:SetSetup(true)
 			HealerProtection:SetupHP()
-		end )
+		end)
 	end
 end
+
 frame:SetScript("OnEvent", frame.OnEvent)

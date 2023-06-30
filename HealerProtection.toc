@@ -1,9 +1,9 @@
-## Interface-Classic: 11403
+## Interface-Classic: 11404
 ## Interface-BCC: 20504
 ## Interface-Wrath: 30402
 ## Interface: 100100
 
-## Version: 1.0.31
+## Version: 1.0.32
 ## Title: HealerProtection by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
 ## Author: D4KiR

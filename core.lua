@@ -8,6 +8,39 @@ function HealerProtection:AllowedTo()
 	return false
 end
 
+local onceM1 = false
+local onceM2 = false
+
+function HealerProtection:CanWriteToChat(chan)
+	local inInstance, _ = IsInInstance()
+
+	if onceM1 and not inInstance and chan ~= "SAY" and chan ~= "YELL" then
+		onceM1 = false
+		HealerProtection:MSG("Only shows Messages in Instances. (if channel is not set to \"SAY\" or \"YELL\")")
+	end
+
+	if (chan == "SAY" or chan == "YELL") and not inInstance then
+		return true
+	elseif inInstance then
+		if HealerProtection:GetConfig("printnothing", false) == true then
+			if onceM2 then
+				onceM2 = false
+				HealerProtection:MSG("\"Print Nothing\" is enabled.")
+			end
+
+			return false
+		elseif UnitInBattleground("player") ~= nil and HealerProtection:GetConfig("showinbgs", false) == false then
+			return false
+		elseif UnitInRaid("player") ~= nil and HealerProtection:GetConfig("showinraids", true) == false then
+			return false
+		else
+			return true
+		end
+	end
+
+	return false
+end
+
 function HealerProtection:ToCurrentChat(msg)
 	local _channel = "SAY"
 
@@ -39,18 +72,14 @@ function HealerProtection:ToCurrentChat(msg)
 	end
 
 	local inInstance, _ = IsInInstance()
+	print("ToCurrentChat", inInstance)
 
-	if inInstance then
-		if HealerProtection:GetConfig("printnothing", false) == true then
-		elseif UnitInBattleground("player") ~= nil and HealerProtection:GetConfig("showinbgs", false) == false then
-		elseif UnitInRaid("player") ~= nil and HealerProtection:GetConfig("showinraids", true) == false then
-		elseif (_channel == "SAY" or _channel == "YELL") and not inInstance then
-		else
-			local mes = prefix .. msg .. suffix
+	if HealerProtection:CanWriteToChat(_channel) then
+		local mes = prefix .. msg .. suffix
 
-			if mes ~= nil then
-				SendChatMessage(mes, _channel)
-			end
+		if mes ~= nil then
+			print(inInstance, _channel, mes)
+			SendChatMessage(mes, _channel)
 		end
 	end
 end

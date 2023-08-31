@@ -3,7 +3,7 @@ local _, HealerProtection = ...
 
 function HealerProtection:AllowedTo()
 	local _channel = HealerProtection:GetConfig("channelchat", "AUTO")
-	if (GetNumGroupMembers() > 0 or GetNumSubgroupMembers() > 0 or _channel == "SAY" or _channel == "YELL") and HealerProtection:GetConfig("printnothing", false) == false then return true end
+	if (GetNumGroupMembers() > 0 or GetNumSubgroupMembers() > 0) and HealerProtection:GetConfig("printnothing", false) == false then return true end
 
 	return false
 end
@@ -14,14 +14,12 @@ local onceM2 = false
 function HealerProtection:CanWriteToChat(chan)
 	local inInstance, _ = IsInInstance()
 
-	if onceM1 and not inInstance and chan ~= "SAY" and chan ~= "YELL" then
+	if onceM1 and not inInstance then
 		onceM1 = false
 		HealerProtection:MSG("Only shows Messages in Instances. (if channel is not set to \"SAY\" or \"YELL\")")
 	end
 
-	if (chan == "SAY" or chan == "YELL") and not inInstance then
-		return true
-	elseif inInstance then
+	if inInstance then
 		if HealerProtection:GetConfig("printnothing", false) == true then
 			if onceM2 then
 				onceM2 = false
@@ -42,7 +40,7 @@ function HealerProtection:CanWriteToChat(chan)
 end
 
 function HealerProtection:ToCurrentChat(msg)
-	local _channel = "SAY"
+	local _channel = "PARTY"
 
 	if HealerProtection:GetConfig("channelchat", "AUTO") == "AUTO" then
 		if IsInRaid(LE_PARTY_CATEGORY_HOME) then
@@ -71,14 +69,10 @@ function HealerProtection:ToCurrentChat(msg)
 		suffix = ""
 	end
 
-	local inInstance, _ = IsInInstance()
-	print("ToCurrentChat", inInstance)
-
 	if HealerProtection:CanWriteToChat(_channel) then
 		local mes = prefix .. msg .. suffix
 
 		if mes ~= nil then
-			print(inInstance, _channel, mes)
 			SendChatMessage(mes, _channel)
 		end
 	end

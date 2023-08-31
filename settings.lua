@@ -251,9 +251,7 @@ function HealerProtection:InitSetting()
 	settings_channel.tab[0] = "AUTO"
 	settings_channel.tab[1] = "PARTY"
 	settings_channel.tab[2] = "RAID"
-	settings_channel.tab[3] = "SAY"
-	settings_channel.tab[4] = "YELL"
-	settings_channel.tab[5] = "INSTANCE_CHAT"
+	settings_channel.tab[3] = "INSTANCE_CHAT"
 	HealerProtection:CreateComboBox(settings_channel)
 	local settings_showtranslation = {}
 	settings_showtranslation.name = "showtranslation"
@@ -331,6 +329,10 @@ function frame:OnEvent(event)
 
 	if vars and addo and not HealerProtection:IsLoaded() then
 		HPloaded = true
+
+		if HealerProtection:GetConfig("channelchat", "AUTO") == "SAY" or HealerProtection:GetConfig("channelchat", "AUTO") == "YELL" then
+			HPTABPC["channelchat"] = "AUTO"
+		end
 
 		C_Timer.After(0, function()
 			HealerProtection:SetSetup(true)

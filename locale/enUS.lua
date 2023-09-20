@@ -1,6 +1,5 @@
 -- enUS English
 local _, HealerProtection = ...
-
 function HealerProtection:LangenUS()
 	local lang = HealerProtection:GetLangTab()
 	local elang = HealerProtection:GetELangTab()
@@ -30,7 +29,7 @@ function HealerProtection:LangenUS()
 	lang.showneardeathchat = "Near death Chat-Message"
 	lang.showneardeathemote = "Near death Emote"
 	lang.notinsight = "Not in sight"
-
+	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
 	for i, v in pairs(lang) do
 		elang[i] = v
 	end

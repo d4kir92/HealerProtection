@@ -1,5 +1,4 @@
 local _, HealerProtection = ...
-
 --local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 function HealerProtection:CreateDropdown(opts)
 	--[[local CB = LibDD:Create_UIDropDownMenu( opts.name, opts.parent )
@@ -33,16 +32,17 @@ function HealerProtection:CreateDropdown(opts)
 	Menu:SetJustifyH("LEFT")
 	Menu:SetStyle("DEFAULT")
 	Menu:SetText(opts.defaultVal)
-
 	for i, v in pairs(opts.items) do
-		Menu:Add({
-			text = v,
-			args = {i, v},
-			func = function(sel, button, key, value)
-				opts.changeFunc(Menu, value)
-				Menu:SetText(value)
-			end
-		})
+		Menu:Add(
+			{
+				text = v,
+				args = {i, v},
+				func = function(sel, button, key, value)
+					opts.changeFunc(Menu, value)
+					Menu:SetText(value)
+				end
+			}
+		)
 	end
 
 	local text = Menu:CreateFontString(nil, "ARTWORK")

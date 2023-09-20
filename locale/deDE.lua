@@ -1,6 +1,5 @@
 -- deDE German Deutsch
 local _, HealerProtection = ...
-
 function HealerProtection:LangdeDE()
 	local lang = HealerProtection:GetLangTab()
 	lang.aggro = "AGGRO"
@@ -29,4 +28,5 @@ function HealerProtection:LangdeDE()
 	lang.showneardeathchat = "Dem Tod nahe Chat-Nachricht"
 	lang.showneardeathemote = "Dem Tod nahe Emote"
 	lang.notinsight = "Nicht in Sicht"
+	lang.showoutsideofinstance = "Außerhalb von Dungeons anzeigen"
 end

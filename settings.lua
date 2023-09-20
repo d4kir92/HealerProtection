@@ -1,6 +1,5 @@
 -- By D4KiR
 local _, HealerProtection = ...
-
 function HealerProtection:InitSetting()
 	local HPTAB_Settings = {}
 	HPTAB_Settings.panel = CreateFrame("Frame", "HPTAB_Settings", UIParent)
@@ -39,6 +38,16 @@ function HealerProtection:InitSetting()
 	settings_showinraids.dbvalue = "showinraids"
 	HealerProtection:CreateCheckBox(settings_showinraids)
 	Y = Y - BR
+	local settings_showoutsideofinstance = {}
+	settings_showoutsideofinstance.name = "showoutsideofinstance"
+	settings_showoutsideofinstance.parent = HPTAB_Settings.panel
+	settings_showoutsideofinstance.checked = HealerProtection:GetConfig("showoutsideofinstance", false)
+	settings_showoutsideofinstance.text = "showoutsideofinstance"
+	settings_showoutsideofinstance.x = 10
+	settings_showoutsideofinstance.y = Y
+	settings_showoutsideofinstance.dbvalue = "showoutsideofinstance"
+	HealerProtection:CreateCheckBox(settings_showoutsideofinstance)
+	Y = Y - DR
 	local settings_showinbgs = {}
 	settings_showinbgs.name = "showinbgs"
 	settings_showinbgs.parent = HPTAB_Settings.panel
@@ -296,7 +305,6 @@ end
 
 local HPloaded = false
 local HPSETUP = false
-
 function HealerProtection:IsLoaded()
 	return HPloaded
 end
@@ -315,7 +323,6 @@ local frame = CreateFrame("FRAME")
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("VARIABLES_LOADED")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-
 function frame:OnEvent(event)
 	if event == "VARIABLES_LOADED" then
 		vars = true
@@ -329,15 +336,13 @@ function frame:OnEvent(event)
 
 	if vars and addo and not HealerProtection:IsLoaded() then
 		HPloaded = true
-
-		if HealerProtection:GetConfig("channelchat", "AUTO") == "SAY" or HealerProtection:GetConfig("channelchat", "AUTO") == "YELL" then
-			HPTABPC["channelchat"] = "AUTO"
-		end
-
-		C_Timer.After(0, function()
-			HealerProtection:SetSetup(true)
-			HealerProtection:SetupHP()
-		end)
+		C_Timer.After(
+			0,
+			function()
+				HealerProtection:SetSetup(true)
+				HealerProtection:SetupHP()
+			end
+		)
 	end
 end
 

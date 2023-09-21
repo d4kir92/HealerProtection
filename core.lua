@@ -167,6 +167,10 @@ function HealerProtection:PrintChat()
 			roleToken = UnitGroupRolesAssigned("PLAYER")
 		end
 
+		if HealerProtection:GetWoWBuild() == "CLASSIC" or HealerProtection:GetWoWBuild() == "TBC" then
+			roleToken = "HEALER"
+		end
+
 		if roleToken == "NONE" then
 			roleToken = "HEALER"
 		end

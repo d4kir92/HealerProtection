@@ -29,4 +29,5 @@ function HealerProtection:LangdeDE()
 	lang.showneardeathemote = "Dem Tod nahe Emote"
 	lang.notinsight = "Nicht in Sicht"
 	lang.showoutsideofinstance = "Außerhalb von Dungeons anzeigen"
+	lang.showasnothealer = "Als Nicht-Heiler anzeigen"
 end

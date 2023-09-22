@@ -30,6 +30,7 @@ function HealerProtection:LangenUS()
 	lang.showneardeathemote = "Near death Emote"
 	lang.notinsight = "Not in sight"
 	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
+	lang.showasnothealer = "Show as Not-Healer"
 	for i, v in pairs(lang) do
 		elang[i] = v
 	end

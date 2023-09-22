@@ -180,7 +180,7 @@ function HealerProtection:PrintChat()
 			HealerProtection:MSG("You are not a Healer.")
 		end
 
-		if roleToken == "HEALER" and not HealerProtection:GetConfig("printnothing", false) then
+		if (roleToken == "HEALER" or HealerProtection:GetConfig("showasnothealer", false)) and not HealerProtection:GetConfig("printnothing", false) then
 			if not UnitIsDead("player") then
 				isdead = false
 				-- Aggro Logic

@@ -28,6 +28,16 @@ function HealerProtection:InitSetting()
 	settings_printnothing.dbvalue = "printnothing"
 	HealerProtection:CreateCheckBox(settings_printnothing)
 	Y = Y - BR
+	local settings_showasnothealer = {}
+	settings_showasnothealer.name = "showasnothealer"
+	settings_showasnothealer.parent = HPTAB_Settings.panel
+	settings_showasnothealer.checked = HealerProtection:GetConfig("showasnothealer", false)
+	settings_showasnothealer.text = "showasnothealer"
+	settings_showasnothealer.x = 10
+	settings_showasnothealer.y = Y
+	settings_showasnothealer.dbvalue = "showasnothealer"
+	HealerProtection:CreateCheckBox(settings_showasnothealer)
+	Y = Y - BR
 	local settings_showinraids = {}
 	settings_showinraids.name = "showinraids"
 	settings_showinraids.parent = HPTAB_Settings.panel

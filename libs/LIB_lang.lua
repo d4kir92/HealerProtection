@@ -29,7 +29,9 @@ function HealerProtection:GT(str, tab, force)
 		if force then
 			return result
 		elseif HealerProtection:GetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
-			if HealerProtection:GetConfig("showonlytranslation", false) then
+			if HealerProtection:GetConfig("showonlyenglish", false) then
+				return eng
+			elseif HealerProtection:GetConfig("showonlytranslation", false) then
 				return result
 			else
 				return eng .. " [" .. result .. "]"

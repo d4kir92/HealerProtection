@@ -272,15 +272,25 @@ function HealerProtection:InitSetting()
 	settings_channel.tab[2] = "RAID"
 	settings_channel.tab[3] = "INSTANCE_CHAT"
 	HealerProtection:CreateComboBox(settings_channel)
+	Y = Y - SR
 	local settings_showtranslation = {}
 	settings_showtranslation.name = "showtranslation"
 	settings_showtranslation.parent = HPTAB_Settings.panel
 	settings_showtranslation.checked = HealerProtection:GetConfig("showtranslation", true)
 	settings_showtranslation.text = "Show Translation"
-	settings_showtranslation.x = 210
+	settings_showtranslation.x = 10
 	settings_showtranslation.y = Y
 	settings_showtranslation.dbvalue = "showtranslation"
 	HealerProtection:CreateCheckBox(settings_showtranslation)
+	local settings_showonlyenglish = {}
+	settings_showonlyenglish.name = "showonlyenglish"
+	settings_showonlyenglish.parent = HPTAB_Settings.panel
+	settings_showonlyenglish.checked = HealerProtection:GetConfig("showonlyenglish", false)
+	settings_showonlyenglish.text = "Show Only English"
+	settings_showonlyenglish.x = 210
+	settings_showonlyenglish.y = Y
+	settings_showonlyenglish.dbvalue = "showonlyenglish"
+	HealerProtection:CreateCheckBox(settings_showonlyenglish)
 	local settings_showonlytranslation = {}
 	settings_showonlytranslation.name = "showonlytranslation"
 	settings_showonlytranslation.parent = HPTAB_Settings.panel

@@ -163,7 +163,7 @@ function HealerProtection:PrintChat()
 			end
 		end
 
-		if UnitGroupRolesAssigned then
+		if UnitGroupRolesAssigned and HealerProtection:GetWoWBuildNr() > 19999 then
 			roleToken = UnitGroupRolesAssigned("PLAYER")
 		end
 

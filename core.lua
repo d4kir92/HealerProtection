@@ -237,7 +237,7 @@ function HealerProtection:PrintChat()
 							local tab = {}
 							tab["MANA"] = manaperc
 							if HealerProtection:GetConfig("showoomchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat(HealerProtection:GT("outofmana") .. " (" .. HealerProtection:GT("xmana", tab) .. ").")
+								HealerProtection:ToCurrentChat(" (" .. HealerProtection:GT("xmana", tab) .. "). " .. HealerProtection:GT("outofmana"))
 							end
 
 							if HealerProtection:GetConfig("showoomemote", true) and HealerProtection:AllowedTo() then
@@ -255,7 +255,7 @@ function HealerProtection:PrintChat()
 							local tab = {}
 							tab["MANA"] = manaperc
 							if HealerProtection:GetConfig("shownearoomchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat(HealerProtection:GT("nearoutofmana") .. " (" .. HealerProtection:GT("xmana", tab) .. ").")
+								HealerProtection:ToCurrentChat(" (" .. HealerProtection:GT("xmana", tab) .. "). " .. HealerProtection:GT("nearoutofmana"))
 							end
 
 							if HealerProtection:GetConfig("shownearoomemote", true) and HealerProtection:AllowedTo() then

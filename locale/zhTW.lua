@@ -1,6 +1,5 @@
 -- zhTW Traditional Chinese
 local _, HealerProtection = ...
-
 function HealerProtection:LangzhTW()
 	local lang = HealerProtection:GetLangTab()
 	lang.aggro = "獲得仇恨"

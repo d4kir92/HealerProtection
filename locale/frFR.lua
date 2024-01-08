@@ -1,6 +1,5 @@
 -- frFR French
 local _, HealerProtection = ...
-
 function HealerProtection:LangfrFR()
 	local lang = HealerProtection:GetLangTab()
 	lang.aggro = "AGGRO"

@@ -1,6 +1,5 @@
 -- zhCN Simplified Chinese
 local _, HealerProtection = ...
-
 function HealerProtection:LangzhCN()
 	local lang = HealerProtection:GetLangTab()
 	lang.aggro = "仇恨"

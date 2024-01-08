@@ -1,6 +1,5 @@
 -- koKR Korean
 local _, HealerProtection = ...
-
 function HealerProtection:LangkoKR()
 	local lang = HealerProtection:GetLangTab()
 	lang.aggro = "어그로"

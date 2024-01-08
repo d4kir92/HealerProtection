@@ -1,6 +1,5 @@
 -- esMX Spain
 local _, HealerProtection = ...
-
 function HealerProtection:LangesMX()
 	local lang = HealerProtection:GetLangTab()
 	lang.aggro = "AGGRO"

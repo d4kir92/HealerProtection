@@ -1,6 +1,5 @@
 -- ruRU Russian
 local _, HealerProtection = ...
-
 function HealerProtection:LangruRU()
 	local lang = HealerProtection:GetLangTab()
 	lang.aggro = "АГРО"

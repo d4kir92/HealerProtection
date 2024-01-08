@@ -1,6 +1,5 @@
 -- esES Spain
 local _, HealerProtection = ...
-
 function HealerProtection:LangesES()
 	local lang = HealerProtection:GetLangTab()
 	lang.aggro = "AGGRO"

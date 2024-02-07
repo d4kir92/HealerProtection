@@ -1,5 +1,5 @@
-## Interface: 11500
-## Version: 1.1.12
+## Interface: 11501
+## Version: 1.1.13
 ## Title: HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
 ## Author: D4KiR

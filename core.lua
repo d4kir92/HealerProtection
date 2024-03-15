@@ -148,6 +148,7 @@ local aggro = false
 local isdead = false
 local neardeath = false
 local isNotHealerWarning = false
+local isChanneling = false
 function HealerProtection:PrintChat()
 	if HealerProtection:GetConfig("OOMPercentage", 10) > HealerProtection:GetConfig("NEAROOMPercentage", 30) and SETOOMP ~= nil and not InCombatLockdown() then
 		HPTABPC["OOMPercentage"] = HealerProtection:GetConfig("NEAROOMPercentage", 30)
@@ -197,7 +198,7 @@ function HealerProtection:PrintChat()
 									HealerProtection:ToCurrentChat("{rt8}" .. " " .. HealerProtection:GT("ihaveaggro"))
 								end
 
-								if HealerProtection:GetConfig("showaggroemote", true) and HealerProtection:AllowedTo() then
+								if HealerProtection:GetConfig("showaggroemote", true) and HealerProtection:AllowedTo() and not isChanneling then
 									DoEmote("helpme")
 								end
 
@@ -240,7 +241,7 @@ function HealerProtection:PrintChat()
 								HealerProtection:ToCurrentChat("(" .. HealerProtection:GT("xmana", tab) .. ") " .. HealerProtection:GT("outofmana") .. ".")
 							end
 
-							if HealerProtection:GetConfig("showoomemote", true) and HealerProtection:AllowedTo() then
+							if HealerProtection:GetConfig("showoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
 								DoEmote("oom")
 							end
 						elseif manaperc > HealerProtection:GetConfig("OOMPercentage", 10) + 20 and oom then
@@ -258,7 +259,7 @@ function HealerProtection:PrintChat()
 								HealerProtection:ToCurrentChat("(" .. HealerProtection:GT("xmana", tab) .. ") " .. HealerProtection:GT("nearoutofmana") .. ".")
 							end
 
-							if HealerProtection:GetConfig("shownearoomemote", true) and HealerProtection:AllowedTo() then
+							if HealerProtection:GetConfig("shownearoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
 								DoEmote("incoming")
 							end
 						elseif manaperc > HealerProtection:GetConfig("NEAROOMPercentage", 30) + 20 and nearoom then
@@ -276,7 +277,7 @@ function HealerProtection:PrintChat()
 								HealerProtection:ToCurrentChat(HealerProtection:GT("neardeath") .. " (" .. HealerProtection:GT("xhealth", tab) .. ").")
 							end
 
-							if HealerProtection:GetConfig("showneardeathemote", true) and HealerProtection:AllowedTo() then
+							if HealerProtection:GetConfig("showneardeathemote", true) and HealerProtection:AllowedTo() and not isChanneling then
 								DoEmote("flee")
 							end
 						elseif healthperc > HealerProtection:GetConfig("NEAROOMPercentage", 30) + 20 and neardeath then
@@ -321,3 +322,16 @@ end
 local f = CreateFrame("Frame")
 f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 f:SetScript("OnEvent", OnEvent)
+local channeling = CreateFrame("Frame")
+channeling:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+channeling:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
+channeling:SetScript(
+	"OnEvent",
+	function(self, event, ...)
+		if event == "UNIT_SPELLCAST_CHANNEL_START" then
+			isChanneling = true
+		elseif event == "UNIT_SPELLCAST_CHANNEL_STOP" then
+			isChanneling = false
+		end
+	end
+)

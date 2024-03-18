@@ -37,6 +37,7 @@ function HealerProtection:CanWriteToChat(chan)
 end
 
 function HealerProtection:ToCurrentChat(msg)
+	local inInstance, _ = IsInInstance()
 	local _channel = "PARTY"
 	if HealerProtection:GetConfig("channelchat", "AUTO") == "AUTO" then
 		if IsInRaid(LE_PARTY_CATEGORY_HOME) then
@@ -62,6 +63,10 @@ function HealerProtection:ToCurrentChat(msg)
 		suffix = " " .. suffix
 	elseif suffix == " " then
 		suffix = ""
+	end
+
+	if not inInstance and not UnitInBattleground("player") and (_channel == "YELL" or _channel == "SAY") then
+		_channel = "PARTY"
 	end
 
 	if HealerProtection:CanWriteToChat(_channel) then

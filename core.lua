@@ -164,11 +164,11 @@ function HealerProtection:PrintChat()
 			end
 		end
 
-		if UnitGroupRolesAssigned and HealerProtection:GetWoWBuildNr() > 19999 then
+		if UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
 			roleToken = UnitGroupRolesAssigned("PLAYER")
 		end
 
-		if HealerProtection:GetWoWBuild() == "CLASSIC" or HealerProtection:GetWoWBuild() == "TBC" then
+		if D4:GetWoWBuild() == "CLASSIC" or D4:GetWoWBuild() == "TBC" then
 			roleToken = "HEALER"
 		end
 

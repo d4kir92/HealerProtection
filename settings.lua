@@ -2,7 +2,7 @@
 local AddonName, HealerProtection = ...
 function HealerProtection:InitSetting()
 	local HPTAB_Settings = {}
-	D4:SetVersion(AddonName, 135923, "1.2.0")
+	D4:SetVersion(AddonName, 135923, "1.2.1")
 	HPTAB_Settings.panel = CreateFrame("Frame", "HPTAB_Settings", UIParent)
 	HPTAB_Settings.panel.name = "HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t"
 	local BR = 16
@@ -29,7 +29,7 @@ function HealerProtection:InitSetting()
 	settings_printnothing.dbvalue = "printnothing"
 	HealerProtection:CreateCheckBox(settings_printnothing)
 	Y = Y - BR
-	if UnitGroupRolesAssigned and HealerProtection:GetWoWBuildNr() > 19999 then
+	if UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
 		local settings_showasnothealer = {}
 		settings_showasnothealer.name = "showasnothealer"
 		settings_showasnothealer.parent = HPTAB_Settings.panel

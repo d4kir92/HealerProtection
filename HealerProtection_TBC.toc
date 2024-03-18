@@ -1,5 +1,5 @@
 ## Interface: 20504
-## Version: 1.2.0
+## Version: 1.2.1
 ## Title: HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
 ## Author: D4KiR
@@ -14,20 +14,20 @@ libs\D4Lib\D4Lib.xml
 libs\LibStub\LibStub.lua
 libs\LibDropDown\embed.xml
 
-libs/LIB_output.lua
-libs/LIB_math.lua
-libs/LIB_design.lua
-libs/dropdown.lua
-libs/LIB_lang.lua
-locale/enUS.lua
-locale/deDE.lua
-locale/esES.lua
-locale/esMX.lua
-locale/frFR.lua
-locale/koKR.lua
-locale/ruRU.lua
-locale/zhCN.lua
-locale/zhTW.lua
+libs\LIB_output.lua
+libs\LIB_math.lua
+libs\LIB_design.lua
+libs\dropdown.lua
+libs\LIB_lang.lua
+locale\enUS.lua
+locale\deDE.lua
+locale\esES.lua
+locale\esMX.lua
+locale\frFR.lua
+locale\koKR.lua
+locale\ruRU.lua
+locale\zhCN.lua
+locale\zhTW.lua
 
 config.lua
 

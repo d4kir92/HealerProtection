@@ -160,7 +160,7 @@ function HealerProtection:PrintChat()
 		SETOOMP:SetValue(HPTABPC["OOMPercentage"])
 	end
 
-	if HealerProtection:IsLoaded() and warning_aggro ~= nil then
+	if HealerProtection:IsLoaded() then
 		local roleToken = "HEALER"
 		if GetSpecialization and GetSpecializationRole then
 			local id = GetSpecialization()
@@ -218,13 +218,17 @@ function HealerProtection:PrintChat()
 						aggro = false
 					end
 
-					if aggro then
-						warning_aggro:Show()
-					else
-						warning_aggro:Hide()
+					if warning_aggro then
+						if aggro then
+							warning_aggro:Show()
+						else
+							warning_aggro:Hide()
+						end
 					end
 				else
-					warning_aggro:Hide()
+					if warning_aggro then
+						warning_aggro:Hide()
+					end
 				end
 
 				-- MANA Logic

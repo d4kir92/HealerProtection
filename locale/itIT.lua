@@ -1,0 +1,33 @@
+-- frFR French
+local _, HealerProtection = ...
+function HealerProtection:LangitIT()
+	local lang = HealerProtection:GetLangTab()
+	lang.aggro = "AGGRO"
+	lang.showaggrochat = "AGGRO Chat-Messaggio"
+	lang.showaggroemote = "AGGRO Emote"
+	lang.outofmana = "Senza Mana"
+	lang.showoomchat = "OOM Chat-Messaggio"
+	lang.showoomemote = "OOM Emote"
+	lang.nearoutofmana = "Quasi senza Mana"
+	lang.shownearoomchat = "Vicino OOM Chat-Messaggio "
+	lang.shownearoomemote = "Vicino OOM Emote"
+	lang.youhaveaggro = "Tu hai AGGRO"
+	lang.ihaveaggro = "I ho AGGRO"
+	lang.underhealthprintmessage = "Se sotto VALUE% Salute, stampa il messaggio"
+	lang.undermanaprintmessage = "Se sotto VALUE% Mana, stampa il messaggio"
+	lang.xmana = "MANA% Mana"
+	lang.xhealth = "HEALTH% Health"
+	lang.prefix = "Prefisso"
+	lang.suffix = "Suffisso"
+	lang.printnothing = "Niente Pubblica"
+	lang.showinraids = "Mostra in Raids"
+	lang.showinbgs = "Mostra in Battlegrounds"
+	lang.healerisdead = "Messaggio quando healer muore"
+	lang.deathmessage = "Messaggio di morte"
+	lang.neardeath = "Vicino alla morte"
+	lang.showneardeathchat = "Chat-Messaggio vicino alla morte"
+	lang.showneardeathemote = "Vicino alla morte Emote"
+	lang.notinsight = "Non in vista"
+	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
+	lang.showasnothealer = "Show as Not-Healer"
+end

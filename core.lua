@@ -113,31 +113,24 @@ function HealerProtection:SetupHP()
 
 	HealerProtection:LangenUS()
 	if GetLocale() == "enUS" then
-		--HealerProtection:MSG("Language detected: enUS (English)")
 		HealerProtection:LangenUS()
 	elseif GetLocale() == "deDE" then
-		--HealerProtection:MSG("Language detected: deDE (Deutsch)")
 		HealerProtection:LangdeDE()
 	elseif GetLocale() == "esES" then
-		--HealerProtection:MSG("Language detected: esES (Spanish)")
 		HealerProtection:LangesES()
 	elseif GetLocale() == "esMX" then
-		--HealerProtection:MSG("Language detected: esMX (Spanish)")
 		HealerProtection:LangesMX()
 	elseif GetLocale() == "frFR" then
-		--HealerProtection:MSG("Language detected: frFR (French)")
 		HealerProtection:LangfrFR()
+	elseif GetLocale() == "itIT" then
+		HealerProtection:LangitIT()
 	elseif GetLocale() == "koKR" then
-		--HealerProtection:MSG("Language detected: koKR (Korean)")
 		HealerProtection:LangkoKR()
 	elseif GetLocale() == "ruRU" then
-		--HealerProtection:MSG("Language detected: ruRU (Russian)")
 		HealerProtection:LangruRU()
 	elseif GetLocale() == "zhCN" then
-		--HealerProtection:MSG("Language detected: zhCN (Simplified Chinese)")
 		HealerProtection:LangzhCN()
 	elseif GetLocale() == "zhTW" then
-		--HealerProtection:MSG("Language detected: zhTW (Traditional Chinese)")
 		HealerProtection:LangzhTW()
 	else
 		HealerProtection:MSG("Language not found (" .. GetLocale() .. "), using English one!")

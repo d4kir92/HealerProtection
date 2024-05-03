@@ -4,7 +4,7 @@
 ## Interface-Cata: 40400
 ## Interface: 100206
 
-## Version: 1.2.11
+## Version: 1.2.12
 ## Title: HealerProtection by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
 ## Author: D4KiR
@@ -30,6 +30,7 @@ locale\deDE.lua
 locale\esES.lua
 locale\esMX.lua
 locale\frFR.lua
+locale\itIT.lua
 locale\koKR.lua
 locale\ruRU.lua
 locale\zhCN.lua

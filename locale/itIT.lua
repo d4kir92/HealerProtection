@@ -1,4 +1,4 @@
--- frFR French
+-- itIT Italian
 local _, HealerProtection = ...
 function HealerProtection:LangitIT()
 	local lang = HealerProtection:GetLangTab()

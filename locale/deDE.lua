@@ -30,4 +30,5 @@ function HealerProtection:LangdeDE()
 	lang.notinsight = "Nicht in Sicht"
 	lang.showoutsideofinstance = "Außerhalb von Dungeons anzeigen"
 	lang.showasnothealer = "Als Nicht-Heiler anzeigen"
+	lang.channelchat = "Chat-Kanaltyp"
 end

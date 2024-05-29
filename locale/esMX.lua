@@ -28,4 +28,7 @@ function HealerProtection:LangesMX()
 	lang.showneardeathchat = "Cercano a la muerte Mensaje de  Chat"
 	lang.showneardeathemote = "Cercano a la muerte Emote"
 	lang.notinsight = "No tengo visión"
+	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
+	lang.showasnothealer = "Show as Not-Healer"
+	lang.channelchat = "Chat Channel Type"
 end

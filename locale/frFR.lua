@@ -28,4 +28,7 @@ function HealerProtection:LangfrFR()
 	lang.showneardeathchat = "Bientôt Trépassé Chat-Message"
 	lang.showneardeathemote = "Bientôt Trépassé Emote"
 	lang.notinsight = "Cible Masquée/Hors de Vue"
+	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
+	lang.showasnothealer = "Show as Not-Healer"
+	lang.channelchat = "Chat Channel Type"
 end

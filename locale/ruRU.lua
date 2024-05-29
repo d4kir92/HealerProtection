@@ -28,4 +28,7 @@ function HealerProtection:LangruRU()
 	lang.showneardeathchat = "Сообщение в чат при смерти"
 	lang.showneardeathemote = "Предсмертная эмоция"
 	lang.notinsight = "Не видно"
+	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
+	lang.showasnothealer = "Show as Not-Healer"
+	lang.channelchat = "Chat Channel Type"
 end

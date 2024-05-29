@@ -28,4 +28,7 @@ function HealerProtection:LangkoKR()
 	lang.showneardeathchat = "죽기 직전 채팅 메세지"
 	lang.showneardeathemote = "죽기 직전 감정표현"
 	lang.notinsight = "보이지 않음"
+	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
+	lang.showasnothealer = "Show as Not-Healer"
+	lang.channelchat = "Chat Channel Type"
 end

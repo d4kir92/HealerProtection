@@ -28,4 +28,7 @@ function HealerProtection:LangzhTW()
 	lang.showneardeathchat = "快死了聊天訊息"
 	lang.showneardeathemote = "快死了表情動作"
 	lang.notinsight = "被卡視角 (補不到)"
+	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
+	lang.showasnothealer = "Show as Not-Healer"
+	lang.channelchat = "Chat Channel Type"
 end

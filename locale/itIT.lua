@@ -22,7 +22,7 @@ function HealerProtection:LangitIT()
 	lang.printnothing = "Non Pubblicare"
 	lang.showinraids = "Mostra in Raid"
 	lang.showinbgs = "Mostra in Battlegrounds"
-	lang.healerisdead = "Messaggio quando healer muore"
+	lang.healerisdead = "Messaggio quando l'healer muore"
 	lang.deathmessage = "Messaggio di morte"
 	lang.neardeath = "Vicino alla morte"
 	lang.showneardeathchat = "Chat-Messaggio vicino alla morte"
@@ -30,4 +30,5 @@ function HealerProtection:LangitIT()
 	lang.notinsight = "Non in vista"
 	lang.showoutsideofinstance = "Mostra fuori dalla Spedizione"
 	lang.showasnothealer = "Mostra se Non-Curatore"
+	lang.channelchat = "Tipo di Canale della Chat"
 end

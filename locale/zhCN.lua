@@ -28,4 +28,7 @@ function HealerProtection:LangzhCN()
 	lang.showneardeathchat = "接近死亡的聊天信息"
 	lang.showneardeathemote = "接近死亡的表情"
 	lang.notinsight = "不在眼前"
+	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
+	lang.showasnothealer = "Show as Not-Healer"
+	lang.channelchat = "Chat Channel Type"
 end

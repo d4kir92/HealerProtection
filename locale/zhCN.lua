@@ -1,34 +1,39 @@
 -- zhCN Simplified Chinese
-local _, HealerProtection = ...
-function HealerProtection:LangzhCN()
-	local lang = HealerProtection:GetLangTab()
-	lang.aggro = "仇恨"
-	lang.showaggrochat = "仇恨 聊天消息"
-	lang.showaggroemote = "仇恨 表情"
-	lang.outofmana = "没蓝了"
-	lang.showoomchat = "没蓝 聊天消息"
-	lang.showoomemote = "没蓝 表情"
-	lang.nearoutofmana = "我快没蓝了"
-	lang.shownearoomchat = "快没蓝 聊天消息"
-	lang.shownearoomemote = "快没蓝 表情"
-	lang.youhaveaggro = "你被怪盯上啦"
-	lang.ihaveaggro = "我被怪盯上啦"
-	lang.underhealthprintmessage = "如果低于 VALUE% 生命值，发送聊天消息"
-	lang.undermanaprintmessage = "如果低于 VALUE% 法力值，发送聊天消息"
-	lang.xmana = "MANA% 法力值"
-	lang.xhealth = "HEALTH% 健康"
-	lang.prefix = "前缀"
-	lang.suffix = "后缀"
-	lang.printnothing = "不显示任何东西"
-	lang.showinraids = "在团队时显示"
-	lang.showinbgs = "在战场时显示"
-	lang.healerisdead = "治疗死了"
-	lang.deathmessage = "死亡信息"
-	lang.neardeath = "接近死亡"
-	lang.showneardeathchat = "接近死亡的聊天信息"
-	lang.showneardeathemote = "接近死亡的表情"
-	lang.notinsight = "不在眼前"
-	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
-	lang.showasnothealer = "Show as Not-Healer"
-	lang.channelchat = "Chat Channel Type"
-end
+D4:AddTrans("zhCN", "aggro", "仇恨")
+D4:AddTrans("zhCN", "showaggrochat", "仇恨 聊天消息")
+D4:AddTrans("zhCN", "showaggroemote", "仇恨 表情")
+D4:AddTrans("zhCN", "outofmana", "没蓝了")
+D4:AddTrans("zhCN", "showoomchat", "没蓝 聊天消息")
+D4:AddTrans("zhCN", "showoomemote", "没蓝 表情")
+D4:AddTrans("zhCN", "nearoutofmana", "我快没蓝了")
+D4:AddTrans("zhCN", "shownearoomchat", "快没蓝 聊天消息")
+D4:AddTrans("zhCN", "shownearoomemote", "快没蓝 表情")
+D4:AddTrans("zhCN", "youhaveaggro", "你被怪盯上啦")
+D4:AddTrans("zhCN", "ihaveaggro", "我被怪盯上啦")
+D4:AddTrans("zhCN", "AGGROPercentage", "如果低于 %s%% 生命值，发送聊天消息")
+D4:AddTrans("zhCN", "NEAROOMPercentage", "如果低于 %s%% 法力值，发送聊天消息")
+D4:AddTrans("zhCN", "xmana", "%s%% 法力值")
+D4:AddTrans("zhCN", "xhealth", "%s%% 健康")
+D4:AddTrans("zhCN", "prefix", "前缀")
+D4:AddTrans("zhCN", "suffix", "后缀")
+D4:AddTrans("zhCN", "printnothing", "不显示任何东西")
+D4:AddTrans("zhCN", "showinraids", "在团队时显示")
+D4:AddTrans("zhCN", "showinbgs", "在战场时显示")
+D4:AddTrans("zhCN", "healerisdead", "治疗死了")
+D4:AddTrans("zhCN", "deathmessage", "死亡信息")
+D4:AddTrans("zhCN", "neardeath", "接近死亡")
+D4:AddTrans("zhCN", "showneardeathchat", "接近死亡的聊天信息")
+D4:AddTrans("zhCN", "showneardeathemote", "接近死亡的表情")
+D4:AddTrans("zhCN", "notinsight", "不在眼前")
+D4:AddTrans("zhCN", "showoutsideofinstance", "Show Outside of Instances/Dungeons")
+D4:AddTrans("zhCN", "showasnothealer", "Show as Not-Healer")
+D4:AddTrans("zhCN", "channelchat", "Chat Channel Type")
+D4:AddTrans("zhCN", "general", "General")
+D4:AddTrans("zhCN", "MMBTN", "Show Minimap Button")
+D4:AddTrans("zhCN", "showtranslation", "Show Translation")
+D4:AddTrans("zhCN", "showonlyenglish", "Show Only English")
+D4:AddTrans("zhCN", "showonlytranslation", "Show Only Translation")
+D4:AddTrans("zhCN", "visibility", "Visibility")
+D4:AddTrans("zhCN", "extras", "Extras")
+D4:AddTrans("zhCN", "NEARDEATHPercentage", "If under %s%% Health, print message")
+D4:AddTrans("zhCN", "OOMPercentage", "If under %s%% Mana, print message")

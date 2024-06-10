@@ -1,34 +1,39 @@
 -- esES Spain
-local _, HealerProtection = ...
-function HealerProtection:LangesES()
-	local lang = HealerProtection:GetLangTab()
-	lang.aggro = "AGGRO"
-	lang.showaggrochat = "AGGRO Mensaje de chat"
-	lang.showaggroemote = "AGGRO Emote"
-	lang.outofmana = "Sin Mana"
-	lang.showoomchat = "Sin Mana Mensaje de chat"
-	lang.showoomemote = "Sin Mana Emote"
-	lang.nearoutofmana = "Casi sin Mana"
-	lang.shownearoomchat = "Casi sin Mana Mensaje de chat"
-	lang.shownearoomemote = "Casi sin Mana Emote"
-	lang.youhaveaggro = "Tienes AGGRO"
-	lang.ihaveaggro = "Tengo AGGRO"
-	lang.underhealthprintmessage = "Si estas por debajo de VALUE% de vida, escribir mensaje"
-	lang.undermanaprintmessage = "Si estas por debajo de VALUE% de mana, escribir mensaje"
-	lang.xmana = "MANA% Maná"
-	lang.xhealth = "HEALTH% Vida"
-	lang.prefix = "Prefijo"
-	lang.suffix = "Sufijo"
-	lang.printnothing = "No imprimir nada"
-	lang.showinraids = "Mostrar en Raid"
-	lang.showinbgs = "Mostrar en Campos de Batalla"
-	lang.healerisdead = "El Curador está muerto"
-	lang.deathmessage = "Mensaje al morir"
-	lang.neardeath = "Cerca de morir"
-	lang.showneardeathchat = "Cerca de Morir, Mensaje de Chat"
-	lang.showneardeathemote = "Cerca de morir Emote"
-	lang.notinsight = "Sin visión / rango"
-	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
-	lang.showasnothealer = "Show as Not-Healer"
-	lang.channelchat = "Chat Channel Type"
-end
+D4:AddTrans("esES", "aggro", "AGGRO")
+D4:AddTrans("esES", "showaggrochat", "AGGRO Mensaje de chat")
+D4:AddTrans("esES", "showaggroemote", "AGGRO Emote")
+D4:AddTrans("esES", "outofmana", "Sin Mana")
+D4:AddTrans("esES", "showoomchat", "Sin Mana Mensaje de chat")
+D4:AddTrans("esES", "showoomemote", "Sin Mana Emote")
+D4:AddTrans("esES", "nearoutofmana", "Casi sin Mana")
+D4:AddTrans("esES", "shownearoomchat", "Casi sin Mana Mensaje de chat")
+D4:AddTrans("esES", "shownearoomemote", "Casi sin Mana Emote")
+D4:AddTrans("esES", "youhaveaggro", "Tienes AGGRO")
+D4:AddTrans("esES", "ihaveaggro", "Tengo AGGRO")
+D4:AddTrans("esES", "AGGROPercentage", "Si estas por debajo de %s%% de vida, escribir mensaje")
+D4:AddTrans("esES", "NEAROOMPercentage", "Si estas por debajo de %s%% de mana, escribir mensaje")
+D4:AddTrans("esES", "xmana", "%s%% Maná")
+D4:AddTrans("esES", "xhealth", "%s%% Vida")
+D4:AddTrans("esES", "prefix", "Prefijo")
+D4:AddTrans("esES", "suffix", "Sufijo")
+D4:AddTrans("esES", "printnothing", "No imprimir nada")
+D4:AddTrans("esES", "showinraids", "Mostrar en Raid")
+D4:AddTrans("esES", "showinbgs", "Mostrar en Campos de Batalla")
+D4:AddTrans("esES", "healerisdead", "El Curador está muerto")
+D4:AddTrans("esES", "deathmessage", "Mensaje al morir")
+D4:AddTrans("esES", "neardeath", "Cerca de morir")
+D4:AddTrans("esES", "showneardeathchat", "Cerca de Morir, Mensaje de Chat")
+D4:AddTrans("esES", "showneardeathemote", "Cerca de morir Emote")
+D4:AddTrans("esES", "notinsight", "Sin visión / rango")
+D4:AddTrans("esES", "showoutsideofinstance", "Show Outside of Instances/Dungeons")
+D4:AddTrans("esES", "showasnothealer", "Show as Not-Healer")
+D4:AddTrans("esES", "channelchat", "Chat Channel Type")
+D4:AddTrans("esES", "general", "General")
+D4:AddTrans("esES", "MMBTN", "Show Minimap Button")
+D4:AddTrans("esES", "showtranslation", "Show Translation")
+D4:AddTrans("esES", "showonlyenglish", "Show Only English")
+D4:AddTrans("esES", "showonlytranslation", "Show Only Translation")
+D4:AddTrans("esES", "visibility", "Visibility")
+D4:AddTrans("esES", "extras", "Extras")
+D4:AddTrans("esES", "NEARDEATHPercentage", "If under %s%% Health, print message")
+D4:AddTrans("esES", "OOMPercentage", "If under %s%% Mana, print message")

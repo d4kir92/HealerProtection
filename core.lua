@@ -36,6 +36,18 @@ function HealerProtection:CanWriteToChat(chan)
 	return false
 end
 
+function HealerProtection:GetLang()
+	if HealerProtection:GetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
+		if HealerProtection:GetConfig("showonlyenglish", false) then
+			return "enUS"
+		elseif HealerProtection:GetConfig("showonlytranslation", false) then
+			return nil
+		end
+	end
+
+	return "enUS"
+end
+
 function HealerProtection:ToCurrentChat(msg)
 	local inInstance, _ = IsInInstance()
 	local _channel = "PARTY"
@@ -88,16 +100,8 @@ function HealerProtection:SetupHP()
 			warning_aggro.text = warning_aggro:CreateFontString(nil, "ARTWORK")
 			warning_aggro.text:SetFont(STANDARD_TEXT_FONT, 20, "OUTLINE")
 			warning_aggro.text:SetPoint("CENTER", 0, 300)
-			warning_aggro.text:SetText(HealerProtection:GT("youhaveaggro", nil, true) .. "!")
+			warning_aggro.text:SetText(D4:Trans("youhaveaggro") .. "!")
 			warning_aggro.text:SetTextColor(1, 0, 0, 1)
-			hooksecurefunc(
-				HealerProtection,
-				"UpdateLanguage",
-				function()
-					warning_aggro.text:SetText(HealerProtection:GT("youhaveaggro", nil, true) .. "!")
-				end
-			)
-
 			warning_aggro:SetPoint("CENTER", 0, 0)
 			warning_aggro:Hide()
 			HealerProtection:InitSetting()
@@ -110,34 +114,6 @@ function HealerProtection:SetupHP()
 			)
 		end
 	end
-
-	HealerProtection:LangenUS()
-	if GetLocale() == "enUS" then
-		HealerProtection:LangenUS()
-	elseif GetLocale() == "deDE" then
-		HealerProtection:LangdeDE()
-	elseif GetLocale() == "esES" then
-		HealerProtection:LangesES()
-	elseif GetLocale() == "esMX" then
-		HealerProtection:LangesMX()
-	elseif GetLocale() == "frFR" then
-		HealerProtection:LangfrFR()
-	elseif GetLocale() == "itIT" then
-		HealerProtection:LangitIT()
-	elseif GetLocale() == "koKR" then
-		HealerProtection:LangkoKR()
-	elseif GetLocale() == "ruRU" then
-		HealerProtection:LangruRU()
-	elseif GetLocale() == "zhCN" then
-		HealerProtection:LangzhCN()
-	elseif GetLocale() == "zhTW" then
-		HealerProtection:LangzhTW()
-	else
-		HealerProtection:MSG("Language not found (" .. GetLocale() .. "), using English one!")
-		HealerProtection:MSG("If you want your language, please visit the cursegaming site of this project!")
-	end
-
-	HealerProtection:UpdateLanguage()
 end
 
 local nearoom = false
@@ -193,7 +169,7 @@ function HealerProtection:PrintChat()
 						if status ~= nil then
 							if status > 0 and not aggro and hpperc < HealerProtection:GetConfig("AGGROPercentage", 50) then
 								if HealerProtection:GetConfig("showaggrochat", true) and HealerProtection:AllowedTo() then
-									HealerProtection:ToCurrentChat("{rt8}" .. " " .. HealerProtection:GT("ihaveaggro"))
+									HealerProtection:ToCurrentChat("{rt8}" .. " " .. D4:Trans("ihaveaggro", HealerProtection:GetLang()))
 								end
 
 								if HealerProtection:GetConfig("showaggroemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -237,10 +213,8 @@ function HealerProtection:PrintChat()
 					if HealerProtection:GetConfig("OOM", true) then
 						if manaperc <= HealerProtection:GetConfig("OOMPercentage", 10) and not oom then
 							oom = true
-							local tab = {}
-							tab["MANA"] = manaperc
 							if HealerProtection:GetConfig("showoomchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat("(" .. HealerProtection:GT("xmana", tab) .. ") " .. HealerProtection:GT("outofmana") .. ".")
+								HealerProtection:ToCurrentChat("(" .. D4:Trans("xmana", HealerProtection:GetLang(), manaperc) .. ") " .. D4:Trans("outofmana", HealerProtection:GetLang()) .. ".")
 							end
 
 							if HealerProtection:GetConfig("showoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -255,10 +229,8 @@ function HealerProtection:PrintChat()
 					if HealerProtection:GetConfig("NEAROOM", true) and not oom then
 						if manaperc <= HealerProtection:GetConfig("NEAROOMPercentage", 30) and not nearoom then
 							nearoom = true
-							local tab = {}
-							tab["MANA"] = manaperc
 							if HealerProtection:GetConfig("shownearoomchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat("(" .. HealerProtection:GT("xmana", tab) .. ") " .. HealerProtection:GT("nearoutofmana") .. ".")
+								HealerProtection:ToCurrentChat("(" .. D4:Trans("xmana", HealerProtection:GetLang(), manaperc) .. ") " .. D4:Trans("nearoutofmana", HealerProtection:GetLang()) .. ".")
 							end
 
 							if HealerProtection:GetConfig("shownearoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -276,7 +248,7 @@ function HealerProtection:PrintChat()
 							local tab = {}
 							tab["HEALTH"] = healthperc
 							if HealerProtection:GetConfig("showneardeathchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat(HealerProtection:GT("neardeath") .. " (" .. HealerProtection:GT("xhealth", tab) .. ").")
+								HealerProtection:ToCurrentChat(D4:Trans("neardeath", HealerProtection:GetLang()) .. " (" .. D4:Trans("xhealth", HealerProtection:GetLang(), healthperc) .. ").")
 							end
 
 							if HealerProtection:GetConfig("showneardeathemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -290,7 +262,7 @@ function HealerProtection:PrintChat()
 			elseif not isdead then
 				isdead = true
 				if HealerProtection:GetConfig("deathmessage", true) then
-					HealerProtection:ToCurrentChat(HealerProtection:GT("healerisdead") .. ".")
+					HealerProtection:ToCurrentChat(D4:Trans("healerisdead", HealerProtection:GetLang()) .. ".")
 				end
 			end
 		end

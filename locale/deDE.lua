@@ -1,34 +1,39 @@
 -- deDE German Deutsch
-local _, HealerProtection = ...
-function HealerProtection:LangdeDE()
-	local lang = HealerProtection:GetLangTab()
-	lang.aggro = "AGGRO"
-	lang.showaggrochat = "AGGRO Chat-Nachricht"
-	lang.showaggroemote = "AGGRO Emote"
-	lang.outofmana = "Mana leer"
-	lang.showoomchat = "Mana leer Chat-Nachricht"
-	lang.showoomemote = "Mana leer Emote"
-	lang.nearoutofmana = "Mana fast leer"
-	lang.shownearoomchat = "Mana fast leer Chat-Nachricht"
-	lang.shownearoomemote = "Mana fast leer Emote"
-	lang.youhaveaggro = "Du hast AGGRO"
-	lang.ihaveaggro = "Ich habe AGGRO"
-	lang.underhealthprintmessage = "Wenn unter VALUE% Gesundheit, dann Nachricht senden"
-	lang.undermanaprintmessage = "Wenn unter VALUE% Mana, dann Nachricht senden"
-	lang.xmana = "MANA% Mana"
-	lang.xhealth = "HEALTH% Gesundheit"
-	lang.prefix = "Präfix"
-	lang.suffix = "Suffix"
-	lang.printnothing = "Nichts Schreiben"
-	lang.showinraids = "In Schlachtzügen anzeigen"
-	lang.showinbgs = "In Schlachtfeldern anzeigen"
-	lang.healerisdead = "Heiler ist tot"
-	lang.deathmessage = "Todesnachricht"
-	lang.neardeath = "Dem Tod nahe"
-	lang.showneardeathchat = "Dem Tod nahe Chat-Nachricht"
-	lang.showneardeathemote = "Dem Tod nahe Emote"
-	lang.notinsight = "Nicht in Sicht"
-	lang.showoutsideofinstance = "Außerhalb von Dungeons anzeigen"
-	lang.showasnothealer = "Als Nicht-Heiler anzeigen"
-	lang.channelchat = "Chat-Kanaltyp"
-end
+D4:AddTrans("deDE", "aggro", "AGGRO")
+D4:AddTrans("deDE", "showaggrochat", "AGGRO Chat-Nachricht")
+D4:AddTrans("deDE", "showaggroemote", "AGGRO Emote")
+D4:AddTrans("deDE", "outofmana", "Mana leer")
+D4:AddTrans("deDE", "showoomchat", "Mana leer Chat-Nachricht")
+D4:AddTrans("deDE", "showoomemote", "Mana leer Emote")
+D4:AddTrans("deDE", "nearoutofmana", "Mana fast leer")
+D4:AddTrans("deDE", "shownearoomchat", "Mana fast leer Chat-Nachricht")
+D4:AddTrans("deDE", "shownearoomemote", "Mana fast leer Emote")
+D4:AddTrans("deDE", "youhaveaggro", "Du hast AGGRO")
+D4:AddTrans("deDE", "ihaveaggro", "Ich habe AGGRO")
+D4:AddTrans("deDE", "AGGROPercentage", "Wenn unter %s%% Gesundheit, dann Nachricht senden")
+D4:AddTrans("deDE", "NEARDEATHPercentage", "If under %s%% Health, print message")
+D4:AddTrans("deDE", "NEAROOMPercentage", "Wenn unter %s%% Mana, dann Nachricht senden")
+D4:AddTrans("deDE", "OOMPercentage", "If under %s%% Mana, print message")
+D4:AddTrans("deDE", "xmana", "%s%% Mana")
+D4:AddTrans("deDE", "xhealth", "%s%% Gesundheit")
+D4:AddTrans("deDE", "prefix", "Präfix")
+D4:AddTrans("deDE", "suffix", "Suffix")
+D4:AddTrans("deDE", "printnothing", "Nichts Schreiben")
+D4:AddTrans("deDE", "showinraids", "In Schlachtzügen anzeigen")
+D4:AddTrans("deDE", "showinbgs", "In Schlachtfeldern anzeigen")
+D4:AddTrans("deDE", "healerisdead", "Heiler ist tot")
+D4:AddTrans("deDE", "deathmessage", "Todesnachricht")
+D4:AddTrans("deDE", "neardeath", "Dem Tod nahe")
+D4:AddTrans("deDE", "showneardeathchat", "Dem Tod nahe Chat-Nachricht")
+D4:AddTrans("deDE", "showneardeathemote", "Dem Tod nahe Emote")
+D4:AddTrans("deDE", "notinsight", "Nicht in Sicht")
+D4:AddTrans("deDE", "showoutsideofinstance", "Außerhalb von Dungeons anzeigen")
+D4:AddTrans("deDE", "showasnothealer", "Als Nicht-Heiler anzeigen")
+D4:AddTrans("deDE", "channelchat", "Chat-Kanaltyp")
+D4:AddTrans("deDE", "general", "Allgemein")
+D4:AddTrans("deDE", "MMBTN", "Minimapknopf anzeigen")
+D4:AddTrans("deDE", "showtranslation", "Übersetzung anzeigen")
+D4:AddTrans("deDE", "showonlyenglish", "Nur Englisch anzeigen")
+D4:AddTrans("deDE", "showonlytranslation", "Nur Übersetzung anzeigen")
+D4:AddTrans("deDE", "visibility", "Sichtbarkeit")
+D4:AddTrans("deDE", "extras", "Extras")

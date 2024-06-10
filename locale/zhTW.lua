@@ -1,34 +1,39 @@
 -- zhTW Traditional Chinese
-local _, HealerProtection = ...
-function HealerProtection:LangzhTW()
-	local lang = HealerProtection:GetLangTab()
-	lang.aggro = "獲得仇恨"
-	lang.showaggrochat = "獲得仇恨聊天訊息"
-	lang.showaggroemote = "獲得仇恨表情動作"
-	lang.outofmana = "沒魔了"
-	lang.showoomchat = "沒魔了聊天訊息"
-	lang.showoomemote = "快沒魔了表情動作"
-	lang.nearoutofmana = "快沒魔了"
-	lang.shownearoomchat = "快沒魔了聊天訊息"
-	lang.shownearoomemote = "快沒魔了表情動作"
-	lang.youhaveaggro = "怪在看你!"
-	lang.ihaveaggro = "怪在打我!"
-	lang.underhealthprintmessage = "低於 VALUE% 血量時，顯示訊息"
-	lang.undermanaprintmessage = "低於 VALUE% 法力時，顯示訊息"
-	lang.xmana = "MANA% 法力"
-	lang.xhealth = "HEALTH% 血量"
-	lang.prefix = "前置文字"
-	lang.suffix = "後置文字"
-	lang.printnothing = "不顯示任何東西"
-	lang.showinraids = "在團隊時顯示"
-	lang.showinbgs = "在戰場時顯示"
-	lang.healerisdead = "補師死了"
-	lang.deathmessage = "死亡訊息"
-	lang.neardeath = "快死了"
-	lang.showneardeathchat = "快死了聊天訊息"
-	lang.showneardeathemote = "快死了表情動作"
-	lang.notinsight = "被卡視角 (補不到)"
-	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
-	lang.showasnothealer = "Show as Not-Healer"
-	lang.channelchat = "Chat Channel Type"
-end
+D4:AddTrans("zhTW", "aggro", "獲得仇恨")
+D4:AddTrans("zhTW", "showaggrochat", "獲得仇恨聊天訊息")
+D4:AddTrans("zhTW", "showaggroemote", "獲得仇恨表情動作")
+D4:AddTrans("zhTW", "outofmana", "沒魔了")
+D4:AddTrans("zhTW", "showoomchat", "沒魔了聊天訊息")
+D4:AddTrans("zhTW", "showoomemote", "快沒魔了表情動作")
+D4:AddTrans("zhTW", "nearoutofmana", "快沒魔了")
+D4:AddTrans("zhTW", "shownearoomchat", "快沒魔了聊天訊息")
+D4:AddTrans("zhTW", "shownearoomemote", "快沒魔了表情動作")
+D4:AddTrans("zhTW", "youhaveaggro", "怪在看你!")
+D4:AddTrans("zhTW", "ihaveaggro", "怪在打我!")
+D4:AddTrans("zhTW", "AGGROPercentage", "低於 %s%% 血量時，顯示訊息")
+D4:AddTrans("zhTW", "NEAROOMPercentage", "低於 %s%% 法力時，顯示訊息")
+D4:AddTrans("zhTW", "xmana", "%s%% 法力")
+D4:AddTrans("zhTW", "xhealth", "%s%% 血量")
+D4:AddTrans("zhTW", "prefix", "前置文字")
+D4:AddTrans("zhTW", "suffix", "後置文字")
+D4:AddTrans("zhTW", "printnothing", "不顯示任何東西")
+D4:AddTrans("zhTW", "showinraids", "在團隊時顯示")
+D4:AddTrans("zhTW", "showinbgs", "在戰場時顯示")
+D4:AddTrans("zhTW", "healerisdead", "補師死了")
+D4:AddTrans("zhTW", "deathmessage", "死亡訊息")
+D4:AddTrans("zhTW", "neardeath", "快死了")
+D4:AddTrans("zhTW", "showneardeathchat", "快死了聊天訊息")
+D4:AddTrans("zhTW", "showneardeathemote", "快死了表情動作")
+D4:AddTrans("zhTW", "notinsight", "被卡視角 (補不到)")
+D4:AddTrans("zhTW", "showoutsideofinstance", "Show Outside of Instances/Dungeons")
+D4:AddTrans("zhTW", "showasnothealer", "Show as Not-Healer")
+D4:AddTrans("zhTW", "channelchat", "Chat Channel Type")
+D4:AddTrans("zhTW", "general", "General")
+D4:AddTrans("zhTW", "MMBTN", "Show Minimap Button")
+D4:AddTrans("zhTW", "showtranslation", "Show Translation")
+D4:AddTrans("zhTW", "showonlyenglish", "Show Only English")
+D4:AddTrans("zhTW", "showonlytranslation", "Show Only Translation")
+D4:AddTrans("zhTW", "visibility", "Visibility")
+D4:AddTrans("zhTW", "extras", "Extras")
+D4:AddTrans("zhTW", "NEARDEATHPercentage", "If under %s%% Health, print message")
+D4:AddTrans("zhTW", "OOMPercentage", "If under %s%% Mana, print message")

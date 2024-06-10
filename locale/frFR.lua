@@ -1,34 +1,39 @@
 -- frFR French
-local _, HealerProtection = ...
-function HealerProtection:LangfrFR()
-	local lang = HealerProtection:GetLangTab()
-	lang.aggro = "AGGRO"
-	lang.showaggrochat = "AGGRO Message dans le Chat"
-	lang.showaggroemote = "AGGRO Emote"
-	lang.outofmana = "Plus de Mana"
-	lang.showoomchat = "Plus de Mana Chat-Message"
-	lang.showoomemote = "OOM Emote"
-	lang.nearoutofmana = "Mana faible"
-	lang.shownearoomchat = "Presque plus de Mana"
-	lang.shownearoomemote = "Presque OOM Emote"
-	lang.youhaveaggro = "Vous avez AGGRO"
-	lang.ihaveaggro = "AGGRO sur moi"
-	lang.underhealthprintmessage = "Si vous êtes sous VALUE% de santé, afficher le message"
-	lang.undermanaprintmessage = "Si vous êtes sous VALUE% de mana, afficher le message"
-	lang.xmana = "MANA% Mana"
-	lang.xhealth = "HEALTH% de Vie"
-	lang.prefix = "Préfixe"
-	lang.suffix = "Suffixe"
-	lang.printnothing = "Ne rien afficher"
-	lang.showinraids = "Afficher en Raids"
-	lang.showinbgs = "Afficher en Champs de Bataille"
-	lang.healerisdead = "Le Heal est Mort"
-	lang.deathmessage = "Message lorsque Mort"
-	lang.neardeath = "Bientôt Trépassé"
-	lang.showneardeathchat = "Bientôt Trépassé Chat-Message"
-	lang.showneardeathemote = "Bientôt Trépassé Emote"
-	lang.notinsight = "Cible Masquée/Hors de Vue"
-	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
-	lang.showasnothealer = "Show as Not-Healer"
-	lang.channelchat = "Chat Channel Type"
-end
+D4:AddTrans("frFR", "aggro", "AGGRO")
+D4:AddTrans("frFR", "showaggrochat", "AGGRO Message dans le Chat")
+D4:AddTrans("frFR", "showaggroemote", "AGGRO Emote")
+D4:AddTrans("frFR", "outofmana", "Plus de Mana")
+D4:AddTrans("frFR", "showoomchat", "Plus de Mana Chat-Message")
+D4:AddTrans("frFR", "showoomemote", "OOM Emote")
+D4:AddTrans("frFR", "nearoutofmana", "Mana faible")
+D4:AddTrans("frFR", "shownearoomchat", "Presque plus de Mana")
+D4:AddTrans("frFR", "shownearoomemote", "Presque OOM Emote")
+D4:AddTrans("frFR", "youhaveaggro", "Vous avez AGGRO")
+D4:AddTrans("frFR", "ihaveaggro", "AGGRO sur moi")
+D4:AddTrans("frFR", "AGGROPercentage", "Si vous êtes sous %s%% de santé, afficher le message")
+D4:AddTrans("frFR", "NEAROOMPercentage", "Si vous êtes sous %s%% de mana, afficher le message")
+D4:AddTrans("frFR", "xmana", "%s%% Mana")
+D4:AddTrans("frFR", "xhealth", "%s%% de Vie")
+D4:AddTrans("frFR", "prefix", "Préfixe")
+D4:AddTrans("frFR", "suffix", "Suffixe")
+D4:AddTrans("frFR", "printnothing", "Ne rien afficher")
+D4:AddTrans("frFR", "showinraids", "Afficher en Raids")
+D4:AddTrans("frFR", "showinbgs", "Afficher en Champs de Bataille")
+D4:AddTrans("frFR", "healerisdead", "Le Heal est Mort")
+D4:AddTrans("frFR", "deathmessage", "Message lorsque Mort")
+D4:AddTrans("frFR", "neardeath", "Bientôt Trépassé")
+D4:AddTrans("frFR", "showneardeathchat", "Bientôt Trépassé Chat-Message")
+D4:AddTrans("frFR", "showneardeathemote", "Bientôt Trépassé Emote")
+D4:AddTrans("frFR", "notinsight", "Cible Masquée/Hors de Vue")
+D4:AddTrans("frFR", "showoutsideofinstance", "Show Outside of Instances/Dungeons")
+D4:AddTrans("frFR", "showasnothealer", "Show as Not-Healer")
+D4:AddTrans("frFR", "channelchat", "Chat Channel Type")
+D4:AddTrans("frFR", "general", "General")
+D4:AddTrans("frFR", "MMBTN", "Show Minimap Button")
+D4:AddTrans("frFR", "showtranslation", "Show Translation")
+D4:AddTrans("frFR", "showonlyenglish", "Show Only English")
+D4:AddTrans("frFR", "showonlytranslation", "Show Only Translation")
+D4:AddTrans("frFR", "visibility", "Visibility")
+D4:AddTrans("frFR", "extras", "Extras")
+D4:AddTrans("frFR", "NEARDEATHPercentage", "If under %s%% Health, print message")
+D4:AddTrans("frFR", "OOMPercentage", "If under %s%% Mana, print message")

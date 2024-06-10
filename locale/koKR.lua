@@ -1,34 +1,39 @@
 -- koKR Korean
-local _, HealerProtection = ...
-function HealerProtection:LangkoKR()
-	local lang = HealerProtection:GetLangTab()
-	lang.aggro = "어그로"
-	lang.showaggrochat = "어그로 채팅 메세지"
-	lang.showaggroemote = "어그로 이모티"
-	lang.outofmana = "마나가 바닥남"
-	lang.showoomchat = "마나가 바닥남"
-	lang.showoomemote = "마나가 바닥남 이모티"
-	lang.nearoutofmana = "마나가 거의 소진됨"
-	lang.shownearoomchat = "마나가 거의 소진됨 채팅 메세지"
-	lang.shownearoomemote = "마나가 거의 소진됨 이모티"
-	lang.youhaveaggro = "어그로 갔습니다"
-	lang.ihaveaggro = "어그로 끌렸습니다"
-	lang.underhealthprintmessage = "체력이 VALUE% 보다 낮으면 메세지를 보냅니다"
-	lang.undermanaprintmessage = "마나가 VALUE% 보다 낮으면 메세지를 보냅니다"
-	lang.xmana = "MANA% 마나"
-	lang.xhealth = "HEALTH% Gesundheit"
-	lang.prefix = "접두사"
-	lang.suffix = "접미사"
-	lang.printnothing = "출력 안함"
-	lang.showinraids = "레이드에서 보기"
-	lang.showinbgs = "전장에서 보기"
-	lang.healerisdead = "힐러 죽음"
-	lang.deathmessage = "죽음 메세지"
-	lang.neardeath = "죽기 직전"
-	lang.showneardeathchat = "죽기 직전 채팅 메세지"
-	lang.showneardeathemote = "죽기 직전 감정표현"
-	lang.notinsight = "보이지 않음"
-	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
-	lang.showasnothealer = "Show as Not-Healer"
-	lang.channelchat = "Chat Channel Type"
-end
+D4:AddTrans("koKR", "aggro", "어그로")
+D4:AddTrans("koKR", "showaggrochat", "어그로 채팅 메세지")
+D4:AddTrans("koKR", "showaggroemote", "어그로 이모티")
+D4:AddTrans("koKR", "outofmana", "마나가 바닥남")
+D4:AddTrans("koKR", "showoomchat", "마나가 바닥남")
+D4:AddTrans("koKR", "showoomemote", "마나가 바닥남 이모티")
+D4:AddTrans("koKR", "nearoutofmana", "마나가 거의 소진됨")
+D4:AddTrans("koKR", "shownearoomchat", "마나가 거의 소진됨 채팅 메세지")
+D4:AddTrans("koKR", "shownearoomemote", "마나가 거의 소진됨 이모티")
+D4:AddTrans("koKR", "youhaveaggro", "어그로 갔습니다")
+D4:AddTrans("koKR", "ihaveaggro", "어그로 끌렸습니다")
+D4:AddTrans("koKR", "AGGROPercentage", "체력이 %s%% 보다 낮으면 메세지를 보냅니다")
+D4:AddTrans("koKR", "NEAROOMPercentage", "마나가 %s%% 보다 낮으면 메세지를 보냅니다")
+D4:AddTrans("koKR", "xmana", "%s%% 마나")
+D4:AddTrans("koKR", "xhealth", "%s%% Gesundheit")
+D4:AddTrans("koKR", "prefix", "접두사")
+D4:AddTrans("koKR", "suffix", "접미사")
+D4:AddTrans("koKR", "printnothing", "출력 안함")
+D4:AddTrans("koKR", "showinraids", "레이드에서 보기")
+D4:AddTrans("koKR", "showinbgs", "전장에서 보기")
+D4:AddTrans("koKR", "healerisdead", "힐러 죽음")
+D4:AddTrans("koKR", "deathmessage", "죽음 메세지")
+D4:AddTrans("koKR", "neardeath", "죽기 직전")
+D4:AddTrans("koKR", "showneardeathchat", "죽기 직전 채팅 메세지")
+D4:AddTrans("koKR", "showneardeathemote", "죽기 직전 감정표현")
+D4:AddTrans("koKR", "notinsight", "보이지 않음")
+D4:AddTrans("koKR", "showoutsideofinstance", "Show Outside of Instances/Dungeons")
+D4:AddTrans("koKR", "showasnothealer", "Show as Not-Healer")
+D4:AddTrans("koKR", "channelchat", "Chat Channel Type")
+D4:AddTrans("koKR", "general", "General")
+D4:AddTrans("koKR", "MMBTN", "Show Minimap Button")
+D4:AddTrans("koKR", "showtranslation", "Show Translation")
+D4:AddTrans("koKR", "showonlyenglish", "Show Only English")
+D4:AddTrans("koKR", "showonlytranslation", "Show Only Translation")
+D4:AddTrans("koKR", "visibility", "Visibility")
+D4:AddTrans("koKR", "extras", "Extras")
+D4:AddTrans("koKR", "NEARDEATHPercentage", "If under %s%% Health, print message")
+D4:AddTrans("koKR", "OOMPercentage", "If under %s%% Mana, print message")

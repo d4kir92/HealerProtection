@@ -6,14 +6,7 @@ function HealerProtection:CreateText(tab)
 	local text = tab.frame:CreateFontString(nil, "ARTWORK")
 	text:SetFont(STANDARD_TEXT_FONT, tab.textsize, "OUTLINE")
 	text:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
-	text:SetText(HealerProtection:GT(tab.text, nil, true))
-	hooksecurefunc(
-		HealerProtection,
-		"UpdateLanguage",
-		function()
-			text:SetText(HealerProtection:GT(tab.text, nil, true))
-		end
-	)
+	text:SetText(D4:Trans(tab.text))
 
 	return text
 end
@@ -135,22 +128,10 @@ function HealerProtection:CreateSlider(tab)
 			val = HealerProtection:MathR(val, sel.decimals)
 			val = val - val % tab.steps
 			HPTABPC[tab.dbvalue] = val
-			local trans = {}
-			trans["VALUE"] = val
-			SL.Text:SetText(HealerProtection:GT(tab.text, trans, true))
+			SL.Text:SetText(D4:Trans(tab.text, nil, val))
 			if tab.func ~= nil then
 				tab:func()
 			end
-		end
-	)
-
-	hooksecurefunc(
-		HealerProtection,
-		"UpdateLanguage",
-		function()
-			local trans = {}
-			trans["VALUE"] = SL:GetValue()
-			SL.Text:SetText(HealerProtection:GT(tab.text, trans, true))
 		end
 	)
 

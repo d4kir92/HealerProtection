@@ -1,34 +1,39 @@
 -- ruRU Russian
-local _, HealerProtection = ...
-function HealerProtection:LangruRU()
-	local lang = HealerProtection:GetLangTab()
-	lang.aggro = "АГРО"
-	lang.showaggrochat = "Сообщение в чате об АГРО"
-	lang.showaggroemote = "АГРО/эмоция"
-	lang.outofmana = "НЕТ МАНЫ"
-	lang.showoomchat = "Сообщение в чат, когда НЕТ МАНЫ"
-	lang.showoomemote = "НЕТ МАНЫ/эмоция"
-	lang.nearoutofmana = "Почти нет Маны"
-	lang.shownearoomchat = "Сообщение в чате, когда почти нет Маны"
-	lang.shownearoomemote = "Почти нет Маны/эмоция"
-	lang.youhaveaggro = "На вас АГРО"
-	lang.ihaveaggro = "На мне АГРО"
-	lang.underhealthprintmessage = "Сообщение в чат, если Здоровье упадет ниже VALUE%"
-	lang.undermanaprintmessage = "Сообщение в чат, если Мана упадет ниже VALUE%"
-	lang.xmana = "MANA% Маны"
-	lang.xhealth = "HEALTH% Здоровье"
-	lang.prefix = "Префикс"
-	lang.suffix = "Суффикс"
-	lang.printnothing = "Ничего не печатать"
-	lang.showinraids = "Показать в рейде"
-	lang.showinbgs = "Показывать на поле битвы"
-	lang.healerisdead = "Целитель мертв"
-	lang.deathmessage = "Сообщение о смерти"
-	lang.neardeath = "При смерти"
-	lang.showneardeathchat = "Сообщение в чат при смерти"
-	lang.showneardeathemote = "Предсмертная эмоция"
-	lang.notinsight = "Не видно"
-	lang.showoutsideofinstance = "Show Outside of Instances/Dungeons"
-	lang.showasnothealer = "Show as Not-Healer"
-	lang.channelchat = "Chat Channel Type"
-end
+D4:AddTrans("ruRU", "aggro", "АГРО")
+D4:AddTrans("ruRU", "showaggrochat", "Сообщение в чате об АГРО")
+D4:AddTrans("ruRU", "showaggroemote", "АГРО/эмоция")
+D4:AddTrans("ruRU", "outofmana", "НЕТ МАНЫ")
+D4:AddTrans("ruRU", "showoomchat", "Сообщение в чат, когда НЕТ МАНЫ")
+D4:AddTrans("ruRU", "showoomemote", "НЕТ МАНЫ/эмоция")
+D4:AddTrans("ruRU", "nearoutofmana", "Почти нет Маны")
+D4:AddTrans("ruRU", "shownearoomchat", "Сообщение в чате, когда почти нет Маны")
+D4:AddTrans("ruRU", "shownearoomemote", "Почти нет Маны/эмоция")
+D4:AddTrans("ruRU", "youhaveaggro", "На вас АГРО")
+D4:AddTrans("ruRU", "ihaveaggro", "На мне АГРО")
+D4:AddTrans("ruRU", "AGGROPercentage", "Сообщение в чат, если Здоровье упадет ниже %s%%")
+D4:AddTrans("ruRU", "NEAROOMPercentage", "Сообщение в чат, если Мана упадет ниже %s%%")
+D4:AddTrans("ruRU", "xmana", "%s%% Маны")
+D4:AddTrans("ruRU", "xhealth", "%s%% Здоровье")
+D4:AddTrans("ruRU", "prefix", "Префикс")
+D4:AddTrans("ruRU", "suffix", "Суффикс")
+D4:AddTrans("ruRU", "printnothing", "Ничего не печатать")
+D4:AddTrans("ruRU", "showinraids", "Показать в рейде")
+D4:AddTrans("ruRU", "showinbgs", "Показывать на поле битвы")
+D4:AddTrans("ruRU", "healerisdead", "Целитель мертв")
+D4:AddTrans("ruRU", "deathmessage", "Сообщение о смерти")
+D4:AddTrans("ruRU", "neardeath", "При смерти")
+D4:AddTrans("ruRU", "showneardeathchat", "Сообщение в чат при смерти")
+D4:AddTrans("ruRU", "showneardeathemote", "Предсмертная эмоция")
+D4:AddTrans("ruRU", "notinsight", "Не видно")
+D4:AddTrans("ruRU", "showoutsideofinstance", "Show Outside of Instances/Dungeons")
+D4:AddTrans("ruRU", "showasnothealer", "Show as Not-Healer")
+D4:AddTrans("ruRU", "channelchat", "Chat Channel Type")
+D4:AddTrans("ruRU", "general", "General")
+D4:AddTrans("ruRU", "MMBTN", "Show Minimap Button")
+D4:AddTrans("ruRU", "showtranslation", "Show Translation")
+D4:AddTrans("ruRU", "showonlyenglish", "Show Only English")
+D4:AddTrans("ruRU", "showonlytranslation", "Show Only Translation")
+D4:AddTrans("ruRU", "visibility", "Visibility")
+D4:AddTrans("ruRU", "extras", "Extras")
+D4:AddTrans("ruRU", "NEARDEATHPercentage", "If under %s%% Health, print message")
+D4:AddTrans("ruRU", "OOMPercentage", "If under %s%% Mana, print message")

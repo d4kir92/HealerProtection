@@ -89,7 +89,7 @@ function HealerProtection:ToCurrentChat(msg)
 	end
 end
 
-function HealerProtection:SetupHP()
+function HealerProtection:Setup()
 	if HealerProtection:IsSetup() then
 		if not InCombatLockdown() then
 			HealerProtection:SetSetup(false)
@@ -109,7 +109,7 @@ function HealerProtection:SetupHP()
 			C_Timer.After(
 				0.1,
 				function()
-					HealerProtection:SetupHP()
+					HealerProtection:Setup()
 				end
 			)
 		end

@@ -1,7 +1,6 @@
 -- By D4KiR
 local AddonName, HealerProtection = ...
 local hpset = nil
-local y = 0
 function HealerProtection:ToggleSettings()
 	if hpset then
 		if hpset:IsShown() then
@@ -13,7 +12,7 @@ function HealerProtection:ToggleSettings()
 end
 
 function HealerProtection:InitSetting()
-	D4:SetVersion(AddonName, 135923, "1.2.21")
+	D4:SetVersion(AddonName, 135923, "1.2.22")
 	HPTABPC["MMBTNTAB"] = HPTABPC["MMBTNTAB"] or {}
 	if HPTABPC["MMBTN"] == nil then
 		HPTABPC["MMBTN"] = true
@@ -45,7 +44,7 @@ function HealerProtection:InitSetting()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.21")
+			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.22")
 		}
 	)
 
@@ -172,12 +171,12 @@ frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 function frame:OnEvent(event)
 	if event == "VARIABLES_LOADED" then
 		vars = true
-		--HealerProtection:SetupHP()
+		--HealerProtection:Setup()
 	end
 
 	if event == "ADDON_LOADED" then
 		addo = true
-		--HealerProtection:SetupHP()
+		--HealerProtection:Setup()
 	end
 
 	if vars and addo and not HealerProtection:IsLoaded() then
@@ -186,7 +185,7 @@ function frame:OnEvent(event)
 			0,
 			function()
 				HealerProtection:SetSetup(true)
-				HealerProtection:SetupHP()
+				HealerProtection:Setup()
 			end
 		)
 	end

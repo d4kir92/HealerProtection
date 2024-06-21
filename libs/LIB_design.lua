@@ -5,7 +5,7 @@ function HealerProtection:CreateText(tab)
 	local text = tab.frame:CreateFontString(nil, "ARTWORK")
 	text:SetFont(STANDARD_TEXT_FONT, tab.textsize, "OUTLINE")
 	text:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
-	text:SetText(D4:Trans(tab.text))
+	text:SetText(HealerProtection:Trans(tab.text))
 
 	return text
 end

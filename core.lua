@@ -1,6 +1,7 @@
 -- By D4KiR
 local _, HealerProtection = ...
 local HPDEBUG = false
+local warning_aggro = nil
 function HealerProtection:AllowedTo()
 	if (GetNumGroupMembers() > 0 or GetNumSubgroupMembers() > 0 or HPDEBUG) and HealerProtection:GetConfig("printnothing", false) == false then return true end
 
@@ -100,7 +101,7 @@ function HealerProtection:Setup()
 			warning_aggro.text = warning_aggro:CreateFontString(nil, "ARTWORK")
 			warning_aggro.text:SetFont(STANDARD_TEXT_FONT, 20, "OUTLINE")
 			warning_aggro.text:SetPoint("CENTER", 0, 300)
-			warning_aggro.text:SetText(D4:Trans("youhaveaggro") .. "!")
+			warning_aggro.text:SetText(HealerProtection:Trans("youhaveaggro") .. "!")
 			warning_aggro.text:SetTextColor(1, 0, 0, 1)
 			warning_aggro:SetPoint("CENTER", 0, 0)
 			warning_aggro:Hide()
@@ -138,11 +139,11 @@ function HealerProtection:PrintChat()
 			end
 		end
 
-		if UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
+		if UnitGroupRolesAssigned and HealerProtection:GetWoWBuildNr() > 19999 then
 			roleToken = UnitGroupRolesAssigned("PLAYER")
 		end
 
-		if D4:GetWoWBuild() == "CLASSIC" or D4:GetWoWBuild() == "TBC" then
+		if HealerProtection:GetWoWBuild() == "CLASSIC" or HealerProtection:GetWoWBuild() == "TBC" then
 			roleToken = "HEALER"
 		end
 
@@ -169,7 +170,7 @@ function HealerProtection:PrintChat()
 						if status ~= nil then
 							if status > 0 and not aggro and hpperc < HealerProtection:GetConfig("AGGROPercentage", 50) then
 								if HealerProtection:GetConfig("showaggrochat", true) and HealerProtection:AllowedTo() then
-									HealerProtection:ToCurrentChat("{rt8}" .. " " .. D4:Trans("ihaveaggro", HealerProtection:GetLang()))
+									HealerProtection:ToCurrentChat("{rt8}" .. " " .. HealerProtection:Trans("ihaveaggro", HealerProtection:GetLang()))
 								end
 
 								if HealerProtection:GetConfig("showaggroemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -214,7 +215,7 @@ function HealerProtection:PrintChat()
 						if manaperc <= HealerProtection:GetConfig("OOMPercentage", 10) and not oom then
 							oom = true
 							if HealerProtection:GetConfig("showoomchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat("(" .. D4:Trans("xmana", HealerProtection:GetLang(), manaperc) .. ") " .. D4:Trans("outofmana", HealerProtection:GetLang()) .. ".")
+								HealerProtection:ToCurrentChat("(" .. HealerProtection:Trans("xmana", HealerProtection:GetLang(), manaperc) .. ") " .. HealerProtection:Trans("outofmana", HealerProtection:GetLang()) .. ".")
 							end
 
 							if HealerProtection:GetConfig("showoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -230,7 +231,7 @@ function HealerProtection:PrintChat()
 						if manaperc <= HealerProtection:GetConfig("NEAROOMPercentage", 30) and not nearoom then
 							nearoom = true
 							if HealerProtection:GetConfig("shownearoomchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat("(" .. D4:Trans("xmana", HealerProtection:GetLang(), manaperc) .. ") " .. D4:Trans("nearoutofmana", HealerProtection:GetLang()) .. ".")
+								HealerProtection:ToCurrentChat("(" .. HealerProtection:Trans("xmana", HealerProtection:GetLang(), manaperc) .. ") " .. HealerProtection:Trans("nearoutofmana", HealerProtection:GetLang()) .. ".")
 							end
 
 							if HealerProtection:GetConfig("shownearoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -248,7 +249,7 @@ function HealerProtection:PrintChat()
 							local tab = {}
 							tab["HEALTH"] = healthperc
 							if HealerProtection:GetConfig("showneardeathchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat(D4:Trans("neardeath", HealerProtection:GetLang()) .. " (" .. D4:Trans("xhealth", HealerProtection:GetLang(), healthperc) .. ").")
+								HealerProtection:ToCurrentChat(HealerProtection:Trans("neardeath", HealerProtection:GetLang()) .. " (" .. HealerProtection:Trans("xhealth", HealerProtection:GetLang(), healthperc) .. ").")
 							end
 
 							if HealerProtection:GetConfig("showneardeathemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -262,7 +263,7 @@ function HealerProtection:PrintChat()
 			elseif not isdead then
 				isdead = true
 				if HealerProtection:GetConfig("deathmessage", true) then
-					HealerProtection:ToCurrentChat(D4:Trans("healerisdead", HealerProtection:GetLang()) .. ".")
+					HealerProtection:ToCurrentChat(HealerProtection:Trans("healerisdead", HealerProtection:GetLang()) .. ".")
 				end
 			end
 		end

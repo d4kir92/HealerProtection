@@ -12,13 +12,13 @@ function HealerProtection:ToggleSettings()
 end
 
 function HealerProtection:InitSetting()
-	D4:SetVersion(AddonName, 135923, "1.2.26")
+	HealerProtection:SetVersion(AddonName, 135923, "1.2.27")
 	HPTABPC["MMBTNTAB"] = HPTABPC["MMBTNTAB"] or {}
 	if HPTABPC["MMBTN"] == nil then
 		HPTABPC["MMBTN"] = true
 	end
 
-	D4:CreateMinimapButton(
+	HealerProtection:CreateMinimapButton(
 		{
 			["name"] = "HealerProtection",
 			["icon"] = 135923,
@@ -31,20 +31,20 @@ function HealerProtection:InitSetting()
 	)
 
 	if HPTABPC["MMBTN"] then
-		D4:GetLibDBIcon():Show("HealerProtection")
+		HealerProtection:GetLibDBIcon():Show("HealerProtection")
 	else
-		D4:GetLibDBIcon():Hide("HealerProtection")
+		HealerProtection:GetLibDBIcon():Hide("HealerProtection")
 	end
 
-	D4:AddSlash("hp", HealerProtection.ToggleSettings)
-	D4:AddSlash("healerprotection", HealerProtection.ToggleSettings)
-	hpset = D4:CreateFrame(
+	HealerProtection:AddSlash("hp", HealerProtection.ToggleSettings)
+	HealerProtection:AddSlash("healerprotection", HealerProtection.ToggleSettings)
+	hpset = HealerProtection:CreateFrame(
 		{
 			["name"] = "HealerProtection Settings Frame",
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.26")
+			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.27")
 		}
 	)
 
@@ -56,43 +56,43 @@ function HealerProtection:InitSetting()
 	hpset.SC:SetSize(hpset.SF:GetSize())
 	hpset.SC:SetPoint("TOPLEFT", hpset.SF, "TOPLEFT", 0, 0)
 	hpset.SF:SetScrollChild(hpset.SC)
-	D4:SetAppendParent(hpset.SC)
-	D4:SetAppendTab(HPTABPC)
-	D4:SetAppendY(0)
-	D4:AppendCategory("general")
-	D4:AppendCheckbox(
+	HealerProtection:SetAppendParent(hpset.SC)
+	HealerProtection:SetAppendTab(HPTABPC)
+	HealerProtection:SetAppendY(0)
+	HealerProtection:AppendCategory("general")
+	HealerProtection:AppendCheckbox(
 		"MMBTN",
 		true,
 		function()
 			print(HPTABPC["MMBTN"])
 			if HPTABPC["MMBTN"] then
-				D4:GetLibDBIcon():Show("HealerProtection")
+				HealerProtection:GetLibDBIcon():Show("HealerProtection")
 			else
-				D4:GetLibDBIcon():Hide("HealerProtection")
+				HealerProtection:GetLibDBIcon():Hide("HealerProtection")
 			end
 		end
 	)
 
-	D4:AppendCategory("visibility")
-	D4:AppendCheckbox("printnothing", false)
-	if UnitGroupRolesAssigned and D4:GetWoWBuildNr() > 19999 then
-		D4:AppendCheckbox("showasnothealer", false)
+	HealerProtection:AppendCategory("visibility")
+	HealerProtection:AppendCheckbox("printnothing", false)
+	if UnitGroupRolesAssigned and HealerProtection:GetWoWBuildNr() > 19999 then
+		HealerProtection:AppendCheckbox("showasnothealer", false)
 	end
 
-	D4:AppendCheckbox("showinraids", true)
-	D4:AppendCheckbox("showoutsideofinstance", false)
-	D4:AppendCheckbox("showinbgs", false)
-	D4:AppendCheckbox("showtranslation", true)
-	D4:AppendCheckbox("showonlyenglish", false)
-	D4:AppendCheckbox("showonlytranslation", false)
-	D4:SetAppendY(D4:GetAppendY() - 10)
+	HealerProtection:AppendCheckbox("showinraids", true)
+	HealerProtection:AppendCheckbox("showoutsideofinstance", false)
+	HealerProtection:AppendCheckbox("showinbgs", false)
+	HealerProtection:AppendCheckbox("showtranslation", true)
+	HealerProtection:AppendCheckbox("showonlyenglish", false)
+	HealerProtection:AppendCheckbox("showonlytranslation", false)
+	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 10)
 	local settings_channel = {}
 	settings_channel.name = "channelchat"
-	settings_channel.parent = D4:GetAppendParent()
+	settings_channel.parent = HealerProtection:GetAppendParent()
 	settings_channel.text = "channelchat"
 	settings_channel.value = HealerProtection:GetConfig("channelchat", "AUTO")
 	settings_channel.x = 0
-	settings_channel.y = D4:GetAppendY()
+	settings_channel.y = HealerProtection:GetAppendY()
 	settings_channel.dbvalue = "channelchat"
 	settings_channel.tab = {}
 	settings_channel.tab[0] = "AUTO"
@@ -102,48 +102,48 @@ function HealerProtection:InitSetting()
 	settings_channel.tab[4] = "YELL"
 	settings_channel.tab[5] = "SAY"
 	HealerProtection:CreateComboBox(settings_channel)
-	D4:SetAppendY(D4:GetAppendY() - 30)
-	D4:AppendCategory("aggro")
-	D4:AppendCheckbox("aggro", true)
-	D4:AppendCheckbox("showaggrochat", true)
-	D4:AppendCheckbox("showaggroemote", true)
-	D4:AppendSlider("AGGROPercentage", 50, 20, 100, 1, 0)
-	D4:AppendCategory("outofmana")
-	D4:AppendCheckbox("outofmana", true)
-	D4:AppendCheckbox("showoomchat", true)
-	D4:AppendCheckbox("showoomemote", true)
-	D4:AppendSlider("OOMPercentage", 10, 1, 30, 1, 0)
-	D4:AppendCategory("nearoutofmana")
-	D4:AppendCheckbox("nearoutofmana", true)
-	D4:AppendCheckbox("shownearoomchat", true)
-	D4:AppendCheckbox("shownearoomemote", true)
-	D4:AppendSlider("NEAROOMPercentage", 50, 10, 50, 1, 0)
-	D4:AppendCategory("neardeath")
-	D4:AppendCheckbox("neardeath", true)
-	D4:AppendCheckbox("showneardeathchat", true)
-	D4:AppendCheckbox("showneardeathemote", true)
-	D4:AppendSlider("NEARDEATHPercentage", 50, 5, 40, 1, 0)
-	D4:AppendCategory("extras")
-	D4:AppendCheckbox("deathmessage", true)
-	D4:AppendCheckbox("notinsight", false)
-	D4:SetAppendY(D4:GetAppendY() - 30)
+	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 30)
+	HealerProtection:AppendCategory("aggro")
+	HealerProtection:AppendCheckbox("aggro", true)
+	HealerProtection:AppendCheckbox("showaggrochat", true)
+	HealerProtection:AppendCheckbox("showaggroemote", true)
+	HealerProtection:AppendSlider("AGGROPercentage", 50, 20, 100, 1, 0)
+	HealerProtection:AppendCategory("outofmana")
+	HealerProtection:AppendCheckbox("outofmana", true)
+	HealerProtection:AppendCheckbox("showoomchat", true)
+	HealerProtection:AppendCheckbox("showoomemote", true)
+	HealerProtection:AppendSlider("OOMPercentage", 10, 1, 30, 1, 0)
+	HealerProtection:AppendCategory("nearoutofmana")
+	HealerProtection:AppendCheckbox("nearoutofmana", true)
+	HealerProtection:AppendCheckbox("shownearoomchat", true)
+	HealerProtection:AppendCheckbox("shownearoomemote", true)
+	HealerProtection:AppendSlider("NEAROOMPercentage", 50, 10, 50, 1, 0)
+	HealerProtection:AppendCategory("neardeath")
+	HealerProtection:AppendCheckbox("neardeath", true)
+	HealerProtection:AppendCheckbox("showneardeathchat", true)
+	HealerProtection:AppendCheckbox("showneardeathemote", true)
+	HealerProtection:AppendSlider("NEARDEATHPercentage", 50, 5, 40, 1, 0)
+	HealerProtection:AppendCategory("extras")
+	HealerProtection:AppendCheckbox("deathmessage", true)
+	HealerProtection:AppendCheckbox("notinsight", false)
+	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 30)
 	local settings_prefix = {}
 	settings_prefix.name = "prefix"
-	settings_prefix.parent = D4:GetAppendParent()
+	settings_prefix.parent = HealerProtection:GetAppendParent()
 	settings_prefix.value = HealerProtection:GetConfig("prefix", "[Healer Protection]")
 	settings_prefix.text = "prefix"
 	settings_prefix.x = 10
-	settings_prefix.y = D4:GetAppendY()
+	settings_prefix.y = HealerProtection:GetAppendY()
 	settings_prefix.dbvalue = "prefix"
 	HealerProtection:CreateTextBox(settings_prefix)
-	D4:SetAppendY(D4:GetAppendY() - 60)
+	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 60)
 	local settings_suffix = {}
 	settings_suffix.name = "suffix"
-	settings_suffix.parent = D4:GetAppendParent()
+	settings_suffix.parent = HealerProtection:GetAppendParent()
 	settings_suffix.value = HealerProtection:GetConfig("suffix", "")
 	settings_suffix.text = "suffix"
 	settings_suffix.x = 10
-	settings_suffix.y = D4:GetAppendY()
+	settings_suffix.y = HealerProtection:GetAppendY()
 	settings_suffix.dbvalue = "suffix"
 	HealerProtection:CreateTextBox(settings_suffix)
 end

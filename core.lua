@@ -279,7 +279,7 @@ local function OnEvent(self, event)
 	if lasttarget ~= TName or delayrange < GetTime() then
 		delayrange = GetTime() + 1
 		lasttarget = TName
-		if eventtype == "SPELL_CAST_FAILED" and IsSpellInRange(mm) and HealerProtection:GetConfig("notinsight", false) then
+		if eventtype == "SPELL_CAST_FAILED" and HealerProtection:IsSpellInRange(mm) and HealerProtection:GetConfig("notinsight", false) then
 			local tex = "Target is not in the field of view (" .. TName .. ")"
 			if HealerProtection:GetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
 				if HealerProtection:GetConfig("showonlytranslation", false) then

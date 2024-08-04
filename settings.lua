@@ -12,29 +12,42 @@ function HealerProtection:ToggleSettings()
 end
 
 function HealerProtection:InitSetting()
-	HealerProtection:SetVersion(AddonName, 135923, "1.2.31")
+	HealerProtection:SetVersion(AddonName, 135923, "1.2.32")
 	HPTABPC["MMBTNTAB"] = HPTABPC["MMBTNTAB"] or {}
-	if HPTABPC["MMBTN"] == nil then
-		HPTABPC["MMBTN"] = true
-	end
-
-	HealerProtection:CreateMinimapButton(
-		{
-			["name"] = "HealerProtection",
-			["icon"] = 135923,
-			["dbtab"] = HPTABPC,
-			["vTT"] = {"HealerProtection", "Leftclick: Options"},
-			["funcL"] = function()
-				HealerProtection:ToggleSettings()
+	C_Timer.After(
+		0,
+		function()
+			if HPTABPC["MMBTN"] == nil then
+				HPTABPC["MMBTN"] = HealerProtection:GetWoWBuild() ~= "RETAIL"
 			end
-		}
-	)
 
-	if HPTABPC["MMBTN"] then
-		HealerProtection:GetLibDBIcon():Show("HealerProtection")
-	else
-		HealerProtection:GetLibDBIcon():Hide("HealerProtection")
-	end
+			HealerProtection:CreateMinimapButton(
+				{
+					["name"] = "HealerProtection",
+					["icon"] = 135923,
+					["dbtab"] = HPTABPC,
+					["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.32"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
+					["funcL"] = function()
+						HealerProtection:ToggleSettings()
+					end,
+					["funcR"] = function()
+						HPTABPC["MMBTN"] = not HPTABPC["MMBTN"]
+						if HPTABPC["MMBTN"] then
+							HealerProtection:GetLibDBIcon():Show("HealerProtection")
+						else
+							HealerProtection:GetLibDBIcon():Hide("HealerProtection")
+						end
+					end
+				}
+			)
+
+			if HPTABPC["MMBTN"] then
+				HealerProtection:GetLibDBIcon():Show("HealerProtection")
+			else
+				HealerProtection:GetLibDBIcon():Hide("HealerProtection")
+			end
+		end
+	)
 
 	HealerProtection:AddSlash("hp", HealerProtection.ToggleSettings)
 	HealerProtection:AddSlash("healerprotection", HealerProtection.ToggleSettings)
@@ -44,7 +57,7 @@ function HealerProtection:InitSetting()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.31")
+			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.32")
 		}
 	)
 
@@ -64,11 +77,10 @@ function HealerProtection:InitSetting()
 		"MMBTN",
 		true,
 		function()
-			print(HPTABPC["MMBTN"])
 			if HPTABPC["MMBTN"] then
-				HealerProtection:GetLibDBIcon():Show("HealerProtection")
+				HealerProtection:ShowMMBtn("HealerProtection")
 			else
-				HealerProtection:GetLibDBIcon():Hide("HealerProtection")
+				HealerProtection:HideMMBtn("HealerProtection")
 			end
 		end
 	)

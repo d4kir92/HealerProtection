@@ -12,7 +12,7 @@ function HealerProtection:ToggleSettings()
 end
 
 function HealerProtection:InitSetting()
-	HealerProtection:SetVersion(AddonName, 135923, "1.2.32")
+	HealerProtection:SetVersion(AddonName, 135923, "1.2.33")
 	HPTABPC["MMBTNTAB"] = HPTABPC["MMBTNTAB"] or {}
 	C_Timer.After(
 		0,
@@ -26,7 +26,7 @@ function HealerProtection:InitSetting()
 					["name"] = "HealerProtection",
 					["icon"] = 135923,
 					["dbtab"] = HPTABPC,
-					["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.32"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
+					["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.33"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
 					["funcL"] = function()
 						HealerProtection:ToggleSettings()
 					end,
@@ -57,7 +57,7 @@ function HealerProtection:InitSetting()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.32")
+			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.33")
 		}
 	)
 
@@ -75,7 +75,7 @@ function HealerProtection:InitSetting()
 	HealerProtection:AppendCategory("general")
 	HealerProtection:AppendCheckbox(
 		"MMBTN",
-		true,
+		HealerProtection:GetWoWBuild() ~= "RETAIL",
 		function()
 			if HPTABPC["MMBTN"] then
 				HealerProtection:ShowMMBtn("HealerProtection")

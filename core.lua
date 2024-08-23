@@ -38,18 +38,14 @@ function HealerProtection:CanWriteToChat(chan)
 end
 
 function HealerProtection:GetLang()
-	if HealerProtection:GetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
-		if HealerProtection:GetConfig("showonlyenglish", false) then
-			return "enUS"
-		elseif HealerProtection:GetConfig("showonlytranslation", false) then
-			return nil
-		end
-	end
+	if HealerProtection:GetConfig("showonlyenglish", false) then return "enUS" end
+	if HealerProtection:GetConfig("showonlytranslation", false) then return GetLocale() end
+	if HealerProtection:GetConfig("showtranslation", true) then return "enUS," .. GetLocale() end
 
 	return "enUS"
 end
 
-function HealerProtection:ToCurrentChat(msg)
+function HealerProtection:ToCurrentChat(formatStr, val1text, val1val, val2text, val2val)
 	local inInstance, _ = IsInInstance()
 	local _channel = "PARTY"
 	if HealerProtection:GetConfig("channelchat", "AUTO") == "AUTO" then
@@ -83,7 +79,34 @@ function HealerProtection:ToCurrentChat(msg)
 	end
 
 	if HealerProtection:CanWriteToChat(_channel) then
-		local mes = prefix .. msg .. suffix
+		local msg = ""
+		if HealerProtection:GetLang() == "enUS" then
+			if val2text then
+				msg = string.format(formatStr, HealerProtection:Trans(val1text, "enUS", val1val), HealerProtection:Trans(val2text, "enUS", val2val))
+			elseif val1text then
+				msg = string.format(formatStr, HealerProtection:Trans(val1text, "enUS", val1val))
+			end
+		elseif HealerProtection:GetLang() == GetLocale() then
+			if val2text then
+				msg = string.format(formatStr, HealerProtection:Trans(val1text, GetLocale(), val1val), HealerProtection:Trans(val2text, GetLocale(), val2val))
+			elseif val1text then
+				msg = string.format(formatStr, HealerProtection:Trans(val1text, GetLocale(), val1val))
+			end
+		else
+			if val2text then
+				msg = string.format(formatStr, HealerProtection:Trans(val1text, "enUS", val1val), HealerProtection:Trans(val2text, "enUS", val2val))
+			elseif val1text then
+				msg = string.format(formatStr, HealerProtection:Trans(val1text, "enUS", val1val))
+			end
+
+			if val2text then
+				msg = msg .. " [" .. string.format(formatStr, HealerProtection:Trans(val1text, GetLocale(), val1val), HealerProtection:Trans(val2text, GetLocale(), val2val)) .. "]"
+			elseif val1text then
+				msg = msg .. " [" .. string.format(formatStr, HealerProtection:Trans(val1text, GetLocale(), val1val)) .. "]"
+			end
+		end
+
+		local mes = prefix .. msg .. "." .. suffix
 		if mes ~= nil then
 			SendChatMessage(mes, _channel)
 		end
@@ -170,7 +193,7 @@ function HealerProtection:PrintChat()
 						if status ~= nil then
 							if status > 0 and not aggro and hpperc < HealerProtection:GetConfig("AGGROPercentage", 50) then
 								if HealerProtection:GetConfig("showaggrochat", true) and HealerProtection:AllowedTo() then
-									HealerProtection:ToCurrentChat("{rt8}" .. " " .. HealerProtection:Trans("ihaveaggro", HealerProtection:GetLang()))
+									HealerProtection:ToCurrentChat("{rt8} %s", "ihaveaggro")
 								end
 
 								if HealerProtection:GetConfig("showaggroemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -215,7 +238,7 @@ function HealerProtection:PrintChat()
 						if manaperc <= HealerProtection:GetConfig("OOMPercentage", 10) and not oom then
 							oom = true
 							if HealerProtection:GetConfig("showoomchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat("(" .. HealerProtection:Trans("xmana", HealerProtection:GetLang(), manaperc) .. ") " .. HealerProtection:Trans("outofmana", HealerProtection:GetLang()) .. ".")
+								HealerProtection:ToCurrentChat("(%s) %s", "xmana", manaperc, "outofmana")
 							end
 
 							if HealerProtection:GetConfig("showoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -231,7 +254,7 @@ function HealerProtection:PrintChat()
 						if manaperc <= HealerProtection:GetConfig("NEAROOMPercentage", 30) and not nearoom then
 							nearoom = true
 							if HealerProtection:GetConfig("shownearoomchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat("(" .. HealerProtection:Trans("xmana", HealerProtection:GetLang(), manaperc) .. ") " .. HealerProtection:Trans("nearoutofmana", HealerProtection:GetLang()) .. ".")
+								HealerProtection:ToCurrentChat("(%s) %s", "xmana", manaperc, "nearoutofmana")
 							end
 
 							if HealerProtection:GetConfig("shownearoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -249,7 +272,7 @@ function HealerProtection:PrintChat()
 							local tab = {}
 							tab["HEALTH"] = healthperc
 							if HealerProtection:GetConfig("showneardeathchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat(HealerProtection:Trans("neardeath", HealerProtection:GetLang()) .. " (" .. HealerProtection:Trans("xhealth", HealerProtection:GetLang(), healthperc) .. ").")
+								HealerProtection:ToCurrentChat("%s (%s)", "neardeath", nil, "xhealth", healthperc)
 							end
 
 							if HealerProtection:GetConfig("showneardeathemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -263,7 +286,7 @@ function HealerProtection:PrintChat()
 			elseif not isdead then
 				isdead = true
 				if HealerProtection:GetConfig("deathmessage", true) then
-					HealerProtection:ToCurrentChat(HealerProtection:Trans("healerisdead", HealerProtection:GetLang()) .. ".")
+					HealerProtection:ToCurrentChat("%s", "healerisdead")
 				end
 			end
 		end
@@ -289,7 +312,7 @@ local function OnEvent(self, event)
 				end
 			end
 
-			HealerProtection:ToCurrentChat(tex)
+			HealerProtection:ToCurrentChat("%s", tex)
 		end
 	end
 end

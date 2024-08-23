@@ -13,5 +13,7 @@ function HealerProtection:GetConfig(str, val)
 		HPTABPC = HPTABPC or {}
 	end
 
+	if tonumber(setting) ~= nil then return tonumber(setting) end
+
 	return setting
 end

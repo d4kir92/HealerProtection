@@ -38,6 +38,7 @@ function HealerProtection:CanWriteToChat(chan)
 end
 
 function HealerProtection:GetLang()
+	if GetLocale() == "enUS" then return GetLocale() end
 	if HealerProtection:GetConfig("showonlyenglish", false) then return "enUS" end
 	if HealerProtection:GetConfig("showonlytranslation", false) then return GetLocale() end
 	if HealerProtection:GetConfig("showtranslation", true) then return "enUS," .. GetLocale() end

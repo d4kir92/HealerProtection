@@ -12,7 +12,7 @@ function HealerProtection:ToggleSettings()
 end
 
 function HealerProtection:InitSetting()
-	HealerProtection:SetVersion(AddonName, 135923, "1.2.37")
+	HealerProtection:SetVersion(AddonName, 135923, "1.2.38")
 	HPTABPC["MMBTNTAB"] = HPTABPC["MMBTNTAB"] or {}
 	C_Timer.After(
 		0,
@@ -26,7 +26,7 @@ function HealerProtection:InitSetting()
 					["name"] = "HealerProtection",
 					["icon"] = 135923,
 					["dbtab"] = HPTABPC,
-					["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.37"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
+					["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.38"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
 					["funcL"] = function()
 						HealerProtection:ToggleSettings()
 					end,
@@ -57,7 +57,7 @@ function HealerProtection:InitSetting()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.37")
+			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.38")
 		}
 	)
 
@@ -98,6 +98,7 @@ function HealerProtection:InitSetting()
 	HealerProtection:AppendCheckbox("showonlyenglish", false)
 	HealerProtection:AppendCheckbox("showonlytranslation", false)
 	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 10)
+	--[[
 	local settings_channel = {}
 	settings_channel.name = "channelchat"
 	settings_channel.parent = HealerProtection:GetAppendParent()
@@ -114,7 +115,20 @@ function HealerProtection:InitSetting()
 	settings_channel.tab[4] = "YELL"
 	settings_channel.tab[5] = "SAY"
 	HealerProtection:CreateComboBox(settings_channel)
-	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 30)
+	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 30)]]
+	HealerProtection:AppendDropdown(
+		"channelchat",
+		"AUTO",
+		{
+			["AUTO"] = "AUTO",
+			["PARTY"] = "PARTY",
+			["RAID"] = "RAID",
+			["INSTANCE_CHAT"] = "INSTANCE_CHAT",
+			["YELL"] = "YELL",
+			["SAY"] = "SAY",
+		}
+	)
+
 	HealerProtection:AppendCategory("aggro")
 	HealerProtection:AppendCheckbox("aggro", true)
 	HealerProtection:AppendCheckbox("showaggrochat", true)

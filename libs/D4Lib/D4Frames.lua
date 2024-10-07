@@ -1,4 +1,5 @@
 local _, D4 = ...
+local X = 0
 local Y = 0
 local PARENT = nil
 local TAB = nil
@@ -14,7 +15,11 @@ function D4:AddCategory(tab)
     tab.parent.f:SetText(D4:Trans(tab.name))
 end
 
-function D4:CreateCheckbox(tab)
+function D4:CreateCheckbox(tab, text)
+    if text == nil then
+        text = true
+    end
+
     tab.sw = tab.sw or 25
     tab.sh = tab.sh or 25
     tab.parent = tab.parent or UIParent
@@ -31,9 +36,11 @@ function D4:CreateCheckbox(tab)
         end
     )
 
-    cb.f = cb:CreateFontString(nil, nil, "GameFontNormal")
-    cb.f:SetPoint("LEFT", cb, "RIGHT", 0, 0)
-    cb.f:SetText(D4:Trans(tab.name))
+    if text then
+        cb.f = cb:CreateFontString(nil, nil, "GameFontNormal")
+        cb.f:SetPoint("LEFT", cb, "RIGHT", 0, 0)
+        cb.f:SetText(D4:Trans(tab.name))
+    end
 
     return cb
 end
@@ -58,6 +65,22 @@ function D4:CreateCheckboxForCVAR(tab)
     )
 
     cb.f:SetPoint("LEFT", cb, "RIGHT", 25, 0)
+
+    return cb
+end
+
+function D4:CreateSliderForCVAR(tab)
+    tab.sw = tab.sw or 25
+    tab.sh = tab.sh or 25
+    tab.parent = tab.parent or UIParent
+    tab.pTab = tab.pTab or "CENTER"
+    tab.value = tab.value or nil
+    local cb = D4:CreateCheckbox(tab, false)
+    tab.sw = 460
+    tab.value = tab.value2
+    tab.key = tab.key or tab.name or ""
+    tab.pTab = {tab.pTab[1], tab.pTab[2] + 32, tab.pTab[3] - 18}
+    D4:CreateSlider(tab)
 
     return cb
 end
@@ -91,7 +114,7 @@ function D4:CreateSlider(tab)
         D4:MSG("[D4][CreateSlider] Missing format string:", tab.key, tab.value)
 
         return
-    elseif tab.value == nil then
+    elseif tab.value == nil or type(tonumber(tab.value)) ~= "number" then
         D4:MSG("[D4][CreateSlider] Missing value:", tab.key, tab.value)
 
         return
@@ -154,7 +177,9 @@ function D4:CreateSlider(tab)
                 TAB[tab.key] = val
             end
 
-            if tab.funcV then
+            if tab.funcV2 then
+                tab:funcV2(val)
+            elseif tab.funcV then
                 tab:funcV(val)
             end
 
@@ -218,6 +243,14 @@ function D4:CreateFrame(tab)
     return fra
 end
 
+function D4:SetAppendX(newX)
+    X = newX
+end
+
+function D4:GetAppendX()
+    return X
+end
+
 function D4:SetAppendY(newY)
     Y = newY
 end
@@ -249,7 +282,7 @@ function D4:AppendCategory(name, x, y)
         {
             ["name"] = name,
             ["parent"] = PARENT,
-            ["pTab"] = {"TOPLEFT", x or 5, y or Y},
+            ["pTab"] = {"TOPLEFT", x or X, y or Y},
         }
     )
 
@@ -260,7 +293,7 @@ end
 
 function D4:AppendCheckbox(key, value, func, x, y)
     value = value or false
-    x = x or 5
+    x = x or X
     if TAB == nil then
         if TABIsNil == false then
             TABIsNil = true
@@ -279,7 +312,7 @@ function D4:AppendCheckbox(key, value, func, x, y)
         {
             ["name"] = key,
             ["parent"] = PARENT,
-            ["pTab"] = {"TOPLEFT", x, y or Y},
+            ["pTab"] = {"TOPLEFT", x or X, y or Y},
             ["value"] = val,
             ["funcV"] = function(sel, checked)
                 TAB[key] = checked
@@ -331,7 +364,7 @@ function D4:AppendSlider(key, value, min, max, steps, decimals, func, lstr)
     slider.decimals = decimals
     slider.color = {0, 1, 0, 1}
     slider.func = func
-    slider.pTab = {"TOPLEFT", 10, Y}
+    slider.pTab = {"TOPLEFT", X + 5, Y}
     D4:CreateSlider(slider)
     Y = Y - 30
 end
@@ -342,23 +375,23 @@ function D4:CreateDropdown(key, value, choices, parent)
     end
 
     local text = parent:CreateFontString(nil, nil, "GameFontNormal")
-    text:SetPoint("TOPLEFT", 10, Y)
+    text:SetPoint("TOPLEFT", X + 5, Y)
     text:SetText(D4:Trans(key))
     Y = Y - 18
     if D4:GetWoWBuild() == "RETAIL" then
         local Dropdown = CreateFrame("DropdownButton", key, parent, "WowStyle1DropdownTemplate")
-        Dropdown:SetDefaultText(choices[TAB[key]])
-        Dropdown:SetPoint("TOPLEFT", 10, Y)
+        Dropdown:SetDefaultText(D4:Trans(choices[TAB[key]]))
+        Dropdown:SetPoint("TOPLEFT", X + 5, Y)
         Dropdown:SetWidth(200)
         Dropdown:SetupMenu(
             function(dropdown, rootDescription)
                 rootDescription:CreateTitle(D4:Trans(key))
-                for i, v in pairs(choices) do
+                for data, name in pairs(choices) do
                     rootDescription:CreateButton(
-                        i,
+                        D4:Trans(name),
                         function()
-                            TAB[key] = v
-                            Dropdown:SetDefaultText(i)
+                            TAB[key] = data
+                            Dropdown:SetDefaultText(D4:Trans(name))
                         end
                     )
                 end
@@ -371,10 +404,10 @@ function D4:CreateDropdown(key, value, choices, parent)
         function WPDropDownDemo_Menu(frame, level, menuList)
             local info = UIDropDownMenu_CreateInfo()
             if level == 1 then
-                for i, v in pairs(choices) do
-                    info.text = v
-                    info.arg1 = i
-                    info.checked = v == choices[TAB[key]]
+                for data, name in pairs(choices) do
+                    info.text = D4:Trans(name)
+                    info.arg1 = data
+                    info.checked = name == choices[TAB[key]]
                     info.func = dropDown.SetValue
                     UIDropDownMenu_AddButton(info)
                 end
@@ -392,6 +425,7 @@ function D4:CreateDropdown(key, value, choices, parent)
 end
 
 function D4:AppendDropdown(key, value, choices)
+    Y = Y - 10
     D4:CreateDropdown(key, value, choices, PARENT)
     Y = Y - 30
 end

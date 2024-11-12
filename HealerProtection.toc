@@ -4,7 +4,7 @@
 ## Interface-Cata: 40401
 ## Interface: 110002, 110005
 
-## Version: 1.2.44
+## Version: 1.2.45
 ## Title: HealerProtection by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
 ## Author: D4KiR

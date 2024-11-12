@@ -62,6 +62,16 @@ function D4:IsOldWow()
     return D4.oldWow
 end
 
+function D4:RegisterEvent(frame, event, unit)
+    if C_EventUtils.IsEventValid(event) then
+        if unit then
+            frame:RegisterUnitEvent(event, "player")
+        else
+            frame:RegisterEvent(event)
+        end
+    end
+end
+
 --[[ QOL ]]
 local ICON_TAG_LIST_EN = {
     ["star"] = 1,
@@ -115,6 +125,24 @@ function D4:IsSpellInRange(spellID, spellType, unit)
     if C_Spell and C_Spell.IsSpellInRange then return C_Spell.IsSpellInRange(spellID, spellType, unit) end
     if IsSpellInRange then return IsSpellInRange(spellID, spellType, unit) end
     D4:MSG("[D4][IsSpellInRange] FAILED")
+
+    return nil
+end
+
+function D4:GetSpellCharges(spellID)
+    if spellID == nil then return nil end
+    if C_Spell and C_Spell.GetSpellCharges then return C_Spell.GetSpellCharges(spellID) end
+    if GetSpellCharges then return GetSpellCharges(spellID) end
+    D4:MSG("[D4][GetSpellCharges] FAILED")
+
+    return nil
+end
+
+function D4:GetSpellCastCount(...)
+    if spellID == nil then return nil end
+    if C_Spell and C_Spell.GetSpellCastCount then return C_Spell.GetSpellCastCount(...) end
+    if GetSpellCastCount then return GetSpellCastCount(...) end
+    D4:MSG("[D4][GetSpellCastCount] FAILED")
 
     return nil
 end
@@ -325,4 +353,62 @@ if D4:GetWoWBuild() == "CLASSIC" then
             end
         end
     )
+end
+
+function D4:ReplaceStr(text, old, new)
+    if text == nil then return "" end
+    local b, e = text:find(old, 1, true)
+    if b == nil then
+        return text
+    else
+        return text:sub(1, b - 1) .. new .. text:sub(e + 1)
+    end
+end
+
+local genderNames = {"", "Male", "Female"}
+function D4:GetClassAtlas(class)
+    return ("classicon-%s"):format(class)
+end
+
+function D4:GetClassIcon(class)
+    return "|A:" .. D4:GetClassAtlas(class) .. ":16:16:0:0|a"
+end
+
+function D4:GetRaceAtlas(race, gender)
+    return ("raceicon-%s-%s"):format(race, gender)
+end
+
+function D4:GetRaceIcon(race, gender)
+    return "|A:" .. D4:GetRaceAtlas(race, genderNames[gender]) .. ":16:16:0:0|a"
+end
+
+local units = {"player"}
+for i = 1, 4 do
+    table.insert(units, "party" .. i)
+end
+
+for i = 1, 40 do
+    table.insert(units, "raid" .. i)
+end
+
+function D4:GetRoleByGuid(guid)
+    if UnitGroupRolesAssigned == nil then return "" end
+    for i, unit in pairs(units) do
+        if UnitGUID(unit) == guid then return UnitGroupRolesAssigned(unit) end
+    end
+
+    return ""
+end
+
+function D4:GetRoleIcon(role)
+    if role == "" then return "" end
+    if role == "DAMAGER" then
+        return "UI-LFG-RoleIcon-DPS"
+    elseif role == "HEALER" then
+        return "UI-LFG-RoleIcon-HEALER"
+    elseif role == "TANK" then
+        return "UI-LFG-RoleIcon-TANK"
+    end
+
+    return ""
 end

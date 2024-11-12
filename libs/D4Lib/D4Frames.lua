@@ -28,7 +28,12 @@ function D4:CreateCheckbox(tab, text)
     local cb = CreateFrame("CheckButton", tab.name, tab.parent, "UICheckButtonTemplate")
     cb:SetSize(tab.sw, tab.sh)
     cb:SetPoint(unpack(tab.pTab))
-    cb:SetChecked(tab.value)
+    if tab.value == true or tab.value == 1 then
+        cb:SetChecked(true)
+    else
+        cb:SetChecked(false)
+    end
+
     cb:SetScript(
         "OnClick",
         function(sel)
@@ -46,6 +51,12 @@ function D4:CreateCheckbox(tab, text)
 end
 
 function D4:CreateCheckboxForCVAR(tab)
+    if tab.name == nil then
+        D4:MSG("[D4] Missing name for [CreateCheckboxForCVAR]")
+
+        return
+    end
+
     tab.sw = tab.sw or 25
     tab.sh = tab.sh or 25
     tab.parent = tab.parent or UIParent
@@ -70,6 +81,12 @@ function D4:CreateCheckboxForCVAR(tab)
 end
 
 function D4:CreateSliderForCVAR(tab)
+    if tab.name == nil then
+        D4:MSG("[D4] Missing name for [CreateSliderForCVAR]")
+
+        return
+    end
+
     tab.sw = tab.sw or 25
     tab.sh = tab.sh or 25
     tab.parent = tab.parent or UIParent
@@ -275,7 +292,7 @@ function D4:AppendCategory(name, x, y)
     if Y == 0 then
         Y = Y - 5
     else
-        Y = Y - 30
+        Y = Y - 50
     end
 
     D4:AddCategory(
@@ -305,7 +322,8 @@ function D4:AppendCheckbox(key, value, func, x, y)
 
     local val = TAB[key]
     if val == nil then
-        val = value
+        TAB[key] = value
+        val = TAB[key]
     end
 
     D4:CreateCheckbox(
@@ -329,7 +347,7 @@ function D4:AppendCheckbox(key, value, func, x, y)
 end
 
 function D4:AppendSlider(key, value, min, max, steps, decimals, func, lstr)
-    Y = Y - 15
+    Y = Y - 24
     if key == nil then
         D4:MSG("[D4][AppendSlider] Missing key:", tab.key, tab.value)
 

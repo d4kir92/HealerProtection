@@ -88,6 +88,11 @@ local ICON_TAG_LIST_EN = {
     ["skull"] = 8,
 }
 
+function D4:SafeExec(sel, func)
+    if InCombatLockdown() and sel:IsProtected() then return end
+    func()
+end
+
 function D4:GetCVar(name)
     if C_CVar and C_CVar.GetCVar then return C_CVar.GetCVar(name) end
     if GetCVar then return GetCVar(name) end
@@ -243,8 +248,8 @@ if D4:GetWoWBuild() == "CLASSIC" then
                     TargetFrameHealthBarTextLeft:SetPoint("LEFT", TargetFrameHealthBar, "LEFT", 0, 0)
                     TargetFrameHealthBarTextRight:SetPoint("RIGHT", TargetFrameHealthBar, "RIGHT", 0, 0)
                     TargetFrameManaBarText:SetPoint("CENTER", TargetFrameManaBar, "CENTER", 0, 0)
-                    TargetFrameManaBarTextLeft:SetPoint("LEFT", TargetFrameManaBar, "LEFT", 0, 0)
-                    TargetFrameManaBarTextRight:SetPoint("RIGHT", TargetFrameManaBar, "RIGHT", 0, 0)
+                    TargetFrameManaBarTextLeft:SetPoint("LEFT", TargetFrameManaBar, "LEFT", 2, 0)
+                    TargetFrameManaBarTextRight:SetPoint("RIGHT", TargetFrameManaBar, "RIGHT", -2, 0)
                     TargetFrameHealthBar.LeftText = TargetFrameHealthBarTextLeft
                     TargetFrameHealthBar.RightText = TargetFrameHealthBarTextRight
                     TargetFrameManaBar.LeftText = TargetFrameManaBarTextLeft

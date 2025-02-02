@@ -8,6 +8,23 @@ function HealerProtection:AllowedTo()
 	return false
 end
 
+function HealerProtection:GetCurrentChannel()
+	local _channel = "PARTY"
+	if HealerProtection:GetConfig("channelchat", "AUTO") == "AUTO" then
+		if IsInRaid(LE_PARTY_CATEGORY_HOME) then
+			_channel = "RAID"
+		elseif IsInRaid(LE_PARTY_CATEGORY_INSTANCE) or IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+			_channel = "INSTANCE_CHAT"
+		elseif IsInGroup(LE_PARTY_CATEGORY_HOME) then
+			_channel = "PARTY"
+		end
+	else
+		_channel = HealerProtection:GetConfig("channelchat", "AUTO")
+	end
+
+	return _channel
+end
+
 local onceM1 = false
 local onceM2 = false
 function HealerProtection:CanWriteToChat(chan)
@@ -48,19 +65,7 @@ end
 
 function HealerProtection:ToCurrentChat(formatStr, val1text, val1val, val2text, val2val)
 	local inInstance, _ = IsInInstance()
-	local _channel = "PARTY"
-	if HealerProtection:GetConfig("channelchat", "AUTO") == "AUTO" then
-		if IsInRaid(LE_PARTY_CATEGORY_HOME) then
-			_channel = "RAID"
-		elseif IsInRaid(LE_PARTY_CATEGORY_INSTANCE) or IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
-			_channel = "INSTANCE_CHAT"
-		elseif IsInGroup(LE_PARTY_CATEGORY_HOME) then
-			_channel = "PARTY"
-		end
-	else
-		_channel = HealerProtection:GetConfig("channelchat", "AUTO")
-	end
-
+	local _channel = HealerProtection:GetCurrentChannel()
 	local prefix = HealerProtection:GetConfig("prefix", "[Healer Protection]")
 	local suffix = HealerProtection:GetConfig("suffix", "")
 	if prefix ~= "" and prefix ~= " " then
@@ -154,6 +159,8 @@ function HealerProtection:PrintChat()
 		SETOOMP:SetValue(HPTABPC["OOMPercentage"])
 	end
 
+	local _channel = HealerProtection:GetCurrentChannel()
+	if not HealerProtection:CanWriteToChat(_channel) then return end
 	if HealerProtection:IsLoaded() then
 		local roleToken = "HEALER"
 		if GetSpecialization and GetSpecializationRole then

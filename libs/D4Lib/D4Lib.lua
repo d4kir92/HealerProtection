@@ -542,18 +542,18 @@ local specRoless = {
     },
 }
 
-if D4:GetWoWBuild() == "CLASSIC" then
-    specRoless["DRUID"] = {
-        [1] = "DAMAGER",
-        [2] = "TANK",
-        [3] = "HEALER",
-    }
-else
+if D4:GetWoWBuild() == "RETAIL" then
     specRoless["DRUID"] = {
         [1] = "DAMAGER",
         [2] = "DAMAGER",
         [3] = "TANK",
         [4] = "HEALER",
+    }
+else
+    specRoless["DRUID"] = {
+        [1] = "DAMAGER",
+        [2] = "TANK",
+        [3] = "HEALER",
     }
 end
 

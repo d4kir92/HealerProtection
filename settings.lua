@@ -12,7 +12,7 @@ function HealerProtection:ToggleSettings()
 end
 
 function HealerProtection:InitSetting()
-	HealerProtection:SetVersion(AddonName, 135923, "1.2.53")
+	HealerProtection:SetVersion(AddonName, 135923, "1.2.54")
 	HPTABPC = HPTABPC or {}
 	HPTABPC["MMBTNTAB"] = HPTABPC["MMBTNTAB"] or {}
 	if HPTABPC["MMBTN"] == nil then
@@ -24,7 +24,7 @@ function HealerProtection:InitSetting()
 			["name"] = "HealerProtection",
 			["icon"] = 135923,
 			["dbtab"] = HPTABPC,
-			["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.53"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
+			["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.54"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
 			["funcL"] = function()
 				HealerProtection:ToggleSettings()
 			end,
@@ -35,15 +35,10 @@ function HealerProtection:InitSetting()
 				else
 					HealerProtection:HideMMBtn("HealerProtection")
 				end
-			end
+			end,
+			["dbkey"] = "MMBTN"
 		}
 	)
-
-	if HPTABPC["MMBTN"] then
-		HealerProtection:ShowMMBtn("HealerProtection")
-	else
-		HealerProtection:HideMMBtn("HealerProtection")
-	end
 
 	HealerProtection:AddSlash("hp", HealerProtection.ToggleSettings)
 	HealerProtection:AddSlash("healerprotection", HealerProtection.ToggleSettings)
@@ -53,7 +48,7 @@ function HealerProtection:InitSetting()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.53")
+			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.54")
 		}
 	)
 

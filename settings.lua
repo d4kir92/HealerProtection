@@ -12,7 +12,7 @@ function HealerProtection:ToggleSettings()
 end
 
 function HealerProtection:InitSetting()
-	HealerProtection:SetVersion(AddonName, 135923, "1.2.57")
+	HealerProtection:SetVersion(AddonName, 135923, "1.2.58")
 	HPTABPC = HPTABPC or {}
 	HPTABPC["MMBTNTAB"] = HPTABPC["MMBTNTAB"] or {}
 	if HPTABPC["MMBTN"] == nil then
@@ -24,7 +24,7 @@ function HealerProtection:InitSetting()
 			["name"] = "HealerProtection",
 			["icon"] = 135923,
 			["dbtab"] = HPTABPC,
-			["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.57"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
+			["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.58"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
 			["funcL"] = function()
 				HealerProtection:ToggleSettings()
 			end,
@@ -48,7 +48,7 @@ function HealerProtection:InitSetting()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.57")
+			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.58")
 		}
 	)
 
@@ -179,24 +179,10 @@ function HealerProtection:SetSetup(val)
 	HPSETUP = val
 end
 
-local vars = false
-local addo = false
 local frame = CreateFrame("FRAME")
-frame:RegisterEvent("ADDON_LOADED")
-frame:RegisterEvent("VARIABLES_LOADED")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-function frame:OnEvent(event)
-	if event == "VARIABLES_LOADED" then
-		vars = true
-		--HealerProtection:Setup()
-	end
-
-	if event == "ADDON_LOADED" then
-		addo = true
-		--HealerProtection:Setup()
-	end
-
-	if vars and addo and not HealerProtection:IsLoaded() then
+frame:RegisterEvent("PLAYER_LOGIN")
+function frame:OnEvent(event, addonName, ...)
+	if event == "PLAYER_LOGIN" then
 		HPloaded = true
 		HPTABPC = HPTABPC or {}
 		C_Timer.After(
@@ -206,6 +192,8 @@ function frame:OnEvent(event)
 				HealerProtection:Setup()
 			end
 		)
+
+		frame:UnregisterEvent("PLAYER_LOGIN")
 	end
 end
 

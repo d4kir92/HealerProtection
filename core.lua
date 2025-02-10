@@ -2,6 +2,17 @@
 local _, HealerProtection = ...
 local HPDEBUG = false
 local warning_aggro = nil
+local nearoom = false
+local oom = false
+local aggro = false
+local isdead = false
+local neardeath = false
+local isNotHealerWarning = false
+local isChanneling = false
+local onceM1 = false
+local onceM2 = false
+local lasttarget = ""
+local delayrange = GetTime()
 function HealerProtection:AllowedTo()
 	if (GetNumGroupMembers() > 0 or GetNumSubgroupMembers() > 0 or HPDEBUG) and HealerProtection:GetConfig("printnothing", false) == false then return true end
 
@@ -25,8 +36,6 @@ function HealerProtection:GetCurrentChannel()
 	return _channel
 end
 
-local onceM1 = false
-local onceM2 = false
 function HealerProtection:CanWriteToChat(chan)
 	local inInstance, _ = IsInInstance()
 	if onceM1 and not inInstance and HealerProtection:GetConfig("showoutsideofinstance", false) == false then
@@ -134,7 +143,47 @@ function HealerProtection:Setup()
 			warning_aggro.text:SetTextColor(1, 0, 0, 1)
 			warning_aggro:SetPoint("CENTER", 0, 0)
 			warning_aggro:Hide()
+			local function OnEvent(sel, event)
+				local _, eventtype, _, _, _, _, _, _, _, _, _, _, mm, _, reason = CombatLogGetCurrentEventInfo()
+				local TName = UnitName("target")
+				if lasttarget ~= TName or delayrange < GetTime() then
+					delayrange = GetTime() + 1
+					lasttarget = TName
+					local targetFriend = UnitIsFriend("player", "target")
+					if eventtype == "SPELL_CAST_FAILED" and HealerProtection:IsSpellInRange(mm) and HealerProtection:GetConfig("notinsight", false) and targetFriend then
+						local tex = "Target is not in the field of view (" .. TName .. ")"
+						if HealerProtection:GetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
+							if HealerProtection:GetConfig("showonlytranslation", false) then
+								tex = tex .. " [" .. reason .. " (" .. TName .. ")]"
+							else
+								tex = tex .. " [" .. reason .. " (" .. TName .. ")]"
+							end
+						end
+
+						HealerProtection:ToCurrentChat("%s", tex)
+					end
+				end
+			end
+
+			local f = CreateFrame("Frame")
+			f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+			f:SetScript("OnEvent", OnEvent)
+			local channeling = CreateFrame("Frame")
+			channeling:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+			channeling:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
+			channeling:SetScript(
+				"OnEvent",
+				function(sel, event, ...)
+					if event == "UNIT_SPELLCAST_CHANNEL_START" then
+						isChanneling = true
+					elseif event == "UNIT_SPELLCAST_CHANNEL_STOP" then
+						isChanneling = false
+					end
+				end
+			)
+
 			HealerProtection:InitSetting()
+			C_Timer.NewTicker(1, HealerProtection.PrintChat)
 		else
 			C_Timer.After(
 				0.1,
@@ -146,13 +195,6 @@ function HealerProtection:Setup()
 	end
 end
 
-local nearoom = false
-local oom = false
-local aggro = false
-local isdead = false
-local neardeath = false
-local isNotHealerWarning = false
-local isChanneling = false
 function HealerProtection:PrintChat()
 	if HealerProtection:GetConfig("OOMPercentage", 10) > HealerProtection:GetConfig("NEAROOMPercentage", 30) and SETOOMP ~= nil and not InCombatLockdown() then
 		HPTABPC["OOMPercentage"] = HealerProtection:GetConfig("NEAROOMPercentage", 30)
@@ -316,45 +358,3 @@ function HealerProtection:PrintChat()
 		end
 	end
 end
-
-C_Timer.NewTicker(1, HealerProtection.PrintChat)
-local lasttarget = ""
-local delayrange = GetTime()
-local function OnEvent(self, event)
-	local _, eventtype, _, _, _, _, _, _, _, _, _, _, mm, _, reason = CombatLogGetCurrentEventInfo()
-	local TName = UnitName("target")
-	if lasttarget ~= TName or delayrange < GetTime() then
-		delayrange = GetTime() + 1
-		lasttarget = TName
-		local targetFriend = UnitIsFriend("player", "target")
-		if eventtype == "SPELL_CAST_FAILED" and HealerProtection:IsSpellInRange(mm) and HealerProtection:GetConfig("notinsight", false) and targetFriend then
-			local tex = "Target is not in the field of view (" .. TName .. ")"
-			if HealerProtection:GetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
-				if HealerProtection:GetConfig("showonlytranslation", false) then
-					tex = tex .. " [" .. reason .. " (" .. TName .. ")]"
-				else
-					tex = tex .. " [" .. reason .. " (" .. TName .. ")]"
-				end
-			end
-
-			HealerProtection:ToCurrentChat("%s", tex)
-		end
-	end
-end
-
-local f = CreateFrame("Frame")
-f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-f:SetScript("OnEvent", OnEvent)
-local channeling = CreateFrame("Frame")
-channeling:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-channeling:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-channeling:SetScript(
-	"OnEvent",
-	function(self, event, ...)
-		if event == "UNIT_SPELLCAST_CHANNEL_START" then
-			isChanneling = true
-		elseif event == "UNIT_SPELLCAST_CHANNEL_STOP" then
-			isChanneling = false
-		end
-	end
-)

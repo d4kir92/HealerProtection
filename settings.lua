@@ -12,33 +12,12 @@ function HealerProtection:ToggleSettings()
 end
 
 function HealerProtection:InitSetting()
-	HealerProtection:SetVersion(AddonName, 135923, "1.2.59")
+	HealerProtection:SetVersion(AddonName, 135923, "1.2.60")
 	HPTABPC = HPTABPC or {}
 	HPTABPC["MMBTNTAB"] = HPTABPC["MMBTNTAB"] or {}
 	if HPTABPC["MMBTN"] == nil then
 		HPTABPC["MMBTN"] = HealerProtection:GetWoWBuild() ~= "RETAIL"
 	end
-
-	HealerProtection:CreateMinimapButton(
-		{
-			["name"] = "HealerProtection",
-			["icon"] = 135923,
-			["dbtab"] = HPTABPC,
-			["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.59"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
-			["funcL"] = function()
-				HealerProtection:ToggleSettings()
-			end,
-			["funcR"] = function()
-				HPTABPC["MMBTN"] = not HPTABPC["MMBTN"]
-				if HPTABPC["MMBTN"] then
-					HealerProtection:ShowMMBtn("HealerProtection")
-				else
-					HealerProtection:HideMMBtn("HealerProtection")
-				end
-			end,
-			["dbkey"] = "MMBTN"
-		}
-	)
 
 	HealerProtection:AddSlash("hp", HealerProtection.ToggleSettings)
 	HealerProtection:AddSlash("healerprotection", HealerProtection.ToggleSettings)
@@ -48,7 +27,7 @@ function HealerProtection:InitSetting()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.59")
+			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.60")
 		}
 	)
 
@@ -176,10 +155,41 @@ function HealerProtection:SetSetup(val)
 	HPSETUP = val
 end
 
-local frame = CreateFrame("FRAME")
-frame:RegisterEvent("PLAYER_LOGIN")
-function frame:OnEvent(event, addonName, ...)
-	if event == "PLAYER_LOGIN" then
+local fra = CreateFrame("FRAME")
+fra:RegisterEvent("PLAYER_LOGIN")
+fra:RegisterEvent("ADDON_LOADED")
+function fra:OnEvent(event, addonName, ...)
+	if event == "ADDON_LOADED" then
+		if addonName == AddonName then
+			fra:UnregisterEvent("ADDON_LOADED")
+			HPTABPC = HPTABPC or {}
+			HPTABPC["MMBTNTAB"] = HPTABPC["MMBTNTAB"] or {}
+			if HPTABPC["MMBTN"] == nil then
+				HPTABPC["MMBTN"] = HealerProtection:GetWoWBuild() ~= "RETAIL"
+			end
+
+			HealerProtection:CreateMinimapButton(
+				{
+					["name"] = "HealerProtection",
+					["icon"] = 135923,
+					["dbtab"] = HPTABPC,
+					["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.60"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
+					["funcL"] = function()
+						HealerProtection:ToggleSettings()
+					end,
+					["funcR"] = function()
+						HPTABPC["MMBTN"] = not HPTABPC["MMBTN"]
+						if HPTABPC["MMBTN"] then
+							HealerProtection:ShowMMBtn("HealerProtection")
+						else
+							HealerProtection:HideMMBtn("HealerProtection")
+						end
+					end,
+					["dbkey"] = "MMBTN"
+				}
+			)
+		end
+	elseif event == "PLAYER_LOGIN" then
 		HPloaded = true
 		HPTABPC = HPTABPC or {}
 		C_Timer.After(
@@ -190,8 +200,8 @@ function frame:OnEvent(event, addonName, ...)
 			end
 		)
 
-		frame:UnregisterEvent("PLAYER_LOGIN")
+		fra:UnregisterEvent("PLAYER_LOGIN")
 	end
 end
 
-frame:SetScript("OnEvent", frame.OnEvent)
+fra:SetScript("OnEvent", fra.OnEvent)

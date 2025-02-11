@@ -240,7 +240,7 @@ function HealerProtection:PrintChat()
 			end
 		end
 
-		if (roleToken == "DAMAGER" or roleToken == "TANK") and not isNotHealerWarning then
+		if HealerProtection:GetConfig("showasnothealer", false) == false and (roleToken == "DAMAGER" or roleToken == "TANK") and not isNotHealerWarning then
 			isNotHealerWarning = true
 			HealerProtection:MSG("You are not a Healer.")
 		end

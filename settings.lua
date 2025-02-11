@@ -12,7 +12,7 @@ function HealerProtection:ToggleSettings()
 end
 
 function HealerProtection:InitSetting()
-	HealerProtection:SetVersion(AddonName, 135923, "1.2.58")
+	HealerProtection:SetVersion(AddonName, 135923, "1.2.59")
 	HPTABPC = HPTABPC or {}
 	HPTABPC["MMBTNTAB"] = HPTABPC["MMBTNTAB"] or {}
 	if HPTABPC["MMBTN"] == nil then
@@ -24,7 +24,7 @@ function HealerProtection:InitSetting()
 			["name"] = "HealerProtection",
 			["icon"] = 135923,
 			["dbtab"] = HPTABPC,
-			["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.58"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
+			["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.59"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
 			["funcL"] = function()
 				HealerProtection:ToggleSettings()
 			end,
@@ -48,7 +48,7 @@ function HealerProtection:InitSetting()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.58")
+			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.59")
 		}
 	)
 
@@ -78,10 +78,7 @@ function HealerProtection:InitSetting()
 
 	HealerProtection:AppendCategory("visibility")
 	HealerProtection:AppendCheckbox("printnothing", false)
-	if UnitGroupRolesAssigned and HealerProtection:GetWoWBuildNr() > 19999 then
-		HealerProtection:AppendCheckbox("showasnothealer", false)
-	end
-
+	HealerProtection:AppendCheckbox("showasnothealer", false)
 	HealerProtection:AppendCheckbox("showinraids", true)
 	HealerProtection:AppendCheckbox("showoutsideofinstance", false)
 	HealerProtection:AppendCheckbox("showinbgs", false)

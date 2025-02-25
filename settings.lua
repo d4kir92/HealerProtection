@@ -12,7 +12,6 @@ function HealerProtection:ToggleSettings()
 end
 
 function HealerProtection:InitSetting()
-	HealerProtection:SetVersion(AddonName, 135923, "1.2.61")
 	HPTABPC = HPTABPC or {}
 	HPTABPC["MMBTNTAB"] = HPTABPC["MMBTNTAB"] or {}
 	if HPTABPC["MMBTN"] == nil then
@@ -27,7 +26,7 @@ function HealerProtection:InitSetting()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = string.format("HealerProtection |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", "1.2.61")
+			["title"] = string.format("|T135923:16:16:0:0|t HealerProtection by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", HealerProtection:GetVersion())
 		}
 	)
 
@@ -168,12 +167,13 @@ function fra:OnEvent(event, addonName, ...)
 				HPTABPC["MMBTN"] = HealerProtection:GetWoWBuild() ~= "RETAIL"
 			end
 
+			HealerProtection:SetVersion(135923, "1.2.62")
 			HealerProtection:CreateMinimapButton(
 				{
 					["name"] = "HealerProtection",
 					["icon"] = 135923,
 					["dbtab"] = HPTABPC,
-					["vTT"] = {{"HealerProtection |T135923:16:16:0:0|t", "v|cff3FC7EB1.2.61"}, {"Leftclick", "Options"}, {"Rightclick", "Toggle Minimapbutton"}},
+					["vTT"] = {{"|T135923:16:16:0:0|t HealerProtection", "v|cff3FC7EB" .. HealerProtection:GetVersion()}, {HealerProtection:Trans("LID_LEFTCLICK"), HealerProtection:Trans("LID_OPENSETTINGS")}, {HealerProtection:Trans("LID_RIGHTCLICK"), HealerProtection:Trans("LID_HIDEMINIMAPBUTTON")}},
 					["funcL"] = function()
 						HealerProtection:ToggleSettings()
 					end,

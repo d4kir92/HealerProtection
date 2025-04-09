@@ -54,6 +54,27 @@ function D4:GetMMBtn(name)
     return _G[name]
 end
 
+if GetD4MinimapHover == nil then
+    local MinimapHover = false
+    local minimapHover = CreateFrame("Frame")
+    minimapHover:HookScript(
+        "OnUpdate",
+        function()
+            local mouseFocus = D4:GetMouseFocus()
+            local btnFocus = false
+            if mouseFocus and D4:GetParent(mouseFocus) ~= nil then
+                btnFocus = D4:GetParent(mouseFocus) == Minimap
+            end
+
+            MinimapHover = MouseIsOver(Minimap) or btnFocus
+        end
+    )
+
+    function GetD4MinimapHover()
+        return MinimapHover
+    end
+end
+
 function D4:CreateMinimapButton(params)
     if params.icon == nil and params.atlas == nil then
         D4:MSG("[CreateMinimapButton] Missing Icon/Atlas")
@@ -245,32 +266,33 @@ function D4:CreateMinimapButton(params)
     animOut:SetToAlpha(0)
     animOut:SetStartDelay(1)
     btn.fadeOut:SetToFinalAlpha(true)
-    Minimap:HookScript(
-        "OnEnter",
+    btn.ia_visible = false
+    btn:HookScript(
+        "OnUpdate",
         function()
-            if btn:GetParent() == Minimap then
-                btn.fadeOut:Stop()
-                btn:SetAlpha(1)
-            else
-                btn.fadeOut:Stop()
-                btn:SetAlpha(1)
+            if btn.ia_visible_old ~= GetD4MinimapHover() then
+                btn.ia_visible_old = GetD4MinimapHover()
+                if GetD4MinimapHover() then
+                    if D4:GetParent(btn) == Minimap then
+                        btn.fadeOut:Stop()
+                        btn:SetAlpha(1)
+                    else
+                        btn.fadeOut:Stop()
+                        btn:SetAlpha(1)
+                    end
+                else
+                    if D4:GetParent(btn) == Minimap then
+                        btn.fadeOut:Play()
+                    else
+                        btn.fadeOut:Stop()
+                        btn:SetAlpha(1)
+                    end
+                end
             end
         end
     )
 
-    Minimap:HookScript(
-        "OnLeave",
-        function()
-            if btn:GetParent() == Minimap then
-                btn.fadeOut:Play()
-            else
-                btn.fadeOut:Stop()
-                btn:SetAlpha(1)
-            end
-        end
-    )
-
-    if btn:GetParent() == Minimap then
+    if D4:GetParent(btn) == Minimap then
         btn.fadeOut:Play()
     end
 
@@ -332,8 +354,9 @@ function D4:UpdateLTP()
         D4:ForeachChildren(
             Minimap,
             function(child)
-                if child and child:GetName() then
-                    local s1 = string.find(string.lower(child:GetName()), "libdbicon")
+                local name = DarkMode:GetName(child)
+                if name then
+                    local s1 = string.find(string.lower(name), "libdbicon")
                     if s1 and s1 > 1 and child.ltp == nil then
                         child.ltp = true
                         child:SetScale(0.75)

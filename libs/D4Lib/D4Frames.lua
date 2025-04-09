@@ -4,13 +4,37 @@ local Y = 0
 local PARENT = nil
 local TAB = nil
 local TABIsNil = false
+function D4:GetName(frame)
+    local ok, name = pcall(
+        function()
+            if type(frame) == "table" and type(frame.GetName) == "function" then return frame:GetName() end
+        end
+    )
+
+    if ok then return name end
+
+    return nil
+end
+
+function D4:GetParent(frame)
+    local ok, parent = pcall(
+        function()
+            if type(frame) == "table" and type(frame.GetParent) == "function" then return frame:GetParent() end
+        end
+    )
+
+    if ok then return parent end
+
+    return nil
+end
+
 function D4:SetFontSize(element, fontSize, newFontFlags)
     if not element then return end
     if element.GetFont == nil then return end
     if not fontSize then return end
     local fontType, _, fontFlags = element:GetFont()
     if fontType == nil then
-        D4:MSG("SetFontSize FAILED #1:", element:GetName())
+        D4:MSG("SetFontSize FAILED #1:", D4:GetName(element))
 
         return
     end

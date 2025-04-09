@@ -242,12 +242,6 @@ function D4:IsAddOnLoaded(name)
     return nil
 end
 
-function D4:GetName(frameOrTexture)
-    if frameOrTexture and frameOrTexture.GetName then return frameOrTexture:GetName() end
-
-    return nil
-end
-
 local function FixIconChat(sel, event, message, author, ...)
     if ICON_LIST then
         for tag in string.gmatch(message, "%b{}") do
@@ -730,6 +724,30 @@ function D4:GetHeroSpecId()
     end
 
     return heroSpecID
+end
+
+function D4:GetFrameByName(name)
+    local frame = _G[name]
+    if type(frame) == "table" then return frame end
+    if name:find("%.") then
+        local parts = {strsplit(".", name)}
+        frame = _G[parts[1]]
+        for i = 2, #parts do
+            if type(frame) ~= "table" then return nil end
+            frame = frame[parts[i]]
+        end
+
+        return type(frame) == "table" and frame or nil
+    end
+
+    local baseName, index = name:match("([^%[]+)%[(%d+)%]")
+    if baseName and index then
+        local f = _G[baseName]
+
+        return f and select(tonumber(index), f:GetRegions()) or nil
+    end
+
+    return nil
 end
 
 local f = CreateFrame("Frame")

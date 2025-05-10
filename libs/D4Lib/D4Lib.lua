@@ -49,7 +49,8 @@ end
 if GetClassColor == nil then
     D4:MSG("[D4] ADD GetClassColor")
     GetClassColor = function(classFilename)
-        local color = RAID_CLASS_COLORS[classFilename]
+        local colorTab = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
+        local color = colorTab[classFilename]
         if color then return color.r, color.g, color.b, color.colorStr end
 
         return 1, 1, 1, "ffffffff"

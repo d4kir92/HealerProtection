@@ -97,27 +97,27 @@ function HealerProtection:ToCurrentChat(formatStr, val1text, val1val, val2text, 
 		local msg = ""
 		if HealerProtection:GetLang() == "enUS" then
 			if val2text then
-				msg = string.format(formatStr, HealerProtection:Trans(val1text, "enUS", val1val), HealerProtection:Trans(val2text, "enUS", val2val))
+				msg = string.format(formatStr, HealerProtection:TryTrans(val1text, "enUS", val1val), HealerProtection:TryTrans(val2text, "enUS", val2val))
 			elseif val1text then
-				msg = string.format(formatStr, HealerProtection:Trans(val1text, "enUS", val1val))
+				msg = string.format(formatStr, HealerProtection:TryTrans(val1text, "enUS", val1val))
 			end
 		elseif HealerProtection:GetLang() == GetLocale() then
 			if val2text then
-				msg = string.format(formatStr, HealerProtection:Trans(val1text, GetLocale(), val1val), HealerProtection:Trans(val2text, GetLocale(), val2val))
+				msg = string.format(formatStr, HealerProtection:TryTrans(val1text, GetLocale(), val1val), HealerProtection:TryTrans(val2text, GetLocale(), val2val))
 			elseif val1text then
-				msg = string.format(formatStr, HealerProtection:Trans(val1text, GetLocale(), val1val))
+				msg = string.format(formatStr, HealerProtection:TryTrans(val1text, GetLocale(), val1val))
 			end
 		else
 			if val2text then
-				msg = string.format(formatStr, HealerProtection:Trans(val1text, "enUS", val1val), HealerProtection:Trans(val2text, "enUS", val2val))
+				msg = string.format(formatStr, HealerProtection:TryTrans(val1text, "enUS", val1val), HealerProtection:TryTrans(val2text, "enUS", val2val))
 			elseif val1text then
-				msg = string.format(formatStr, HealerProtection:Trans(val1text, "enUS", val1val))
+				msg = string.format(formatStr, HealerProtection:TryTrans(val1text, "enUS", val1val))
 			end
 
 			if val2text then
-				msg = msg .. " [" .. string.format(formatStr, HealerProtection:Trans(val1text, GetLocale(), val1val), HealerProtection:Trans(val2text, GetLocale(), val2val)) .. "]"
+				msg = msg .. " [" .. string.format(formatStr, HealerProtection:TryTrans(val1text, GetLocale(), val1val), HealerProtection:TryTrans(val2text, GetLocale(), val2val)) .. "]"
 			elseif val1text then
-				msg = msg .. " [" .. string.format(formatStr, HealerProtection:Trans(val1text, GetLocale(), val1val)) .. "]"
+				msg = msg .. " [" .. string.format(formatStr, HealerProtection:TryTrans(val1text, GetLocale(), val1val)) .. "]"
 			end
 		end
 

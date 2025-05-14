@@ -68,12 +68,12 @@ function HealerProtection:InitSetting()
 		"LID_channelchat",
 		"AUTO",
 		{
-			["AUTO"] = "AUTO",
-			["PARTY"] = "PARTY",
-			["RAID"] = "RAID",
-			["INSTANCE_CHAT"] = "INSTANCE_CHAT",
-			["YELL"] = "YELL",
-			["SAY"] = "SAY",
+			["AUTO"] = "LID_AUTO",
+			["PARTY"] = "LID_PARTY",
+			["RAID"] = "LID_RAID",
+			["INSTANCE_CHAT"] = "LID_INSTANCE_CHAT",
+			["YELL"] = "LID_YELL",
+			["SAY"] = "LID_SAY",
 		}
 	)
 
@@ -149,7 +149,7 @@ function fra:OnEvent(event, addonName, ...)
 				HPTABPC["MMBTN"] = HealerProtection:GetWoWBuild() ~= "RETAIL"
 			end
 
-			HealerProtection:SetVersion(135923, "1.2.73")
+			HealerProtection:SetVersion(135923, "1.2.74")
 			HealerProtection:CreateMinimapButton(
 				{
 					["name"] = "HealerProtection",

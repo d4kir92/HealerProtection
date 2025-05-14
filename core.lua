@@ -38,8 +38,9 @@ end
 
 function HealerProtection:InInstance()
 	if HPDEBUG then return true end
+	local is, _ = IsInInstance()
 
-	return IsInInstance()
+	return is
 end
 
 function HealerProtection:CanWriteToChat(chan)

@@ -36,8 +36,14 @@ function HealerProtection:GetCurrentChannel()
 	return _channel
 end
 
+function HealerProtection:InInstance()
+	if HPDEBUG then return true end
+
+	return IsInInstance()
+end
+
 function HealerProtection:CanWriteToChat(chan)
-	local inInstance, _ = IsInInstance()
+	local inInstance = HealerProtection:InInstance()
 	if onceM1 and not inInstance and HealerProtection:GetConfig("showoutsideofinstance", false) == false then
 		onceM1 = false
 		HealerProtection:MSG("Only shows Messages in Instances.")
@@ -73,7 +79,7 @@ function HealerProtection:GetLang()
 end
 
 function HealerProtection:ToCurrentChat(formatStr, val1text, val1val, val2text, val2val)
-	local inInstance, _ = IsInInstance()
+	local inInstance = HealerProtection:InInstance()
 	local _channel = HealerProtection:GetCurrentChannel()
 	local prefix = HealerProtection:GetConfig("prefix", "[Healer Protection]")
 	local suffix = HealerProtection:GetConfig("suffix", "")
@@ -139,7 +145,7 @@ function HealerProtection:Setup()
 			warning_aggro.text = warning_aggro:CreateFontString(nil, "ARTWORK")
 			warning_aggro.text:SetFont(STANDARD_TEXT_FONT, 20, "OUTLINE")
 			warning_aggro.text:SetPoint("CENTER", 0, 300)
-			warning_aggro.text:SetText(HealerProtection:Trans("youhaveaggro") .. "!")
+			warning_aggro.text:SetText(HealerProtection:Trans("LID_youhaveaggro") .. "!")
 			warning_aggro.text:SetTextColor(1, 0, 0, 1)
 			warning_aggro:SetPoint("CENTER", 0, 0)
 			warning_aggro:Hide()
@@ -259,7 +265,7 @@ function HealerProtection:PrintChat()
 						if status ~= nil then
 							if status > 0 and not aggro and hpperc < HealerProtection:GetConfig("AGGROPercentage", 50) then
 								if HealerProtection:GetConfig("showaggrochat", true) and HealerProtection:AllowedTo() then
-									HealerProtection:ToCurrentChat("{rt8} %s", "ihaveaggro")
+									HealerProtection:ToCurrentChat("{rt8} %s", "LID_ihaveaggro")
 								end
 
 								if HealerProtection:GetConfig("showaggroemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -304,7 +310,7 @@ function HealerProtection:PrintChat()
 						if manaperc <= HealerProtection:GetConfig("OOMPercentage", 10) and not oom then
 							oom = true
 							if HealerProtection:GetConfig("showoomchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat("(%s) %s", "xmana", manaperc, "outofmana")
+								HealerProtection:ToCurrentChat("(%s) %s", "LID_xmana", manaperc, "LID_outofmana")
 							end
 
 							if HealerProtection:GetConfig("showoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -320,7 +326,7 @@ function HealerProtection:PrintChat()
 						if manaperc <= HealerProtection:GetConfig("NEAROOMPercentage", 30) and not nearoom then
 							nearoom = true
 							if HealerProtection:GetConfig("shownearoomchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat("(%s) %s", "xmana", manaperc, "nearoutofmana")
+								HealerProtection:ToCurrentChat("(%s) %s", "LID_xmana", manaperc, "LID_nearoutofmana")
 							end
 
 							if HealerProtection:GetConfig("shownearoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -338,7 +344,7 @@ function HealerProtection:PrintChat()
 							local tab = {}
 							tab["HEALTH"] = healthperc
 							if HealerProtection:GetConfig("showneardeathchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat("%s (%s)", "neardeath", nil, "xhealth", healthperc)
+								HealerProtection:ToCurrentChat("%s (%s)", "LID_neardeath", nil, "LID_xhealth", healthperc)
 							end
 
 							if HealerProtection:GetConfig("showneardeathemote", true) and HealerProtection:AllowedTo() and not isChanneling then
@@ -352,7 +358,7 @@ function HealerProtection:PrintChat()
 			elseif not isdead then
 				isdead = true
 				if HealerProtection:GetConfig("deathmessage", true) then
-					HealerProtection:ToCurrentChat("%s", "healerisdead")
+					HealerProtection:ToCurrentChat("%s", "LID_healerisdead")
 				end
 			end
 		end

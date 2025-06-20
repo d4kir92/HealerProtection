@@ -41,9 +41,9 @@ function HealerProtection:InitSetting()
 	HealerProtection:SetAppendParent(hpset.SC)
 	HealerProtection:SetAppendTab(HPTABPC)
 	HealerProtection:SetAppendY(0)
-	HealerProtection:AppendCategory("LID_general")
+	HealerProtection:AppendCategory("general")
 	HealerProtection:AppendCheckbox(
-		"LID_MMBTN",
+		"MMBTN",
 		HealerProtection:GetWoWBuild() ~= "RETAIL",
 		function()
 			if HPTABPC["MMBTN"] then
@@ -54,57 +54,57 @@ function HealerProtection:InitSetting()
 		end
 	)
 
-	HealerProtection:AppendCategory("LID_visibility")
-	HealerProtection:AppendCheckbox("LID_printnothing", false)
-	HealerProtection:AppendCheckbox("LID_showasnothealer", false)
-	HealerProtection:AppendCheckbox("LID_showinraids", true)
-	HealerProtection:AppendCheckbox("LID_showoutsideofinstance", false)
-	HealerProtection:AppendCheckbox("LID_showinbgs", false)
-	HealerProtection:AppendCheckbox("LID_showtranslation", true)
-	HealerProtection:AppendCheckbox("LID_showonlyenglish", false)
-	HealerProtection:AppendCheckbox("LID_showonlytranslation", false)
+	HealerProtection:AppendCategory("visibility")
+	HealerProtection:AppendCheckbox("printnothing", false)
+	HealerProtection:AppendCheckbox("showasnothealer", false)
+	HealerProtection:AppendCheckbox("showinraids", true)
+	HealerProtection:AppendCheckbox("showoutsideofinstance", false)
+	HealerProtection:AppendCheckbox("showinbgs", false)
+	HealerProtection:AppendCheckbox("showtranslation", true)
+	HealerProtection:AppendCheckbox("showonlyenglish", false)
+	HealerProtection:AppendCheckbox("showonlytranslation", false)
 	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 10)
 	HealerProtection:AppendDropdown(
-		"LID_channelchat",
+		"channelchat",
 		"AUTO",
 		{
-			["AUTO"] = "LID_AUTO",
-			["PARTY"] = "LID_PARTY",
-			["RAID"] = "LID_RAID",
-			["INSTANCE_CHAT"] = "LID_INSTANCE_CHAT",
-			["YELL"] = "LID_YELL",
-			["SAY"] = "LID_SAY",
+			["AUTO"] = "AUTO",
+			["PARTY"] = "PARTY",
+			["RAID"] = "RAID",
+			["INSTANCE_CHAT"] = "INSTANCE_CHAT",
+			["YELL"] = "YELL",
+			["SAY"] = "SAY",
 		}
 	)
 
-	HealerProtection:AppendCategory("LID_aggro")
-	HealerProtection:AppendCheckbox("LID_aggro", true)
-	HealerProtection:AppendCheckbox("LID_showaggrochat", true)
-	HealerProtection:AppendCheckbox("LID_showaggroemote", true)
-	HealerProtection:AppendSlider("LID_AGGROPercentage", 50, 20, 100, 1, 0)
-	HealerProtection:AppendCategory("LID_outofmana")
-	HealerProtection:AppendCheckbox("LID_outofmana", true)
-	HealerProtection:AppendCheckbox("LID_showoomchat", true)
-	HealerProtection:AppendCheckbox("LID_showoomemote", true)
-	HealerProtection:AppendSlider("LID_OOMPercentage", 10, 1, 30, 1, 0)
-	HealerProtection:AppendCategory("LID_nearoutofmana")
-	HealerProtection:AppendCheckbox("LID_nearoutofmana", true)
-	HealerProtection:AppendCheckbox("LID_shownearoomchat", true)
-	HealerProtection:AppendCheckbox("LID_shownearoomemote", true)
-	HealerProtection:AppendSlider("LID_NEAROOMPercentage", 50, 10, 50, 1, 0)
-	HealerProtection:AppendCategory("LID_neardeath")
-	HealerProtection:AppendCheckbox("LID_neardeath", true)
-	HealerProtection:AppendCheckbox("LID_showneardeathchat", true)
-	HealerProtection:AppendCheckbox("LID_showneardeathemote", true)
-	HealerProtection:AppendSlider("LID_NEARDEATHPercentage", 50, 5, 40, 1, 0)
-	HealerProtection:AppendCategory("LID_extras")
-	HealerProtection:AppendCheckbox("LID_deathmessage", true)
-	HealerProtection:AppendCheckbox("LID_notinsight", false)
+	HealerProtection:AppendCategory("aggro")
+	HealerProtection:AppendCheckbox("aggro", true)
+	HealerProtection:AppendCheckbox("showaggrochat", true)
+	HealerProtection:AppendCheckbox("showaggroemote", true)
+	HealerProtection:AppendSlider("AGGROPercentage", 50, 20, 100, 1, 0)
+	HealerProtection:AppendCategory("outofmana")
+	HealerProtection:AppendCheckbox("outofmana", true)
+	HealerProtection:AppendCheckbox("showoomchat", true)
+	HealerProtection:AppendCheckbox("showoomemote", true)
+	HealerProtection:AppendSlider("OOMPercentage", 10, 1, 30, 1, 0)
+	HealerProtection:AppendCategory("nearoutofmana")
+	HealerProtection:AppendCheckbox("nearoutofmana", true)
+	HealerProtection:AppendCheckbox("shownearoomchat", true)
+	HealerProtection:AppendCheckbox("shownearoomemote", true)
+	HealerProtection:AppendSlider("NEAROOMPercentage", 50, 10, 50, 1, 0)
+	HealerProtection:AppendCategory("neardeath")
+	HealerProtection:AppendCheckbox("neardeath", true)
+	HealerProtection:AppendCheckbox("showneardeathchat", true)
+	HealerProtection:AppendCheckbox("showneardeathemote", true)
+	HealerProtection:AppendSlider("NEARDEATHPercentage", 50, 5, 40, 1, 0)
+	HealerProtection:AppendCategory("extras")
+	HealerProtection:AppendCheckbox("deathmessage", true)
+	HealerProtection:AppendCheckbox("notinsight", false)
 	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 30)
 	local settings_prefix = {}
-	settings_prefix.name = "LID_prefix"
+	settings_prefix.name = "prefix"
 	settings_prefix.parent = HealerProtection:GetAppendParent()
-	settings_prefix.value = HealerProtection:GetConfig("prefix", "[Healer Protection]")
+	settings_prefix.value = HealerProtection:DBGV("prefix", "[Healer Protection]")
 	settings_prefix.text = "LID_prefix"
 	settings_prefix.x = 10
 	settings_prefix.y = HealerProtection:GetAppendY()
@@ -112,9 +112,9 @@ function HealerProtection:InitSetting()
 	HealerProtection:CreateTextBox(settings_prefix)
 	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 60)
 	local settings_suffix = {}
-	settings_suffix.name = "LID_suffix"
+	settings_suffix.name = "suffix"
 	settings_suffix.parent = HealerProtection:GetAppendParent()
-	settings_suffix.value = HealerProtection:GetConfig("suffix", "")
+	settings_suffix.value = HealerProtection:DBGV("suffix", "")
 	settings_suffix.text = "LID_suffix"
 	settings_suffix.x = 10
 	settings_suffix.y = HealerProtection:GetAppendY()
@@ -149,7 +149,7 @@ function fra:OnEvent(event, addonName, ...)
 				HPTABPC["MMBTN"] = HealerProtection:GetWoWBuild() ~= "RETAIL"
 			end
 
-			HealerProtection:SetVersion(135923, "1.2.75")
+			HealerProtection:SetVersion(135923, "1.2.76")
 			HealerProtection:CreateMinimapButton(
 				{
 					["name"] = "HealerProtection",

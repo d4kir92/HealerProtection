@@ -13,15 +13,20 @@ local onceM1 = false
 local onceM2 = false
 local lasttarget = ""
 local delayrange = GetTime()
+local outsideOfGroup = false
 function HealerProtection:AllowedTo()
-	if (GetNumGroupMembers() > 0 or GetNumSubgroupMembers() > 0 or HPDEBUG) and HealerProtection:GetConfig("printnothing", false) == false then return true end
+	if (GetNumGroupMembers() > 0 or GetNumSubgroupMembers() > 0 or HPDEBUG) and HealerProtection:DBGV("printnothing", false) == false then return true end
+	if outsideOfGroup == false then
+		outsideOfGroup = true
+		HealerProtection:INFO("Not in a Party/Raid")
+	end
 
 	return false
 end
 
 function HealerProtection:GetCurrentChannel()
 	local _channel = "PARTY"
-	if HealerProtection:GetConfig("channelchat", "AUTO") == "AUTO" then
+	if HealerProtection:DBGV("channelchat", "AUTO") == "AUTO" then
 		if IsInRaid(LE_PARTY_CATEGORY_HOME) then
 			_channel = "RAID"
 		elseif IsInRaid(LE_PARTY_CATEGORY_INSTANCE) or IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
@@ -30,7 +35,7 @@ function HealerProtection:GetCurrentChannel()
 			_channel = "PARTY"
 		end
 	else
-		_channel = HealerProtection:GetConfig("channelchat", "AUTO")
+		_channel = HealerProtection:DBGV("channelchat", "AUTO")
 	end
 
 	return _channel
@@ -45,22 +50,22 @@ end
 
 function HealerProtection:CanWriteToChat(chan)
 	local inInstance = HealerProtection:InInstance()
-	if onceM1 and not inInstance and HealerProtection:GetConfig("showoutsideofinstance", false) == false then
+	if onceM1 and not inInstance and HealerProtection:DBGV("showoutsideofinstance", false) == false then
 		onceM1 = false
 		HealerProtection:MSG("Only shows Messages in Instances.")
 	end
 
-	if inInstance or HealerProtection:GetConfig("showoutsideofinstance", false) then
-		if HealerProtection:GetConfig("printnothing", false) == true then
+	if inInstance or HealerProtection:DBGV("showoutsideofinstance", false) then
+		if HealerProtection:DBGV("printnothing", false) == true then
 			if onceM2 then
 				onceM2 = false
 				HealerProtection:MSG("\"Print Nothing\" is enabled.")
 			end
 
 			return false
-		elseif UnitInBattleground("player") ~= nil and HealerProtection:GetConfig("showinbgs", false) == false then
+		elseif UnitInBattleground("player") ~= nil and HealerProtection:DBGV("showinbgs", false) == false then
 			return false
-		elseif UnitInRaid("player") ~= nil and HealerProtection:GetConfig("showinraids", true) == false then
+		elseif UnitInRaid("player") ~= nil and HealerProtection:DBGV("showinraids", true) == false then
 			return false
 		else
 			return true
@@ -72,9 +77,9 @@ end
 
 function HealerProtection:GetLang()
 	if GetLocale() == "enUS" then return GetLocale() end
-	if HealerProtection:GetConfig("showonlyenglish", false) then return "enUS" end
-	if HealerProtection:GetConfig("showonlytranslation", false) then return GetLocale() end
-	if HealerProtection:GetConfig("showtranslation", true) then return "enUS," .. GetLocale() end
+	if HealerProtection:DBGV("showonlyenglish", false) then return "enUS" end
+	if HealerProtection:DBGV("showonlytranslation", false) then return GetLocale() end
+	if HealerProtection:DBGV("showtranslation", true) then return "enUS," .. GetLocale() end
 
 	return "enUS"
 end
@@ -82,8 +87,8 @@ end
 function HealerProtection:ToCurrentChat(formatStr, val1text, val1val, val2text, val2val)
 	local inInstance = HealerProtection:InInstance()
 	local _channel = HealerProtection:GetCurrentChannel()
-	local prefix = HealerProtection:GetConfig("prefix", "[Healer Protection]")
-	local suffix = HealerProtection:GetConfig("suffix", "")
+	local prefix = HealerProtection:DBGV("prefix", "[Healer Protection]")
+	local suffix = HealerProtection:DBGV("suffix", "")
 	if prefix ~= "" and prefix ~= " " then
 		prefix = prefix .. " "
 	elseif prefix == " " then
@@ -138,6 +143,7 @@ end
 function HealerProtection:Setup()
 	if HealerProtection:IsSetup() then
 		if not InCombatLockdown() then
+			HPTABPC = HPTABPC or {}
 			HealerProtection:SetSetup(false)
 			warning_aggro = CreateFrame("Frame", nil, UIParent)
 			warning_aggro:SetFrameStrata("BACKGROUND")
@@ -157,10 +163,10 @@ function HealerProtection:Setup()
 					delayrange = GetTime() + 1
 					lasttarget = TName
 					local targetFriend = UnitIsFriend("player", "target")
-					if eventtype == "SPELL_CAST_FAILED" and HealerProtection:IsSpellInRange(mm) and HealerProtection:GetConfig("notinsight", false) and targetFriend then
+					if eventtype == "SPELL_CAST_FAILED" and HealerProtection:IsSpellInRange(mm) and HealerProtection:DBGV("notinsight", false) and targetFriend then
 						local tex = "Target is not in the field of view (" .. TName .. ")"
-						if HealerProtection:GetConfig("showtranslation", true) and GetLocale() ~= "enUS" then
-							if HealerProtection:GetConfig("showonlytranslation", false) then
+						if HealerProtection:DBGV("showtranslation", true) and GetLocale() ~= "enUS" then
+							if HealerProtection:DBGV("showonlytranslation", false) then
 								tex = tex .. " [" .. reason .. " (" .. TName .. ")]"
 							else
 								tex = tex .. " [" .. reason .. " (" .. TName .. ")]"
@@ -189,6 +195,7 @@ function HealerProtection:Setup()
 				end
 			)
 
+			HealerProtection:SetDbTab(HPTABPC)
 			HealerProtection:InitSetting()
 			C_Timer.NewTicker(1, HealerProtection.PrintChat)
 		else
@@ -203,8 +210,8 @@ function HealerProtection:Setup()
 end
 
 function HealerProtection:PrintChat()
-	if HealerProtection:GetConfig("OOMPercentage", 10) > HealerProtection:GetConfig("NEAROOMPercentage", 30) and SETOOMP ~= nil and not InCombatLockdown() then
-		HPTABPC["OOMPercentage"] = HealerProtection:GetConfig("NEAROOMPercentage", 30)
+	if HealerProtection:DBGV("OOMPercentage", 10) > HealerProtection:DBGV("NEAROOMPercentage", 30) and SETOOMP ~= nil and not InCombatLockdown() then
+		HPTABPC["OOMPercentage"] = HealerProtection:DBGV("NEAROOMPercentage", 30)
 		SETOOMP:SetValue(HPTABPC["OOMPercentage"])
 	end
 
@@ -247,16 +254,16 @@ function HealerProtection:PrintChat()
 			end
 		end
 
-		if HealerProtection:GetConfig("showasnothealer", false) == false and (roleToken == "DAMAGER" or roleToken == "TANK") and not isNotHealerWarning then
+		if HealerProtection:DBGV("showasnothealer", false) == false and (roleToken == "DAMAGER" or roleToken == "TANK") and not isNotHealerWarning then
 			isNotHealerWarning = true
 			HealerProtection:MSG("You are not a Healer.")
 		end
 
-		if (roleToken == "HEALER" or HealerProtection:GetConfig("showasnothealer", false)) and not HealerProtection:GetConfig("printnothing", false) then
+		if (roleToken == "HEALER" or HealerProtection:DBGV("showasnothealer", false)) and not HealerProtection:DBGV("printnothing", false) then
 			if not UnitIsDead("player") then
 				isdead = false
 				-- Aggro Logic
-				if HealerProtection:GetConfig("AGGRO", true) then
+				if HealerProtection:DBGV("AGGRO", true) then
 					local status = nil
 					status = UnitThreatSituation("player")
 					local hp = UnitHealth("player")
@@ -264,12 +271,12 @@ function HealerProtection:PrintChat()
 					if hpmax > 0 then
 						local hpperc = hp / hpmax * 100
 						if status ~= nil then
-							if status > 0 and not aggro and hpperc < HealerProtection:GetConfig("AGGROPercentage", 50) then
-								if HealerProtection:GetConfig("showaggrochat", true) and HealerProtection:AllowedTo() then
+							if status > 0 and not aggro and hpperc < HealerProtection:DBGV("AGGROPercentage", 50) then
+								if HealerProtection:DBGV("showaggrochat", true) and HealerProtection:AllowedTo() then
 									HealerProtection:ToCurrentChat("{rt8} %s", "LID_ihaveaggro")
 								end
 
-								if HealerProtection:GetConfig("showaggroemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+								if HealerProtection:DBGV("showaggroemote", true) and HealerProtection:AllowedTo() and not isChanneling then
 									DoEmote("helpme")
 								end
 
@@ -307,58 +314,58 @@ function HealerProtection:PrintChat()
 					local healthmax = UnitHealthMax("player")
 					local healthperc = HealerProtection:MathR(health / healthmax * 100, 1)
 					-- OOM
-					if HealerProtection:GetConfig("OOM", true) then
-						if manaperc <= HealerProtection:GetConfig("OOMPercentage", 10) and not oom then
+					if HealerProtection:DBGV("OOM", true) then
+						if manaperc <= HealerProtection:DBGV("OOMPercentage", 10) and not oom then
 							oom = true
-							if HealerProtection:GetConfig("showoomchat", true) and HealerProtection:AllowedTo() then
+							if HealerProtection:DBGV("showoomchat", true) and HealerProtection:AllowedTo() then
 								HealerProtection:ToCurrentChat("(%s) %s", "LID_xmana", manaperc, "LID_outofmana")
 							end
 
-							if HealerProtection:GetConfig("showoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+							if HealerProtection:DBGV("showoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
 								DoEmote("oom")
 							end
-						elseif manaperc > HealerProtection:GetConfig("OOMPercentage", 10) + 20 and oom then
+						elseif manaperc > HealerProtection:DBGV("OOMPercentage", 10) + 20 and oom then
 							oom = false
 						end
 					end
 
 					-- Near OOM
-					if HealerProtection:GetConfig("NEAROOM", true) and not oom then
-						if manaperc <= HealerProtection:GetConfig("NEAROOMPercentage", 30) and not nearoom then
+					if HealerProtection:DBGV("NEAROOM", true) and not oom then
+						if manaperc <= HealerProtection:DBGV("NEAROOMPercentage", 30) and not nearoom then
 							nearoom = true
-							if HealerProtection:GetConfig("shownearoomchat", true) and HealerProtection:AllowedTo() then
+							if HealerProtection:DBGV("shownearoomchat", true) and HealerProtection:AllowedTo() then
 								HealerProtection:ToCurrentChat("(%s) %s", "LID_xmana", manaperc, "LID_nearoutofmana")
 							end
 
-							if HealerProtection:GetConfig("shownearoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+							if HealerProtection:DBGV("shownearoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
 								DoEmote("incoming")
 							end
-						elseif manaperc > HealerProtection:GetConfig("NEAROOMPercentage", 30) + 20 and nearoom then
+						elseif manaperc > HealerProtection:DBGV("NEAROOMPercentage", 30) + 20 and nearoom then
 							nearoom = false
 						end
 					end
 
 					-- Near Death
-					if HealerProtection:GetConfig("NEARDEATH", true) then
-						if healthperc <= HealerProtection:GetConfig("NEARDEATHPercentage", 30) and not neardeath then
+					if HealerProtection:DBGV("NEARDEATH", true) then
+						if healthperc <= HealerProtection:DBGV("NEARDEATHPercentage", 30) and not neardeath then
 							neardeath = true
 							local tab = {}
 							tab["HEALTH"] = healthperc
-							if HealerProtection:GetConfig("showneardeathchat", true) and HealerProtection:AllowedTo() then
+							if HealerProtection:DBGV("showneardeathchat", true) and HealerProtection:AllowedTo() then
 								HealerProtection:ToCurrentChat("%s (%s)", "LID_neardeath", nil, "LID_xhealth", healthperc)
 							end
 
-							if HealerProtection:GetConfig("showneardeathemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+							if HealerProtection:DBGV("showneardeathemote", true) and HealerProtection:AllowedTo() and not isChanneling then
 								DoEmote("flee")
 							end
-						elseif healthperc > HealerProtection:GetConfig("NEAROOMPercentage", 30) + 20 and neardeath then
+						elseif healthperc > HealerProtection:DBGV("NEAROOMPercentage", 30) + 20 and neardeath then
 							neardeath = false
 						end
 					end
 				end
 			elseif not isdead then
 				isdead = true
-				if HealerProtection:GetConfig("deathmessage", true) then
+				if HealerProtection:DBGV("deathmessage", true) then
 					HealerProtection:ToCurrentChat("%s", "LID_healerisdead")
 				end
 			end

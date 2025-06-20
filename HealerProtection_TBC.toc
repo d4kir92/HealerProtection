@@ -1,5 +1,5 @@
 ## Interface: 20504
-## Version: 1.2.76
+## Version: 1.2.77
 ## Title: H|cff3FC7EBealer|rP|cff3FC7EBrotection|r |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
 ## Author: D|cff3FC7EB4KiR |T132115:16:16:0:0|t

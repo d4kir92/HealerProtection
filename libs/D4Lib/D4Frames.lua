@@ -43,13 +43,17 @@ function D4:GetText(frame)
     return nil
 end
 
-function D4:SetClampedToScreen(frame, value)
+function D4:SetClampedToScreen(frame, value, from)
     if frame == nil then return end
     if value == nil then return end
     local ok = pcall(
         function()
+            if frame == nil then return false end
+            if InCombatLockdown() and frame:IsProtected() then return false end
             if type(frame) == "table" and type(frame.SetClampedToScreen) == "function" then
                 frame:SetClampedToScreen(value)
+
+                return true
             end
         end
     )
@@ -81,6 +85,14 @@ function D4:TrySetParent(frame, parent)
     if ok then return true end
 
     return false
+end
+
+function D4:RunSec(callback, ...)
+    if callback == nil then return end
+    local ok, ret = pcall(function(...) return callback(...) end, ...)
+    if ok then return ret end
+
+    return nil
 end
 
 function D4:SetFontSize(element, fontSize, newFontFlags)

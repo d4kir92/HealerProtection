@@ -48,6 +48,41 @@ if C_Timer == nil then
     D4.oldWow = true
 end
 
+local countAfter = {}
+local countAfterEvents = {}
+local debug = false
+function D4:SetDebug(bo)
+    debug = bo
+end
+
+function D4:After(time, callback, from)
+    if from == nil then
+        D4:INFO("[AFTER] MISSING FROM", time)
+
+        return
+    end
+
+    if debug then
+        countAfter[from] = countAfter[from] or 0
+        countAfter[from] = countAfter[from] + 1
+    end
+
+    C_Timer.After(
+        time,
+        function()
+            callback()
+        end
+    )
+end
+
+function D4:GetCountAfter()
+    return countAfter
+end
+
+function D4:GetCountAfterEvents()
+    return countAfterEvents
+end
+
 function D4:GetClassColor(class)
     local colorTab = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
     if CUSTOM_CLASS_COLORS == nil and D4:GetWoWBuild() == "CLASSIC" and class == "SHAMAN" then return 0, 0.44, 0.87, "FF0070DE" end
@@ -82,6 +117,32 @@ function D4:RegisterEvent(frame, event, unit)
     end
 end
 
+function D4:UnregisterEvent(frame, event)
+    if C_EventUtils.IsEventValid(event) then
+        frame:UnregisterEvent(event)
+    end
+end
+
+function D4:OnEvent(frame, callback, from)
+    if from == nil then
+        D4:INFO("[D4][OnEvent] Missing from")
+
+        return
+    end
+
+    frame:HookScript(
+        "OnEvent",
+        function(sel, event, ...)
+            if debug then
+                countAfterEvents[from] = countAfterEvents[from] or 0
+                countAfterEvents[from] = countAfterEvents[from] + 1
+            end
+
+            callback(sel, event, ...)
+        end
+    )
+end
+
 function D4:ForeachChildren(frame, callback, from)
     if frame == nil then
         D4:MSG("[ForeachChildren] frame == nil", from)
@@ -104,7 +165,8 @@ function D4:ForeachChildren(frame, callback, from)
     for x = 1, frame:GetNumChildren() do
         local child = select(x, frame:GetChildren())
         if child then
-            callback(child, x)
+            local ret = callback(child, x)
+            if ret then return ret end
         else
             return
         end
@@ -133,7 +195,8 @@ function D4:ForeachRegions(frame, callback, from)
     for x = 1, frame:GetNumRegions() do
         local region = select(x, frame:GetRegions())
         if region then
-            callback(region, x)
+            local ret = callback(region, x)
+            if ret then return ret end
         else
             return
         end
@@ -156,8 +219,39 @@ local ICON_TAG_LIST_EN = {
     ["skull"] = 8,
 }
 
-function D4:SafeExec(sel, func)
-    if InCombatLockdown() and sel:IsProtected() then return end
+local callbacks = {}
+local fSecure = CreateFrame("Frame")
+D4:RegisterEvent(fSecure, "PLAYER_REGEN_ENABLED")
+D4:OnEvent(
+    fSecure,
+    function()
+        for i, func in pairs(callbacks) do
+            func()
+        end
+
+        callbacks = {}
+    end, "fSecure"
+)
+
+function D4:SafeExec(sel, func, from)
+    if sel == nil then
+        D4:MSG("[D4][SafeExec] MISSING FRAME", from)
+
+        return
+    end
+
+    if from == nil then
+        D4:MSG("[D4][SafeExec] MISSING FROM", D4:GetName(sel))
+
+        return
+    end
+
+    if InCombatLockdown() and sel:IsProtected() then
+        callbacks[from] = func
+
+        return
+    end
+
     func()
 end
 
@@ -244,12 +338,21 @@ function D4:LoadAddOn(name)
     return nil
 end
 
-function D4:IsAddOnLoaded(name)
-    if C_AddOns and C_AddOns.IsAddOnLoaded then return C_AddOns.IsAddOnLoaded(name) end
+function D4:IsAddOnLoaded(name, from)
+    if C_AddOns and C_AddOns.IsAddOnLoaded then
+        local loaded, _ = C_AddOns.IsAddOnLoaded(name)
+
+        return loaded
+    end
+
     if IsAddOnLoaded then return IsAddOnLoaded(name) end
     D4:MSG("[D4][IsAddOnLoaded] FAILED")
 
     return nil
+end
+
+function D4:IsAddonLoaded(name, from)
+    return D4:IsAddOnLoaded(name, from)
 end
 
 local function FixIconChat(sel, event, message, author, ...)
@@ -265,7 +368,7 @@ local function FixIconChat(sel, event, message, author, ...)
     return false, message, author, ...
 end
 
-C_Timer.After(
+D4:After(
     2,
     function()
         local chatChannels = {}
@@ -280,11 +383,11 @@ C_Timer.After(
         end
 
         ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", FixIconChat)
-    end
+    end, "D4 1"
 )
 
 if D4:GetWoWBuild() == "CLASSIC" then
-    C_Timer.After(
+    D4:After(
         2,
         function()
             -- FIX HEALTH
@@ -424,7 +527,7 @@ if D4:GetWoWBuild() == "CLASSIC" then
                     hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", TextStatusBar_UpdateTextStringWithValues)
                 end
             end
-        end
+        end, "FixHealth"
     )
 end
 
@@ -650,6 +753,44 @@ function D4:GetSpecIcon(className, specId)
     return specIcons[className][specId]
 end
 
+local icons = {}
+local searchIcons = true
+function D4:GetTalentIcons()
+    if searchIcons then
+        if GetSpecialization and GetSpecialization() then
+            if GetSpecializationInfo then
+                for i = 1, 4 do
+                    local name, _, _, icon = GetSpecializationInfo(i)
+                    if name and icon then
+                        searchIcons = false
+                        icons[name] = icon
+                    end
+                end
+            end
+        elseif GetPrimaryTalentTree and GetPrimaryTalentTree() then
+            if GetTalentTabInfo then
+                for i = 1, 4 do
+                    local name, _, _, icon = GetTalentTabInfo(i)
+                    if name and icon then
+                        searchIcons = false
+                        icons[name] = icon
+                    end
+                end
+            end
+        elseif GetTalentTabInfo then
+            for i = 1, 4 do
+                local name, _, _, icon = GetTalentTabInfo(i)
+                if name and icon then
+                    searchIcons = false
+                    icons[name] = icon
+                end
+            end
+        end
+    end
+
+    return icons
+end
+
 function D4:GetTalentInfo()
     local specid, icon
     if GetSpecialization and GetSpecialization() then
@@ -783,9 +924,9 @@ function D4:GetFrameByName(name)
 end
 
 local f = CreateFrame("Frame")
-f:RegisterEvent("PLAYER_LOGIN")
-f:SetScript(
-    "OnEvent",
+D4:RegisterEvent(f, "PLAYER_LOGIN")
+D4:OnEvent(
+    f,
     function(self, event, ...)
         if GetTrackingTexture then
             local trackingTexture = GetTrackingTexture()
@@ -794,5 +935,83 @@ f:SetScript(
                 MiniMapTracking:Show()
             end
         end
-    end
+    end, "MiniMapTracking"
 )
+
+function D4:DrawDebug(name, callback, fontSize, sw, sh, p1, p2, p3, p4, p5)
+    sw = sw or 100
+    sh = sh or 50
+    p1 = p1 or "CENTER"
+    p2 = p2 or UIParent
+    p3 = p3 or "CENTER"
+    p4 = p4 or 0
+    p5 = p5 or 0
+    local fDebug = CreateFrame("Frame", name)
+    fDebug:SetSize(sw, sh)
+    fDebug:SetPoint(p1, p2, p3, p4, p5)
+    fDebug.header = fDebug:CreateFontString(nil, nil, "GameFontNormal")
+    fDebug.header:SetPoint("CENTER", fDebug, "CENTER", 0, 200)
+    fDebug.header:SetSize(sw, sh)
+    fDebug.header:SetJustifyH("LEFT")
+    --fDebug.header:SetText(name)
+    if fontSize then
+        D4:SetFontSize(fDebug.header, fontSize)
+    end
+
+    fDebug.text = fDebug:CreateFontString(nil, nil, "GameFontNormal")
+    fDebug.text:SetPoint("CENTER", fDebug, "CENTER", 0, 0)
+    fDebug.text:SetSize(sw, sh)
+    fDebug.text:SetJustifyH("LEFT")
+    if fontSize then
+        D4:SetFontSize(fDebug.text, fontSize)
+    end
+
+    local function Think()
+        local text = callback()
+        fDebug.text:SetText(text)
+        D4:After(
+            0.2,
+            function()
+                Think()
+            end, "D4:DD " .. name
+        )
+    end
+
+    Think()
+
+    return fDebug
+end
+
+function D4:FindInGlobal(name, exact, ...)
+    local args = {...}
+    D4:After(
+        0.1,
+        function()
+            for i, v in pairs(_G) do
+                if exact then
+                    if v and type(v) == "string" and v == name then
+                        print("i", i, "v", v)
+                    end
+                else
+                    if v and type(v) == "string" and string.find(v, name, 1, true) then
+                        if #args > 0 then
+                            local all = true
+                            for x, w in pairs(args) do
+                                if string.find(v, w, 1, true) == nil then
+                                    all = false
+                                    break
+                                end
+                            end
+
+                            if all then
+                                print("v", v, "i", i)
+                            end
+                        else
+                            print("v", v, "i", i)
+                        end
+                    end
+                end
+            end
+        end, "FindInGlobal"
+    )
+end

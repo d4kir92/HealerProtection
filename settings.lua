@@ -20,7 +20,7 @@ function HealerProtection:InitSetting()
 
 	HealerProtection:AddSlash("hp", HealerProtection.ToggleSettings)
 	HealerProtection:AddSlash("healerprotection", HealerProtection.ToggleSettings)
-	hpset = HealerProtection:CreateFrame(
+	hpset = HealerProtection:CreateWindow(
 		{
 			["name"] = "HealerProtection Settings Frame",
 			["pTab"] = {"CENTER"},
@@ -149,7 +149,7 @@ function fra:OnEvent(event, addonName, ...)
 				HPTABPC["MMBTN"] = HealerProtection:GetWoWBuild() ~= "RETAIL"
 			end
 
-			HealerProtection:SetVersion(135923, "1.2.79")
+			HealerProtection:SetVersion(135923, "1.2.80")
 			HealerProtection:CreateMinimapButton(
 				{
 					["name"] = "HealerProtection",

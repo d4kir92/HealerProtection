@@ -4,17 +4,40 @@ local Y = 0
 local PARENT = nil
 local TAB = nil
 local TABIsNil = false
-function D4:GetName(frame)
-    if frame == nil then return nil end
+function D4:GetName(frame, bStr)
+    if frame == nil then
+        if bStr then
+            return ""
+        else
+            return nil
+        end
+    end
+
     local ok, name = pcall(
         function()
             if type(frame) == "table" and type(frame.GetName) == "function" then return frame:GetName() end
         end
     )
 
-    if ok then return name end
+    if ok then
+        if name ~= nil then
+            return name
+        else
+            if frame == nil then
+                if bStr then
+                    return ""
+                else
+                    return nil
+                end
+            end
+        end
+    end
 
-    return nil
+    if bStr then
+        return ""
+    else
+        return nil
+    end
 end
 
 function D4:GetParent(frame)
@@ -32,13 +55,13 @@ end
 
 function D4:GetText(frame)
     if frame == nil then return nil end
-    local ok, parent = pcall(
+    local ok, text = pcall(
         function()
             if type(frame) == "table" and type(frame.GetText) == "function" then return frame:GetText() end
         end
     )
 
-    if ok then return parent end
+    if ok then return text end
 
     return nil
 end
@@ -74,6 +97,7 @@ function D4:TrySetParent(frame, parent)
         return false
     end
 
+    if frame:IsProtected() and InCombatLockdown() then return false end
     local ok = pcall(
         function()
             if type(frame) == "table" and type(frame.SetParent) == "function" then
@@ -87,9 +111,44 @@ function D4:TrySetParent(frame, parent)
     return false
 end
 
-function D4:RunSec(callback, ...)
+function D4:TrySetScale(frame, scale)
+    if frame == nil then
+        D4:INFO("[D4] Missing Frame for TrySetScale", frame)
+
+        return false
+    end
+
+    if scale == nil then
+        D4:INFO("[D4] Missing Scale for TrySetScale", scale)
+
+        return false
+    end
+
+    if frame:IsProtected() and InCombatLockdown() then return false end
+    local ok = pcall(
+        function()
+            if type(frame) == "table" and type(frame.SetScale) == "function" then
+                frame:SetScale(scale)
+            end
+        end
+    )
+
+    if ok then return true end
+
+    return false
+end
+
+function D4:TryRun(callback, ...)
     if callback == nil then return end
     local ok, ret = pcall(function(...) return callback(...) end, ...)
+    if ok then return ret end
+
+    return nil
+end
+
+function D4:TrySec(callback, ...)
+    if callback == nil then return end
+    local ok, ret = securecall(function(...) return callback(...) end, ...)
     if ok then return ret end
 
     return nil
@@ -134,7 +193,7 @@ function D4:CreateCheckbox(tab, text)
     tab.parent = tab.parent or UIParent
     tab.pTab = tab.pTab or "CENTER"
     tab.value = tab.value or nil
-    local cb = CreateFrame("CheckButton", tab.name, tab.parent, "UICheckButtonTemplate")
+    local cb = D4:CreateCheckButton(tab.name, tab.parent)
     cb:SetSize(tab.sw, tab.sh)
     cb:SetPoint(unpack(tab.pTab))
     if tab.value == true or tab.value == 1 then
@@ -176,7 +235,7 @@ function D4:CreateCheckboxForCVAR(tab)
     tab.pTab = tab.pTab or "CENTER"
     tab.value = tab.value or nil
     local cb = D4:CreateCheckbox(tab)
-    local cb2 = CreateFrame("CheckButton", tab.name, tab.parent, "UICheckButtonTemplate")
+    local cb2 = D4:CreateCheckButton(tab.name, tab.parent)
     cb2:SetSize(tab.sw, tab.sh)
     local p1, p2, p3 = unpack(tab.pTab)
     cb2:SetPoint(p1, p2 + 25, p3)
@@ -417,7 +476,7 @@ function D4:AddColorPicker(key, value, func, x, y)
         TAB[key .. "_A"] = value.A
     end
 
-    local btn = CreateFrame("Button", key, PARENT, "UIPanelButtonTemplate")
+    local btn = D4:CreateButton(key, PARENT)
     btn:SetSize(180, 25)
     btn:SetPoint("TOPLEFT", PARENT, "TOPLEFT", x, Y)
     btn:SetText(D4:Trans("LID_" .. key))
@@ -463,34 +522,142 @@ function D4:AddColorPicker(key, value, func, x, y)
     )
 end
 
---[[ FRAMES ]]
-function D4:CreateFrame(tab)
-    tab.sw = tab.sw or 100
-    tab.sh = tab.sh or 100
-    tab.parent = tab.parent or UIParent
-    tab.pTab = tab.pTab or "CENTER"
-    tab.title = tab.title or ""
-    local fra = nil
-    if not D4:IsOldWow() then
-        tab.templates = tab.templates or "BasicFrameTemplateWithInset"
-        fra = CreateFrame("FRAME", tab.name, tab.parent, tab.templates)
+function D4:CheckTemplates(templates)
+    if templates == nil then return false end
+    templates = string.gsub(templates, "%s", "")
+    local tab = {strsplit(",", templates)}
+    for i, v in ipairs(tab) do
+        if not (DoesTemplateExist and DoesTemplateExist(v)) then return false end
+    end
+
+    return true
+end
+
+function D4:CreateFrame(name, parent, templates)
+    if false and templates and D4:CheckTemplates(templates) then
+        return CreateFrame("Frame", name, parent, templates)
+    elseif false and DoesTemplateExist and DoesTemplateExist("BasicFrameTemplateWithInset") then
+        return CreateFrame("Frame", name, parent, "BasicFrameTemplateWithInset")
     else
-        fra = CreateFrame("Frame", tab.name, tab.parent)
+        local fra = CreateFrame("Frame", name, parent)
         fra.TitleText = fra:CreateFontString(nil, nil, "GameFontNormal")
-        fra.TitleText:SetPoint("TOP", fra, "TOP", 0, 0)
-        fra.CloseButton = CreateFrame("Button", tab.name .. ".CloseButton", fra, "UIPanelButtonTemplate")
+        fra.TitleText:SetPoint("TOP", fra, "TOP", 0, -4)
+        fra.CloseButton = D4:CreateButton(name .. ".CloseButton", fra)
         fra.CloseButton:SetPoint("TOPRIGHT", fra, "TOPRIGHT", 0, 0)
         fra.CloseButton:SetSize(25, 25)
         fra.CloseButton:SetText("X")
-        fra.bg = fra:CreateTexture(tab.name .. ".bg", "ARTWORK")
+        fra.CloseButton:SetScript(
+            "OnClick",
+            function(sel, btm)
+                fra:Hide()
+            end
+        )
+
+        fra.bg = fra:CreateTexture(name .. ".bg", "ARTWORK")
         fra.bg:SetAllPoints(fra)
         if fra.bg.SetColorTexture then
             fra.bg:SetColorTexture(0.03, 0.03, 0.03, 0.5)
         else
             fra.bg:SetTexture(0.03, 0.03, 0.03, 0.5)
         end
-    end
 
+        return fra
+    end
+end
+
+function D4:CreateButton(name, parent, noDefaultTemplate, templates)
+    noDefaultTemplate = noDefaultTemplate or false
+    if noDefaultTemplate then
+        return CreateFrame("Button", name, parent, templates)
+    elseif templates and D4:CheckTemplates(templates) then
+        return CreateFrame("Button", name, parent, templates)
+    elseif DoesTemplateExist and DoesTemplateExist("UIPanelButtonTemplate") then
+        return CreateFrame("Button", name, parent, "UIPanelButtonTemplate")
+    else
+        local btn = CreateFrame("Button", name, parent)
+        btn.bg = btn:CreateTexture(name .. ".bg", "ARTWORK")
+        btn.bg:SetAllPoints(btn)
+        if btn.bg.SetColorTexture then
+            btn.bg:SetColorTexture(0.03, 0.03, 0.03, 0.5)
+        else
+            btn.bg:SetTexture(0.03, 0.03, 0.03, 0.5)
+        end
+
+        btn.Text = btn:CreateFontString(nil, nil, "GameFontNormal")
+        btn.Text:SetPoint("CENTER", btn, "CENTER", 0, 0)
+        function btn:SetText(text)
+            btn.Text:SetText(text)
+        end
+
+        return btn
+    end
+end
+
+function D4:CreateCheckButton(name, parent, templates)
+    if templates and D4:CheckTemplates(templates) then
+        return CreateFrame("CheckButton", name, parent, templates)
+    elseif DoesTemplateExist and DoesTemplateExist("ChatConfigCheckButtonTemplate") then
+        return CreateFrame("CheckButton", name, parent, "ChatConfigCheckButtonTemplate")
+    else
+        local btn = CreateFrame("Button", name, parent)
+        btn.cb = CreateFrame("CheckButton", name .. ".cb", btn)
+        btn.cb:SetSize(24, 24)
+        btn.cb:SetPoint("LEFT", btn, "LEFT", 0, 0)
+        btn.cb:HookScript(
+            "OnClick",
+            function(sel, button)
+                btn:Click()
+                if btn.cb:GetChecked() then
+                    btn.X:SetText("X")
+                else
+                    btn.X:SetText("")
+                end
+            end
+        )
+
+        btn.bg = btn:CreateTexture(name .. ".bg", "ARTWORK")
+        btn.bg:SetAllPoints(btn.cb)
+        if btn.bg.SetColorTexture then
+            btn.bg:SetColorTexture(0.03, 0.03, 0.03, 0.5)
+        else
+            btn.bg:SetTexture(0.03, 0.03, 0.03, 0.5)
+        end
+
+        btn.X = btn.cb:CreateFontString(nil, nil, "GameFontNormal")
+        btn.X:SetPoint("CENTER", btn.cb, "CENTER", 0, 0)
+        btn.Text = btn:CreateFontString(nil, nil, "GameFontNormal")
+        btn.Text:SetPoint("CENTER", btn, "CENTER", 0, 0)
+        function btn:SetText(text)
+            btn.Text:SetText(text)
+        end
+
+        function btn:SetChecked(bo)
+            if bo then
+                btn.X:SetText("X")
+            else
+                btn.X:SetText("")
+            end
+
+            btn.cb:SetChecked(bo)
+        end
+
+        function btn:GetChecked()
+            return btn.cb:GetChecked()
+        end
+
+        return btn
+    end
+end
+
+--[[ FRAMES ]]
+function D4:CreateWindow(tab)
+    tab.sw = tab.sw or 100
+    tab.sh = tab.sh or 100
+    tab.parent = tab.parent or UIParent
+    tab.pTab = tab.pTab or "CENTER"
+    tab.title = tab.title or ""
+    tab.templates = tab.templates
+    local fra = D4:CreateFrame(tab.name, tab.parent, tab.templates)
     fra:SetSize(tab.sw, tab.sh)
     fra:SetPoint(unpack(tab.pTab))
     D4:SetClampedToScreen(fra, true)

@@ -534,9 +534,9 @@ function D4:CheckTemplates(templates)
 end
 
 function D4:CreateFrame(name, parent, templates)
-    if false and templates and D4:CheckTemplates(templates) then
+    if templates and D4:CheckTemplates(templates) then
         return CreateFrame("Frame", name, parent, templates)
-    elseif false and DoesTemplateExist and DoesTemplateExist("BasicFrameTemplateWithInset") then
+    elseif DoesTemplateExist and DoesTemplateExist("BasicFrameTemplateWithInset") then
         return CreateFrame("Frame", name, parent, "BasicFrameTemplateWithInset")
     else
         local fra = CreateFrame("Frame", name, parent)

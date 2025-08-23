@@ -1,4 +1,8 @@
 local _, D4 = ...
+local CreateFrame = getglobal("CreateFrame")
+local InCombatLockdown = getglobal("InCombatLockdown")
+local securecall = getglobal("securecall")
+local strsplit = getglobal("strsplit")
 local X = 0
 local Y = 0
 local PARENT = nil
@@ -328,77 +332,81 @@ function D4:CreateSlider(tab)
     tab.steps = tab.steps or 1
     tab.decimals = tab.decimals or 0
     tab.key = tab.key or tab.name or ""
-    local slider = CreateFrame("Slider", tab.key, tab.parent, "UISliderTemplate")
-    slider:SetSize(tab.sw, 16)
-    slider:SetPoint(unpack(tab.pTab))
-    if slider.Low == nil then
-        slider.Low = slider:CreateFontString(nil, nil, "GameFontNormal")
-        slider.Low:SetPoint("BOTTOMLEFT", slider, "BOTTOMLEFT", 0, -12)
-        slider.Low:SetTextColor(1, 1, 1)
-    end
-
-    if slider.High == nil then
-        slider.High = slider:CreateFontString(nil, nil, "GameFontNormal")
-        slider.High:SetPoint("BOTTOMRIGHT", slider, "BOTTOMRIGHT", 0, -12)
-        slider.High:SetTextColor(1, 1, 1)
-    end
-
-    if slider.Text == nil then
-        slider.Text = slider:CreateFontString(nil, nil, "GameFontNormal")
-        slider.Text:SetPoint("TOP", slider, "TOP", 0, 16)
-        slider.Text:SetTextColor(1, 1, 1)
-    end
-
-    slider.Low:SetText(tab.vmin)
-    slider.High:SetText(tab.vmax)
-    if tab.name and tab.key and tab.key == "" then
-        D4:INFO("[D4][CreateSlider] " .. tab.name .. " has no key")
-    end
-
-    local struct = D4:Trans("LID_" .. tab.key)
-    if struct and tab.value then
-        slider.Text:SetText(string.format(struct, tab.value))
-    end
-
-    D4:SetFontSize(slider.Low, 10, "THINOUTLINE")
-    D4:SetFontSize(slider.High, 10, "THINOUTLINE")
-    D4:SetFontSize(slider.Text, 10, "THINOUTLINE")
-    slider:SetMinMaxValues(tab.vmin, tab.vmax)
-    slider:SetObeyStepOnDrag(true)
-    slider:SetValueStep(tab.steps)
-    if tab.value then
-        slider:SetValue(tab.value)
-    end
-
-    slider:SetScript(
-        "OnValueChanged",
-        function(sel, val)
-            val = string.format("%." .. tab.decimals .. "f", val)
-            val = tonumber(val)
-            if TAB then
-                TAB[tab.key] = val
-            end
-
-            if tab.funcV2 then
-                tab:funcV2(val)
-            elseif tab.funcV then
-                tab:funcV(val)
-            end
-
-            if tab.func then
-                tab:func(val)
-            end
-
-            local struct2 = D4:Trans("LID_" .. tab.key)
-            if struct2 then
-                slider.Text:SetText(string.format(struct2, val))
-            else
-                D4:MSG("[D4][CreateSlider][OnValueChanged] Missing format string:", tab.key)
-            end
+    if DoesTemplateExist and DoesTemplateExist("UISliderTemplate") then
+        local slider = CreateFrame("Slider", tab.key, tab.parent, "UISliderTemplate")
+        slider:SetSize(tab.sw, 16)
+        slider:SetPoint(unpack(tab.pTab))
+        if slider.Low == nil then
+            slider.Low = slider:CreateFontString(nil, nil, "GameFontNormal")
+            slider.Low:SetPoint("BOTTOMLEFT", slider, "BOTTOMLEFT", 0, -12)
+            slider.Low:SetTextColor(1, 1, 1)
         end
-    )
 
-    return slider
+        if slider.High == nil then
+            slider.High = slider:CreateFontString(nil, nil, "GameFontNormal")
+            slider.High:SetPoint("BOTTOMRIGHT", slider, "BOTTOMRIGHT", 0, -12)
+            slider.High:SetTextColor(1, 1, 1)
+        end
+
+        if slider.Text == nil then
+            slider.Text = slider:CreateFontString(nil, nil, "GameFontNormal")
+            slider.Text:SetPoint("TOP", slider, "TOP", 0, 16)
+            slider.Text:SetTextColor(1, 1, 1)
+        end
+
+        slider.Low:SetText(tab.vmin)
+        slider.High:SetText(tab.vmax)
+        if tab.name and tab.key and tab.key == "" then
+            D4:INFO("[D4][CreateSlider] " .. tab.name .. " has no key")
+        end
+
+        local struct = D4:Trans("LID_" .. tab.key)
+        if struct and tab.value then
+            slider.Text:SetText(string.format(struct, tab.value))
+        end
+
+        D4:SetFontSize(slider.Low, 10, "THINOUTLINE")
+        D4:SetFontSize(slider.High, 10, "THINOUTLINE")
+        D4:SetFontSize(slider.Text, 10, "THINOUTLINE")
+        slider:SetMinMaxValues(tab.vmin, tab.vmax)
+        slider:SetObeyStepOnDrag(true)
+        slider:SetValueStep(tab.steps)
+        if tab.value then
+            slider:SetValue(tab.value)
+        end
+
+        slider:SetScript(
+            "OnValueChanged",
+            function(sel, val)
+                val = string.format("%." .. tab.decimals .. "f", val)
+                val = tonumber(val)
+                if TAB then
+                    TAB[tab.key] = val
+                end
+
+                if tab.funcV2 then
+                    tab:funcV2(val)
+                elseif tab.funcV then
+                    tab:funcV(val)
+                end
+
+                if tab.func then
+                    tab:func(val)
+                end
+
+                local struct2 = D4:Trans("LID_" .. tab.key)
+                if struct2 then
+                    slider.Text:SetText(string.format(struct2, val))
+                else
+                    D4:MSG("[D4][CreateSlider][OnValueChanged] Missing format string:", tab.key)
+                end
+            end
+        )
+
+        return slider
+    end
+
+    return nil
 end
 
 function D4:GetColor(name, from)
@@ -870,16 +878,20 @@ function D4:CreateDropdown(key, value, choices, parent, func)
         return nil
     end
 
-    local text = parent:CreateFontString(nil, nil, "GameFontNormal")
-    text:SetPoint("TOPLEFT", X + 5, Y)
-    text:SetText(D4:Trans("LID_" .. key))
+    if choices[TAB[key]] == nil then
+        D4:INFO("[D4][CreateDropdown] key not exists in TAB")
+
+        return nil
+    end
+
+    local DropDown = nil
     Y = Y - 18
     if D4:GetWoWBuild() == "RETAIL" then
-        local Dropdown = CreateFrame("DropdownButton", key, parent, "WowStyle1DropdownTemplate")
-        Dropdown:SetDefaultText(D4:Trans("LID_" .. choices[TAB[key]]))
-        Dropdown:SetPoint("TOPLEFT", X + 5, Y)
-        Dropdown:SetWidth(200)
-        Dropdown:SetupMenu(
+        DropDown = CreateFrame("DropdownButton", key, parent, "WowStyle1DropdownTemplate")
+        DropDown:SetDefaultText(D4:Trans("LID_" .. choices[TAB[key]]))
+        DropDown:SetPoint("TOPLEFT", X + 5, Y)
+        DropDown:SetWidth(200)
+        DropDown:SetupMenu(
             function(dropdown, rootDescription)
                 if key and key == "" then
                     D4:INFO("[D4][CreateDropdown] has no key")
@@ -895,7 +907,7 @@ function D4:CreateDropdown(key, value, choices, parent, func)
                         D4:Trans("LID_" .. name),
                         function()
                             TAB[key] = data
-                            Dropdown:SetDefaultText(D4:Trans("LID_" .. name))
+                            DropDown:SetDefaultText(D4:Trans("LID_" .. name))
                             if func then
                                 func(data)
                             end
@@ -905,9 +917,9 @@ function D4:CreateDropdown(key, value, choices, parent, func)
             end
         )
     else
-        local dropDown = CreateFrame("Frame", "WPDemoDropDown", PARENT, "UIDropDownMenuTemplate")
-        dropDown:SetPoint("TOPLEFT", -10, Y)
-        UIDropDownMenu_SetWidth(dropDown, 200)
+        DropDown = CreateFrame("Frame", "WPDemoDropDown", parent, "UIDropDownMenuTemplate")
+        DropDown:SetPoint("TOPLEFT", -10, Y)
+        UIDropDownMenu_SetWidth(DropDown, 200)
         function WPDropDownDemo_Menu(frame, level, menuList)
             local info = UIDropDownMenu_CreateInfo()
             if level == 1 then
@@ -921,23 +933,29 @@ function D4:CreateDropdown(key, value, choices, parent, func)
                     info.text = D4:Trans("LID_" .. name)
                     info.arg1 = data
                     info.checked = name == choices[TAB[key]]
-                    info.func = dropDown.SetValue
+                    info.func = DropDown.SetValue
                     UIDropDownMenu_AddButton(info)
                 end
             end
         end
 
-        UIDropDownMenu_Initialize(dropDown, WPDropDownDemo_Menu)
-        UIDropDownMenu_SetText(dropDown, D4:Trans("LID_" .. choices[TAB[key]]))
-        function dropDown:SetValue(newValue)
+        UIDropDownMenu_Initialize(DropDown, WPDropDownDemo_Menu)
+        UIDropDownMenu_SetText(DropDown, D4:Trans("LID_" .. choices[TAB[key]]))
+        function DropDown:SetValue(newValue)
             TAB[key] = newValue
-            UIDropDownMenu_SetText(dropDown, newValue)
+            UIDropDownMenu_SetText(DropDown, newValue)
             CloseDropDownMenus()
             if func then
                 func(newValue)
             end
         end
     end
+
+    local text = parent:CreateFontString(nil, nil, "GameFontNormal")
+    text:SetPoint("BOTTOMLEFT", DropDown, "TOPLEFT", X + 4, 2)
+    text:SetText(D4:Trans("LID_" .. key))
+
+    return DropDown
 end
 
 function D4:AppendDropdown(key, value, choices, func)

@@ -135,7 +135,14 @@ function HealerProtection:ToCurrentChat(formatStr, val1text, val1val, val2text, 
 
 		local mes = prefix .. msg .. "." .. suffix
 		if mes ~= nil then
-			SendChatMessage(mes, _channel)
+			if C_ChatInfo then
+				C_ChatInfo.SendChatMessage(mes, _channel)
+			else
+				local SendChatMessage = getglobal("SendChatMessage")
+				if SendChatMessage then
+					SendChatMessage(mes, _channel)
+				end
+			end
 		end
 	end
 end
@@ -210,6 +217,7 @@ function HealerProtection:Setup()
 end
 
 function HealerProtection:PrintChat()
+	local SETOOMP = getglobal("SETOOMP")
 	if HealerProtection:DBGV("OOMPercentage", 10) > HealerProtection:DBGV("NEAROOMPercentage", 30) and SETOOMP ~= nil and not InCombatLockdown() then
 		HPTABPC["OOMPercentage"] = HealerProtection:DBGV("NEAROOMPercentage", 30)
 		SETOOMP:SetValue(HPTABPC["OOMPercentage"])
@@ -231,6 +239,8 @@ function HealerProtection:PrintChat()
 		end
 
 		if HealerProtection:GetWoWBuild() == "CLASSIC" or HealerProtection:GetWoWBuild() == "TBC" and roleToken == "NONE" then
+			local GetActiveTalentGroup = getglobal("GetActiveTalentGroup")
+			local GetTalentGroupRole = getglobal("GetTalentGroupRole")
 			if GetActiveTalentGroup and GetTalentGroupRole then
 				local group = GetActiveTalentGroup()
 				local role = GetTalentGroupRole(group)

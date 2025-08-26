@@ -39,7 +39,7 @@ HealerProtection:AddTrans("ruRU", "LID_showonlytranslation", "Показыват
 HealerProtection:AddTrans("ruRU", "LID_visibility", "Видимость")
 HealerProtection:AddTrans("ruRU", "LID_extras", "Дополнительно")
 HealerProtection:AddTrans("ruRU", "LID_AUTO", "АВТО")
-HealerProtection:AddTrans("ruRU", "LID_YELL", "КРик")
+HealerProtection:AddTrans("ruRU", "LID_YELL", "Крик")
 HealerProtection:AddTrans("ruRU", "LID_SAY", "Сказать")
 HealerProtection:AddTrans("ruRU", "LID_INSTANCE_CHAT", "Подземелье")
 HealerProtection:AddTrans("ruRU", "LID_PARTY", "Группа")

@@ -135,7 +135,7 @@ function HealerProtection:ToCurrentChat(formatStr, val1text, val1val, val2text, 
 
 		local mes = prefix .. msg .. "." .. suffix
 		if mes ~= nil then
-			if C_ChatInfo then
+			if C_ChatInfo and C_ChatInfo.SendChatMessage then
 				C_ChatInfo.SendChatMessage(mes, _channel)
 			else
 				local SendChatMessage = getglobal("SendChatMessage")

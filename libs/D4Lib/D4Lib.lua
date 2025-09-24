@@ -135,6 +135,7 @@ end
 function D4:RegisterEvent(frame, event, unit)
     if C_EventUtils == nil then
         frame:RegisterEvent(event)
+        D4:MSG("[D4] MISSING C_EventUtils")
 
         return
     end
@@ -291,6 +292,16 @@ function D4:GetItemInfo(itemID)
     local GetItemInfo = getglobal("GetItemInfo")
     if GetItemInfo then return GetItemInfo(itemID) end
     D4:MSG("[D4][GetItemInfo] FAILED")
+
+    return nil
+end
+
+function D4:GetItemCount(itemID)
+    if itemID == nil then return nil end
+    if C_Item and C_Item.GetItemCount then return C_Item.GetItemCount(itemID) end
+    local GetItemCount = getglobal("GetItemCount")
+    if GetItemCount then return GetItemCount(itemID) end
+    D4:MSG("[D4][GetItemCount] FAILED")
 
     return nil
 end

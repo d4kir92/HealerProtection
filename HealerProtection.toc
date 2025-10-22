@@ -1,11 +1,11 @@
-## Interface-Classic: 11507
+## Interface-Classic: 11508
 ## Interface-BCC: 20504
 ## Interface-Wrath: 30300, 30403
 ## Interface-Cata: 40402
 ## Interface-Mists: 50501
 ## Interface: 110205
 
-## Version: 1.2.88
+## Version: 1.2.89
 ## Title: H|cff3FC7EBealer|rP|cff3FC7EBrotection|r |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
 ## Notes-ruRU: Сообщает важную информацию в чат, когда целитель подвергается опасности (например, когда нет маны или под воздействием АГРО)

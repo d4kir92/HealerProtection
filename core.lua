@@ -243,9 +243,13 @@ function HealerProtection:PrintChat()
 			local GetTalentGroupRole = getglobal("GetTalentGroupRole")
 			if GetActiveTalentGroup and GetTalentGroupRole then
 				local group = GetActiveTalentGroup()
-				local role = GetTalentGroupRole(group)
-				if role and role ~= "" then
-					roleToken = role
+				if group then
+					local role = GetTalentGroupRole(group)
+					if role and role ~= "" then
+						roleToken = role
+					else
+						roleToken = "FAKEHEALER"
+					end
 				else
 					roleToken = "FAKEHEALER"
 				end

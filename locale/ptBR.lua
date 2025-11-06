@@ -1,6 +1,8 @@
 local _, HealerProtection = ...
 -- ptBR Portuguese Brazilian
+HealerProtection:AddTrans("ptBR", "LID_aggro", "AGGRO")
 HealerProtection:AddTrans("ptBR", "LID_showaggrochat", "Mensagem de Chat de AGGRO")
+HealerProtection:AddTrans("ptBR", "LID_showaggroemote", "Emote de AGGRO")
 HealerProtection:AddTrans("ptBR", "LID_outofmana", "Sem Mana")
 HealerProtection:AddTrans("ptBR", "LID_showoomchat", "Mensagem de Chat de Sem Mana")
 HealerProtection:AddTrans("ptBR", "LID_showoomemote", "Emote de Sem Mana")
@@ -36,3 +38,9 @@ HealerProtection:AddTrans("ptBR", "LID_showonlyenglish", "Mostrar Somente Inglê
 HealerProtection:AddTrans("ptBR", "LID_showonlytranslation", "Mostrar Somente Tradução")
 HealerProtection:AddTrans("ptBR", "LID_visibility", "Visibilidade")
 HealerProtection:AddTrans("ptBR", "LID_extras", "Extras")
+HealerProtection:AddTrans("ptBR", "LID_AUTO", "AUTO")
+HealerProtection:AddTrans("ptBR", "LID_YELL", "Gritar")
+HealerProtection:AddTrans("ptBR", "LID_SAY", "Dizer")
+HealerProtection:AddTrans("ptBR", "LID_INSTANCE_CHAT", "Instância")
+HealerProtection:AddTrans("ptBR", "LID_PARTY", "Grupo")
+HealerProtection:AddTrans("ptBR", "LID_RAID", "Raid")

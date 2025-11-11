@@ -186,7 +186,10 @@ function HealerProtection:Setup()
 			end
 
 			local f = CreateFrame("Frame")
-			f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+			if HealerProtection:GetWoWBuildNr() < 120000 then
+				f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+			end
+
 			f:SetScript("OnEvent", OnEvent)
 			local channeling = CreateFrame("Frame")
 			channeling:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")

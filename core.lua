@@ -235,12 +235,18 @@ function HealerProtection:PrintChat()
 			if id ~= nil then
 				roleToken = GetSpecializationRole(id)
 			end
+		else
+			local specId = HealerProtection:GetTalentInfo()
+			if specId then
+				local _, className = UnitClass("player")
+				roleToken = HealerProtection:GetRole(className, specId)
+			end
 		end
 
-		if UnitGroupRolesAssigned then
+		if UnitGroupRolesAssigned and HealerProtection:GetWoWBuild() ~= "TBC" then
 			roleToken = UnitGroupRolesAssigned("PLAYER")
 		else
-			if HealerProtection:GetWoWBuild() == "CLASSIC" or HealerProtection:GetWoWBuild() == "TBC" and roleToken == "NONE" then
+			if (HealerProtection:GetWoWBuild() == "CLASSIC" or HealerProtection:GetWoWBuild() == "TBC") and roleToken == "NONE" then
 				local GetActiveTalentGroup = getglobal("GetActiveTalentGroup")
 				local GetTalentGroupRole = getglobal("GetTalentGroupRole")
 				if GetActiveTalentGroup and GetTalentGroupRole then

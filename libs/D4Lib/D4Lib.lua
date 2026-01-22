@@ -798,6 +798,7 @@ local specRoless = {
     ["DEMONHUNTER"] = {
         [1] = "DAMAGER",
         [2] = "TANK",
+        [3] = "DAMAGER",
     },
     ["EVOKER"] = {
         [1] = "DAMAGER",
@@ -871,6 +872,7 @@ function D4:GetRole(className, specId)
 end
 
 function D4:GetSpecIcon(className, specId)
+    if specId == nil then return nil end
     if GetSpecializationInfoForClassID then
         local classId = classIds[className]
         if classId then
@@ -935,7 +937,7 @@ function D4:GetTalentInfo()
         end
 
         return specid, icon
-    elseif GetPrimaryTalentTree and GetPrimaryTalentTree() then
+    elseif D4:GetWoWBuild() ~= "TBC" and GetPrimaryTalentTree and GetPrimaryTalentTree() then
         specid = GetPrimaryTalentTree()
         if specid and GetTalentTabInfo then
             _, _, _, icon = GetTalentTabInfo(specid)

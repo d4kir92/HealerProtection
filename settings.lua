@@ -149,7 +149,7 @@ function fra:OnEvent(event, addonName, ...)
 				HPTABPC["MMBTN"] = HealerProtection:GetWoWBuild() ~= "RETAIL"
 			end
 
-			HealerProtection:SetVersion(135923, "1.2.98")
+			HealerProtection:SetVersion(135923, "1.2.99")
 			HealerProtection:CreateMinimapButton(
 				{
 					["name"] = "HealerProtection",

@@ -926,10 +926,6 @@ end
 
 function D4:GetTalentInfo()
     local specid, icon
-    local GetPrimaryTalentTree = getglobal("GetPrimaryTalentTree")
-    local GetTalentTabInfo = getglobal("GetTalentTabInfo")
-    local GetActiveTalentGroup = getglobal("GetActiveTalentGroup")
-    local GetTalentGroupRole = getglobal("GetTalentGroupRole")
     if GetSpecialization and GetSpecialization() then
         specid = GetSpecialization()
         if GetSpecializationInfo then

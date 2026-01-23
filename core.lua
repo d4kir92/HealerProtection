@@ -246,7 +246,7 @@ function HealerProtection:PrintChat()
 		if UnitGroupRolesAssigned and HealerProtection:GetWoWBuild() ~= "TBC" then
 			roleToken = UnitGroupRolesAssigned("PLAYER")
 		else
-			if (HealerProtection:GetWoWBuild() == "CLASSIC" or HealerProtection:GetWoWBuild() == "TBC") and roleToken == "NONE" then
+			if HealerProtection:GetWoWBuild() == "CLASSIC" and roleToken == "NONE" then
 				local GetActiveTalentGroup = getglobal("GetActiveTalentGroup")
 				local GetTalentGroupRole = getglobal("GetTalentGroupRole")
 				if GetActiveTalentGroup and GetTalentGroupRole then
@@ -264,15 +264,15 @@ function HealerProtection:PrintChat()
 				else
 					roleToken = "FAKEHEALER"
 				end
-			end
 
-			if roleToken == "FAKEHEALER" then
-				local specId = HealerProtection:GetTalentInfo()
-				local _, className = UnitClass("PLAYER")
-				if className and specId then
-					roleToken = HealerProtection:GetRole(className, specId)
-				else
-					roleToken = "HEALER"
+				if roleToken == "FAKEHEALER" then
+					local specId = HealerProtection:GetTalentInfo()
+					local _, className = UnitClass("PLAYER")
+					if className and specId then
+						roleToken = HealerProtection:GetRole(className, specId)
+					else
+						roleToken = "HEALER"
+					end
 				end
 			end
 		end

@@ -1,5 +1,5 @@
 ## Interface: 20505
-## Version: 1.2.102
+## Version: 1.2.103
 ## Title: H|cff3FC7EBealer|rP|cff3FC7EBrotection|r |T135923:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
 ## Notes-ruRU: Сообщает важную информацию в чат, когда целитель подвергается опасности (например, когда нет маны или под воздействием АГРО)

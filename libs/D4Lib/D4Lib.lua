@@ -1179,7 +1179,7 @@ D4:After(
                 local unit = contextData.unit
                 if unit == nil then return end
                 if not UnitIsPlayer(unit) then return end
-                if not IsInGroup() and false then return end
+                if not IsInGroup() and not IsInRaid() then return end
                 rootDescription:CreateDivider()
                 local isLeader = UnitIsGroupLeader("player")
                 local isAssistant = UnitIsGroupAssistant("player")

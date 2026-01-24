@@ -229,54 +229,7 @@ function HealerProtection:PrintChat()
 	local _channel = HealerProtection:GetCurrentChannel()
 	if not HealerProtection:CanWriteToChat(_channel) then return end
 	if HealerProtection:IsLoaded() then
-		local roleToken = "HEALER"
-		if GetSpecialization and GetSpecializationRole then
-			local id = GetSpecialization()
-			if id ~= nil then
-				roleToken = GetSpecializationRole(id)
-			end
-		else
-			local specId = HealerProtection:GetTalentInfo()
-			if specId then
-				local _, className = UnitClass("player")
-				roleToken = HealerProtection:GetRole(className, specId)
-			end
-		end
-
-		if UnitGroupRolesAssigned and HealerProtection:GetWoWBuild() ~= "TBC" then
-			roleToken = UnitGroupRolesAssigned("PLAYER")
-		else
-			if HealerProtection:GetWoWBuild() == "CLASSIC" and roleToken == "NONE" then
-				local GetActiveTalentGroup = getglobal("GetActiveTalentGroup")
-				local GetTalentGroupRole = getglobal("GetTalentGroupRole")
-				if GetActiveTalentGroup and GetTalentGroupRole then
-					local group = GetActiveTalentGroup()
-					if group then
-						local role = GetTalentGroupRole(group)
-						if role and role ~= "" then
-							roleToken = role
-						else
-							roleToken = "FAKEHEALER"
-						end
-					else
-						roleToken = "FAKEHEALER"
-					end
-				else
-					roleToken = "FAKEHEALER"
-				end
-
-				if roleToken == "FAKEHEALER" then
-					local specId = HealerProtection:GetTalentInfo()
-					local _, className = UnitClass("PLAYER")
-					if className and specId then
-						roleToken = HealerProtection:GetRole(className, specId)
-					else
-						roleToken = "HEALER"
-					end
-				end
-			end
-		end
-
+		local roleToken = HealerProtection:GetRole("player")
 		if HealerProtection:DBGV("showasnothealer", false) == false and (roleToken == "DAMAGER" or roleToken == "TANK") and not isNotHealerWarning then
 			isNotHealerWarning = true
 			HealerProtection:MSG("You are not a Healer.")

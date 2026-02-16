@@ -9,6 +9,7 @@ local isdead = false
 local neardeath = false
 local isNotHealerWarning = false
 local isChanneling = false
+local isdrinkingeating = false
 local onceM1 = false
 local onceM2 = false
 local lasttarget = ""
@@ -219,6 +220,17 @@ function HealerProtection:Setup()
 	end
 end
 
+function HealerProtection:IsPlayerDrinkingOrEating()
+	for i = 1, 40 do
+		local name = UnitBuff("player", i)
+		if not name then break end
+		if name == "Drink" or name == "Drinking" or name == "Food" or name == "Eating" then
+			return true
+		end
+	end
+	return false
+end
+
 function HealerProtection:PrintChat()
 	local SETOOMP = getglobal("SETOOMP")
 	if HealerProtection:DBGV("OOMPercentage", 10) > HealerProtection:DBGV("NEAROOMPercentage", 30) and SETOOMP ~= nil and not InCombatLockdown() then
@@ -339,6 +351,24 @@ function HealerProtection:PrintChat()
 						end
 					end
 				end
+
+				-- Drinking / Eating Logic
+				if HealerProtection:DBGV("DRINKINGEATING", true) then
+					local active = HealerProtection:IsPlayerDrinkingOrEating()
+					if active and not isdrinkingeating then
+						isdrinkingeating = true
+						if HealerProtection:DBGV("showdrinkingeatingchat", true) and HealerProtection:AllowedTo() then
+							HealerProtection:ToCurrentChat("%s", "LID_drinkingeating")
+						end
+
+						if HealerProtection:DBGV("showdrinkingeatingemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+							DoEmote("drink")
+						end
+					elseif not active and isdrinkingeating then
+						isdrinkingeating = false
+					end
+				end
+
 			elseif not isdead then
 				isdead = true
 				if HealerProtection:DBGV("deathmessage", true) then

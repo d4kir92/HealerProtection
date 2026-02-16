@@ -97,6 +97,10 @@ function HealerProtection:InitSetting()
 	HealerProtection:AppendCheckbox("showneardeathchat", true)
 	HealerProtection:AppendCheckbox("showneardeathemote", true)
 	HealerProtection:AppendSlider("NEARDEATHPercentage", 50, 5, 40, 1, 0)
+	HealerProtection:AppendCategory("drinkingeating")
+	HealerProtection:AppendCheckbox("drinkingeating", true)
+	HealerProtection:AppendCheckbox("showdrinkingeatingchat", true)
+	HealerProtection:AppendCheckbox("showdrinkingeatingemote", true)
 	HealerProtection:AppendCategory("extras")
 	HealerProtection:AppendCheckbox("deathmessage", true)
 	HealerProtection:AppendCheckbox("notinsight", false)
@@ -149,7 +153,7 @@ function fra:OnEvent(event, addonName, ...)
 				HPTABPC["MMBTN"] = HealerProtection:GetWoWBuild() ~= "RETAIL"
 			end
 
-			HealerProtection:SetVersion(135923, "1.2.106")
+			HealerProtection:SetVersion(135923, "1.2.105")
 			HealerProtection:CreateMinimapButton(
 				{
 					["name"] = "HealerProtection",

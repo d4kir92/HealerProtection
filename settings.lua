@@ -26,7 +26,7 @@ function HealerProtection:InitSetting()
 			["pTab"] = {"CENTER"},
 			["sw"] = 520,
 			["sh"] = 520,
-			["title"] = string.format("|T135923:16:16:0:0|t H|cff3FC7EBealer|rP|cff3FC7EBrotection|r by |cff3FC7EBD4KiR |T132115:16:16:0:0|t v|cff3FC7EB%s", HealerProtection:GetVersion())
+			["title"] = string.format("|T135923:16:16:0:0|t HealerProtection by |cff55d2ffD4KiR |T132115:16:16:0:0|t v%s", HealerProtection:GetVersion())
 		}
 	)
 
@@ -159,7 +159,7 @@ function fra:OnEvent(event, addonName, ...)
 					["name"] = "HealerProtection",
 					["icon"] = 135923,
 					["dbtab"] = HPTABPC,
-					["vTT"] = {{"|T135923:16:16:0:0|t H|cff3FC7EBealer|rP|cff3FC7EBrotection|r", "v|cff3FC7EB" .. HealerProtection:GetVersion()}, {HealerProtection:Trans("LID_LEFTCLICK"), HealerProtection:Trans("LID_OPENSETTINGS")}, {HealerProtection:Trans("LID_RIGHTCLICK"), HealerProtection:Trans("LID_HIDEMINIMAPBUTTON")}},
+					["vTT"] = {{"|T135923:16:16:0:0|t HealerProtection", "v" .. HealerProtection:GetVersion()}, {HealerProtection:Trans("LID_LEFTCLICK"), HealerProtection:Trans("LID_OPENSETTINGS")}, {HealerProtection:Trans("LID_RIGHTCLICK"), HealerProtection:Trans("LID_HIDEMINIMAPBUTTON")}},
 					["funcL"] = function()
 						HealerProtection:ToggleSettings()
 					end,

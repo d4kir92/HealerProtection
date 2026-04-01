@@ -77,11 +77,14 @@ function HealerProtection:InitSetting()
 		}
 	)
 
-	HealerProtection:AppendCategory("aggro")
-	HealerProtection:AppendCheckbox("aggro", true)
-	HealerProtection:AppendCheckbox("showaggrochat", true)
-	HealerProtection:AppendCheckbox("showaggroemote", true)
-	HealerProtection:AppendSlider("AGGROPercentage", 50, 20, 100, 1, 0)
+	if HealerProtection:GetWoWBuildNr() < 120000 then
+		HealerProtection:AppendCategory("aggro")
+		HealerProtection:AppendCheckbox("aggro", true)
+		HealerProtection:AppendCheckbox("showaggrochat", true)
+		HealerProtection:AppendCheckbox("showaggroemote", true)
+		HealerProtection:AppendSlider("AGGROPercentage", 50, 20, 100, 1, 0)
+	end
+
 	HealerProtection:AppendCategory("outofmana")
 	HealerProtection:AppendCheckbox("outofmana", true)
 	HealerProtection:AppendCheckbox("showoomchat", true)

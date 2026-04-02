@@ -224,10 +224,9 @@ function HealerProtection:IsPlayerDrinkingOrEating()
 	for i = 1, 40 do
 		local name = UnitBuff("player", i)
 		if not name then break end
-		if name == "Drink" or name == "Drinking" or name == "Food" or name == "Eating" then
-			return true
-		end
+		if name == "Drink" or name == "Drinking" or name == "Food" or name == "Eating" then return true end
 	end
+
 	return false
 end
 
@@ -251,7 +250,7 @@ function HealerProtection:PrintChat()
 			if not UnitIsDead("player") then
 				isdead = false
 				-- Aggro Logic
-				if HealerProtection:DBGV("AGGRO", true) then
+				if HealerProtection:GetWoWBuildNr() < 120000 and HealerProtection:DBGV("AGGRO", true) then
 					local status = nil
 					status = UnitThreatSituation("player")
 					local hp = UnitHealth("player")
@@ -368,7 +367,6 @@ function HealerProtection:PrintChat()
 						isdrinkingeating = false
 					end
 				end
-
 			elseif not isdead then
 				isdead = true
 				if HealerProtection:DBGV("deathmessage", true) then

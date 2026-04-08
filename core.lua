@@ -220,11 +220,30 @@ function HealerProtection:Setup()
 	end
 end
 
-function HealerProtection:IsPlayerDrinkingOrEating()
-	for i = 1, 40 do
-		local name = UnitBuff("player", i)
-		if not name then break end
-		if name == "Drink" or name == "Drinking" or name == "Food" or name == "Eating" then return true end
+local scannerTooltip = CreateFrame("GameTooltip", "ScannerTooltip", nil, "GameTooltipTemplate")
+scannerTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
+local manaWord = MANA or "Mana"
+local manaRegex = "%f[%a]" .. manaWord .. "%f[%A]"
+function HealerProtection:IsUnitDrinking(unit)
+	unit = unit or "player"
+	if C_TooltipInfo and C_TooltipInfo.GetUnitAura then
+		for i = 1, 40 do
+			local tooltipData = C_TooltipInfo.GetUnitAura(unit, i, "HELPFUL")
+			if not tooltipData then break end
+			for _, line in ipairs(tooltipData.lines) do
+				if line.leftText and line.leftText:find(manaRegex) then return true end
+			end
+		end
+	else
+		for i = 1, 10 do
+			scannerTooltip:ClearLines()
+			scannerTooltip:SetUnitAura(unit, i, "HELPFUL")
+			for j = 2, 4 do
+				local line = _G["ScannerTooltipTextLeft" .. j]
+				local text = line and line:GetText()
+				if text and text:find(manaRegex) then return true end
+			end
+		end
 	end
 
 	return false
@@ -353,7 +372,7 @@ function HealerProtection:PrintChat()
 
 				-- Drinking / Eating Logic
 				if HealerProtection:DBGV("DRINKINGEATING", true) then
-					local active = HealerProtection:IsPlayerDrinkingOrEating()
+					local active = HealerProtection:IsUnitDrinking()
 					if active and not isdrinkingeating then
 						isdrinkingeating = true
 						if HealerProtection:DBGV("showdrinkingeatingchat", true) and HealerProtection:AllowedTo() then

@@ -1,5 +1,5 @@
 ## Interface: 50503
-## Version: 1.2.110
+## Version: 1.2.111
 ## Title: HealerProtection |T135923:16:16:0:0|t by |cff55d2ffD4KiR |T132115:16:16:0:0|t
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
 ## Notes-ruRU: Сообщает важную информацию в чат, когда целитель подвергается опасности (например, когда нет маны или под воздействием АГРО)

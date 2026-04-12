@@ -222,27 +222,28 @@ end
 
 local scannerTooltip = CreateFrame("GameTooltip", "ScannerTooltip", nil, "GameTooltipTemplate")
 scannerTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
-local manaWord = MANA or "Mana"
-local manaRegex = "%f[%a]" .. manaWord .. "%f[%A]"
+local drinkWord = TUTORIAL_TITLE12 or "Drink"
+local drinkRegex = "%f[%a]" .. drinkWord .. "%f[%A]"
 function HealerProtection:IsUnitDrinking(unit)
+	--HealerProtection:EasyFind("Trinken", true)
 	unit = unit or "player"
 	if C_TooltipInfo and C_TooltipInfo.GetUnitAura then
-		for i = 1, 40 do
+		for i = 1, 32 do
 			local tooltipData = C_TooltipInfo.GetUnitAura(unit, i, "HELPFUL")
 			if not tooltipData then break end
 			for _, line in ipairs(tooltipData.lines) do
-				if line.leftText and line.leftText:find(manaRegex) then return true end
+				if line == nil then break end
+				if line.leftText and line.leftText:find(drinkRegex) then return true end
 			end
 		end
 	else
-		for i = 1, 10 do
+		for i = 1, 32 do
 			scannerTooltip:ClearLines()
 			scannerTooltip:SetUnitAura(unit, i, "HELPFUL")
-			for j = 2, 4 do
-				local line = _G["ScannerTooltipTextLeft" .. j]
-				local text = line and line:GetText()
-				if text and text:find(manaRegex) then return true end
-			end
+			local line = _G["ScannerTooltipTextLeft" .. 1]
+			if line == nil then break end
+			local text = line and line:GetText()
+			if text and text:find(drinkRegex) then return true end
 		end
 	end
 

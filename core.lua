@@ -28,11 +28,11 @@ end
 function HealerProtection:GetCurrentChannel()
 	local _channel = "PARTY"
 	if HealerProtection:DBGV("channelchat", "AUTO") == "AUTO" then
-		if IsInRaid(LE_PARTY_CATEGORY_HOME) then
+		if IsInRaid() then
 			_channel = "RAID"
-		elseif IsInRaid(LE_PARTY_CATEGORY_INSTANCE) or IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+		elseif IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
 			_channel = "INSTANCE_CHAT"
-		elseif IsInGroup(LE_PARTY_CATEGORY_HOME) then
+		elseif IsInGroup() then
 			_channel = "PARTY"
 		end
 	else

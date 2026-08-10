@@ -1,8 +1,17 @@
 ## Interface: 50504
-## Version: 1.2.122
+## Version: 1.2.123
 ## Title: HealerProtection |T135923:16:16:0:0|t by |cff55d2ffD4KiR |T132115:16:16:0:0|t
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
+## Notes-deDE: Gib wichtige Informationen im Chat weiter, wenn der Heiler in Gefahr ist (kein Mana mehr, Aggro)
+## Notes-esES: Envía información importante al chat cuando el sanador está en peligro (sin maná, amenaza)
+## Notes-esMX: Envía información importante al chat cuando el sanador está en peligro (sin maná, amenaza)
+## Notes-frFR: Envoie des informations importantes dans le chat lorsque le soigneur est en danger (plus de mana, aggro)
+## Notes-itIT: Invia informazioni importanti in chat quando il guaritore è in pericolo (mana esaurito, aggro)
+## Notes-koKR: 힐러가 위험할 때 (마나 고갈, 어그로) 채팅에 중요한 정보를 알립니다
+## Notes-ptBR: Envia informações importantes ao chat quando o curandeiro está em perigo (sem mana, ameaça)
 ## Notes-ruRU: Сообщает важную информацию в чат, когда целитель подвергается опасности (например, когда нет маны или под воздействием АГРО)
+## Notes-zhCN: 当治疗者处于危险时(法力耗尽、仇恨)在聊天中发送重要信息
+## Notes-zhTW: 當治療者處於危險時(法力耗盡、仇恨)在聊天中傳送重要資訊
 ## Author: D4KiR |T132115:16:16:0:0|t
 ## Category: Combat
 ## Category-deDE: Kampf

@@ -1,5 +1,5 @@
 ## Interface: 40402
-## Version: 1.2.124
+## Version: 1.2.125
 ## Title: HealerProtection |T135923:16:16:0:0|t by |cff55d2ffD4KiR |T132115:16:16:0:0|t
 ## Notes: Say important info to chat when healer is in danger (OOM, Aggro)
 ## Notes-deDE: Gib wichtige Informationen im Chat weiter, wenn der Heiler in Gefahr ist (kein Mana mehr, Aggro)

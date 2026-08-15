@@ -32,7 +32,6 @@
         "UIDropDownMenu_CreateInfo",
         "UIDropDownMenu_AddButton",
         "AddonCompartmentFrame",
-        "MouseIsOver",
         "ChatEdit_ParseText",
         "ChatEdit_SendText"
     ]

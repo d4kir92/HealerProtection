@@ -1233,6 +1233,12 @@ D4:After(1, function()
         D4:AddTrans("deDE", "LID_DAMAGER", "Schadem")
         D4:AddTrans("enUS", "LID_NOROLE", "No Role")
         D4:AddTrans("deDE", "LID_NOROLE", "Keine Rolle")
+        D4:AddTrans("ptBR", "LID_CHOOSEROLE", "Selecionar função")
+        D4:AddTrans("ptBR", "LID_NOTLEADER", "Não é líder")
+        D4:AddTrans("ptBR", "LID_TANK", "Tanque")
+        D4:AddTrans("ptBR", "LID_HEALER", "Curandeiro")
+        D4:AddTrans("ptBR", "LID_DAMAGER", "Dano")
+        D4:AddTrans("ptBR", "LID_NOROLE", "Sem função")
         local function IsRole(unit, role)
             return UnitGroupRolesAssigned(unit) == role
         end

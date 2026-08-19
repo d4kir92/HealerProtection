@@ -2,11 +2,12 @@
 local _, HealerProtection = ...
 function HealerProtection:CreateText(tab)
 	tab.textsize = tab.textsize or 12
-	local text = tab.frame:CreateFontString(nil, "ARTWORK")
-	text:SetFont(STANDARD_TEXT_FONT, tab.textsize, "OUTLINE")
+	local text = tab.frame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	text:SetText(HealerProtection:Trans(tab.text))
+	local font = text:GetFont()
+	text:SetFont(font, tab.textsize, "OUTLINE")
 	text:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
 	text:SetText(HealerProtection:Trans(tab.text))
-
 	return text
 end
 
@@ -35,16 +36,12 @@ function HealerProtection:CreateTextBox(tab)
 	tab.value = string.gsub(tab.value, "\n", "")
 	f.Text:SetText(tab.value or "")
 	f.Text:SetCursorPosition(0)
-	f.Text:SetScript(
-		"OnTextChanged",
-		function(sel)
-			local text = sel:GetText()
-			sel:SetText(text)
-			HPTABPC[tab.dbvalue] = text
-			HealerProtection:Setup()
-		end
-	)
-
+	f.Text:SetScript("OnTextChanged", function(sel)
+		local text = sel:GetText()
+		sel:SetText(text)
+		HPTABPC[tab.dbvalue] = text
+		HealerProtection:Setup()
+	end)
 	return f
 end
 
@@ -68,6 +65,5 @@ function HealerProtection:CreateComboBox(tab)
 
 	local DD = HealerProtection:CreateDropdown(rows)
 	DD:SetPoint("TOPLEFT", tab.parent, "TOPLEFT", tab.x, tab.y)
-
 	return DD
 end

@@ -1,4 +1,8 @@
 local _, D4 = ...
+function GetLocale()
+    return "zhTW"
+end
+
 local hooksecurefunc = _G["hooksecurefunc"]
 local GetBuildInfo = _G["GetBuildInfo"]
 local CreateFrame = _G["CreateFrame"]

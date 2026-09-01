@@ -251,12 +251,6 @@ function HealerProtection:IsUnitDrinking(unit)
 end
 
 function HealerProtection:PrintChat()
-	local SETOOMP = getglobal("SETOOMP")
-	if HealerProtection:DBGV("OOMPercentage", 10) > HealerProtection:DBGV("NEAROOMPercentage", 30) and SETOOMP ~= nil and not InCombatLockdown() then
-		HPTABPC["OOMPercentage"] = HealerProtection:DBGV("NEAROOMPercentage", 30)
-		SETOOMP:SetValue(HPTABPC["OOMPercentage"])
-	end
-
 	local _channel = HealerProtection:GetCurrentChannel()
 	if not HealerProtection:CanWriteToChat(_channel) then return end
 	if HealerProtection:IsLoaded() then

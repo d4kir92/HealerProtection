@@ -1,14 +1,87 @@
 -- By D4KiR
 local AddonName, HealerProtection = ...
 local hpset = nil
+local DEFAULT_WIDTH = 520
+local DEFAULT_HEIGHT = 520
 function HealerProtection:ToggleSettings()
-	if hpset then
-		if hpset:IsShown() then
-			hpset:Hide()
-		else
-			hpset:Show()
-		end
+	if hpset == nil then return end
+	hpset:Toggle()
+end
+
+local function GetCollapsed(key)
+	if key == nil then return nil end
+	if type(HPTABPC) ~= "table" then return nil end
+	if type(HPTABPC["COLLAPSED"]) ~= "table" then return nil end
+	return HPTABPC["COLLAPSED"][key]
+end
+
+local function SetCollapsed(key, collapsed)
+	if key == nil then return end
+	if type(HPTABPC) ~= "table" then return end
+	if type(HPTABPC["COLLAPSED"]) ~= "table" then HPTABPC["COLLAPSED"] = {} end
+	if collapsed then
+		HPTABPC["COLLAPSED"][key] = true
+	else
+		HPTABPC["COLLAPSED"][key] = nil
 	end
+end
+
+local function AddCategory(key, level)
+	hpset:AddCategory({
+		["label"] = "LID_" .. key,
+		["key"] = key,
+		["search"] = key,
+		["level"] = level
+	})
+end
+
+local LABELS = {
+	["AGGRO"] = "aggro",
+	["OOM"] = "outofmana",
+	["NEAROOM"] = "nearoutofmana",
+	["NEARDEATH"] = "neardeath",
+	["DRINKINGEATING"] = "drinkingeating",
+}
+
+local function AddCheckbox(key, default, func)
+	local label = LABELS[key] or key
+	local search = key
+	if label ~= key then search = key .. " " .. label end
+	hpset:AddCheckbox({
+		["label"] = "LID_" .. label,
+		["search"] = search,
+		["value"] = HealerProtection:DBGV(key, default),
+		["func"] = function(value)
+			HealerProtection:DBSV(key, value)
+			if func then func() end
+		end
+	})
+end
+
+local function AddSlider(key, default, min, max, step, decimals, func)
+	hpset:AddSlider({
+		["label"] = "LID_" .. key,
+		["search"] = key,
+		["value"] = HealerProtection:DBGV(key, default),
+		["min"] = min,
+		["max"] = max,
+		["step"] = step,
+		["decimals"] = decimals,
+		["func"] = function(value)
+			HealerProtection:DBSV(key, value)
+			if func then func() end
+		end
+	})
+end
+
+local function AddEditbox(key, default)
+	hpset:AddEditbox({
+		["label"] = "LID_" .. key,
+		["search"] = key,
+		["value"] = HealerProtection:DBGV(key, default),
+		["maxLetters"] = 20,
+		["func"] = function(value) HealerProtection:DBSV(key, value) end
+	})
 end
 
 function HealerProtection:InitSetting()
@@ -20,29 +93,29 @@ function HealerProtection:InitSetting()
 
 	HealerProtection:AddSlash("hp", HealerProtection.ToggleSettings)
 	HealerProtection:AddSlash("healerprotection", HealerProtection.ToggleSettings)
-	hpset = HealerProtection:CreateWindow(
+	hpset = HealerProtection:CreateUIWindow(
 		{
-			["name"] = "HealerProtection Settings Frame",
+			["name"] = "HealerProtectionSettings",
 			["pTab"] = {"CENTER"},
-			["sw"] = 520,
-			["sh"] = 520,
+			["width"] = HealerProtection:DBGV("WINDOWWIDTH", DEFAULT_WIDTH),
+			["height"] = HealerProtection:DBGV("WINDOWHEIGHT", DEFAULT_HEIGHT),
+			["minWidth"] = 360,
+			["minHeight"] = 240,
+			["onResize"] = function(width, height)
+				HealerProtection:DBSV("WINDOWWIDTH", width)
+				HealerProtection:DBSV("WINDOWHEIGHT", height)
+			end,
+			["getCollapsed"] = function(key) return GetCollapsed(key) end,
+			["setCollapsed"] = function(key, collapsed) SetCollapsed(key, collapsed) end,
 			["title"] = string.format("|T135923:16:16:0:0|t HealerProtection by |cff55d2ffD4KiR |T132115:16:16:0:0|t v%s", HealerProtection:GetVersion())
 		}
 	)
 
 	hpset:SetFrameLevel(110)
-	hpset.SF = CreateFrame("ScrollFrame", "hpset_SF", hpset, "UIPanelScrollFrameTemplate")
-	hpset.SF:SetPoint("TOPLEFT", hpset, 8, -26)
-	hpset.SF:SetPoint("BOTTOMRIGHT", hpset, -32, 8)
-	hpset.SC = CreateFrame("Frame", "hpset_SC", hpset.SF)
-	hpset.SC:SetSize(hpset.SF:GetSize())
-	hpset.SC:SetPoint("TOPLEFT", hpset.SF, "TOPLEFT", 0, 0)
-	hpset.SF:SetScrollChild(hpset.SC)
-	HealerProtection:SetAppendParent(hpset.SC)
-	HealerProtection:SetAppendTab(HPTABPC)
-	HealerProtection:SetAppendY(0)
-	HealerProtection:AppendCategory("general")
-	HealerProtection:AppendCheckbox(
+	hpset:SuspendLayout()
+	hpset:AddSearch()
+	AddCategory("general")
+	AddCheckbox(
 		"MMBTN",
 		HealerProtection:GetWoWBuild() ~= "RETAIL",
 		function()
@@ -54,79 +127,85 @@ function HealerProtection:InitSetting()
 		end
 	)
 
-	HealerProtection:AppendCategory("visibility")
-	HealerProtection:AppendCheckbox("printnothing", false)
-	HealerProtection:AppendCheckbox("showasnothealer", false)
-	HealerProtection:AppendCheckbox("showinraids", true)
-	HealerProtection:AppendCheckbox("showoutsideofinstance", false)
-	HealerProtection:AppendCheckbox("showinbgs", false)
-	HealerProtection:AppendCheckbox("showtranslation", true)
-	HealerProtection:AppendCheckbox("showonlyenglish", false)
-	HealerProtection:AppendCheckbox("showonlytranslation", false)
-	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 10)
-	HealerProtection:AppendDropdown(
-		"channelchat",
-		"AUTO",
+	AddCheckbox("printnothing", false)
+	AddCategory("visibility")
+	AddCheckbox("showasnothealer", false)
+	AddCheckbox("showinraids", true)
+	AddCheckbox("showinbgs", false)
+	AddCheckbox("showoutsideofinstance", false)
+	AddCategory("output")
+	hpset:AddDropdown(
 		{
-			["AUTO"] = "AUTO",
-			["PARTY"] = "PARTY",
-			["RAID"] = "RAID",
-			["INSTANCE_CHAT"] = "INSTANCE_CHAT",
-			["YELL"] = "YELL",
-			["SAY"] = "SAY",
+			["label"] = "LID_channelchat",
+			["search"] = "channelchat",
+			["value"] = HealerProtection:DBGV("channelchat", "AUTO"),
+			["choices"] = {
+				{
+					["value"] = "AUTO",
+					["label"] = "LID_AUTO"
+				},
+				{
+					["value"] = "PARTY",
+					["label"] = "LID_PARTY"
+				},
+				{
+					["value"] = "RAID",
+					["label"] = "LID_RAID"
+				},
+				{
+					["value"] = "INSTANCE_CHAT",
+					["label"] = "LID_INSTANCE_CHAT"
+				},
+				{
+					["value"] = "YELL",
+					["label"] = "LID_YELL"
+				},
+				{
+					["value"] = "SAY",
+					["label"] = "LID_SAY"
+				},
+			},
+			["func"] = function(value) HealerProtection:DBSV("channelchat", value) end
 		}
 	)
 
+	AddEditbox("prefix", "[Healer Protection]")
+	AddEditbox("suffix", "")
+	AddCategory("language", 2)
+	AddCheckbox("showtranslation", true)
+	AddCheckbox("showonlyenglish", false)
+	AddCheckbox("showonlytranslation", false)
+	AddCategory("alerts")
+	AddCheckbox("deathmessage", true)
+	AddCheckbox("notinsight", false)
 	if HealerProtection:GetWoWBuildNr() < 120000 then
-		HealerProtection:AppendCategory("aggro")
-		HealerProtection:AppendCheckbox("aggro", true)
-		HealerProtection:AppendCheckbox("showaggrochat", true)
-		HealerProtection:AppendCheckbox("showaggroemote", true)
-		HealerProtection:AppendSlider("AGGROPercentage", 50, 20, 100, 1, 0)
+		AddCategory("aggro", 2)
+		AddCheckbox("AGGRO", true)
+		AddCheckbox("showaggrochat", true)
+		AddCheckbox("showaggroemote", true)
+		AddSlider("AGGROPercentage", 50, 20, 100, 1, 0)
 	end
 
-	HealerProtection:AppendCategory("outofmana")
-	HealerProtection:AppendCheckbox("outofmana", true)
-	HealerProtection:AppendCheckbox("showoomchat", true)
-	HealerProtection:AppendCheckbox("showoomemote", true)
-	HealerProtection:AppendSlider("OOMPercentage", 10, 1, 30, 1, 0)
-	HealerProtection:AppendCategory("nearoutofmana")
-	HealerProtection:AppendCheckbox("nearoutofmana", true)
-	HealerProtection:AppendCheckbox("shownearoomchat", true)
-	HealerProtection:AppendCheckbox("shownearoomemote", true)
-	HealerProtection:AppendSlider("NEAROOMPercentage", 50, 10, 50, 1, 0)
-	HealerProtection:AppendCategory("neardeath")
-	HealerProtection:AppendCheckbox("neardeath", true)
-	HealerProtection:AppendCheckbox("showneardeathchat", true)
-	HealerProtection:AppendCheckbox("showneardeathemote", true)
-	HealerProtection:AppendSlider("NEARDEATHPercentage", 50, 5, 40, 1, 0)
-	HealerProtection:AppendCategory("drinkingeating")
-	HealerProtection:AppendCheckbox("drinkingeating", true)
-	HealerProtection:AppendCheckbox("showdrinkingeatingchat", true)
-	HealerProtection:AppendCheckbox("showdrinkingeatingemote", true)
-	HealerProtection:AppendCategory("extras")
-	HealerProtection:AppendCheckbox("deathmessage", true)
-	HealerProtection:AppendCheckbox("notinsight", false)
-	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 30)
-	local settings_prefix = {}
-	settings_prefix.name = "prefix"
-	settings_prefix.parent = HealerProtection:GetAppendParent()
-	settings_prefix.value = HealerProtection:DBGV("prefix", "[Healer Protection]")
-	settings_prefix.text = "LID_prefix"
-	settings_prefix.x = 10
-	settings_prefix.y = HealerProtection:GetAppendY()
-	settings_prefix.dbvalue = "prefix"
-	HealerProtection:CreateTextBox(settings_prefix)
-	HealerProtection:SetAppendY(HealerProtection:GetAppendY() - 60)
-	local settings_suffix = {}
-	settings_suffix.name = "suffix"
-	settings_suffix.parent = HealerProtection:GetAppendParent()
-	settings_suffix.value = HealerProtection:DBGV("suffix", "")
-	settings_suffix.text = "LID_suffix"
-	settings_suffix.x = 10
-	settings_suffix.y = HealerProtection:GetAppendY()
-	settings_suffix.dbvalue = "suffix"
-	HealerProtection:CreateTextBox(settings_suffix)
+	AddCategory("outofmana", 2)
+	AddCheckbox("OOM", true)
+	AddCheckbox("showoomchat", true)
+	AddCheckbox("showoomemote", true)
+	AddSlider("OOMPercentage", 10, 1, 30, 1, 0)
+	AddCategory("nearoutofmana", 2)
+	AddCheckbox("NEAROOM", true)
+	AddCheckbox("shownearoomchat", true)
+	AddCheckbox("shownearoomemote", true)
+	AddSlider("NEAROOMPercentage", 50, 10, 50, 1, 0)
+	AddCategory("neardeath", 2)
+	AddCheckbox("NEARDEATH", true)
+	AddCheckbox("showneardeathchat", true)
+	AddCheckbox("showneardeathemote", true)
+	AddSlider("NEARDEATHPercentage", 50, 5, 40, 1, 0)
+	AddCategory("drinkingeating", 2)
+	AddCheckbox("DRINKINGEATING", true)
+	AddCheckbox("showdrinkingeatingchat", true)
+	AddCheckbox("showdrinkingeatingemote", true)
+	hpset:ResumeLayout()
 end
 
 local HPloaded = false

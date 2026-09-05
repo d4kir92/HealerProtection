@@ -15,6 +15,8 @@ local onceM2 = false
 local lasttarget = ""
 local delayrange = GetTime()
 local outsideOfGroup = false
+local maxManaPeak = 0
+local lastAnnounce = {}
 function HealerProtection:AllowedTo()
 	if (GetNumGroupMembers() > 0 or GetNumSubgroupMembers() > 0 or HPDEBUG) and HealerProtection:DBGV("printnothing", false) == false then return true end
 	if outsideOfGroup == false then
@@ -250,6 +252,25 @@ function HealerProtection:IsUnitDrinking(unit)
 	return false
 end
 
+local function CanAnnounce(key)
+	local cooldown = HealerProtection:DBGV("REPEATCOOLDOWN", 20)
+	if cooldown <= 0 then return true end
+	local now = GetTime()
+	local last = lastAnnounce[key]
+	if last ~= nil and now - last < cooldown then return false end
+	lastAnnounce[key] = now
+
+	return true
+end
+
+local function IsMaxManaDrained(manamax)
+	if manamax <= 0 then return true end
+	if HealerProtection:DBGV("IGNOREMAXMANADRAIN", true) == false then return false end
+	if maxManaPeak > 0 and manamax < maxManaPeak * 0.5 then return true end
+
+	return false
+end
+
 function HealerProtection:PrintChat()
 	local _channel = HealerProtection:GetCurrentChannel()
 	if not HealerProtection:CanWriteToChat(_channel) then return end
@@ -273,12 +294,14 @@ function HealerProtection:PrintChat()
 						local hpperc = hp / hpmax * 100
 						if status ~= nil then
 							if status > 0 and not aggro and hpperc < HealerProtection:DBGV("AGGROPercentage", 50) then
-								if HealerProtection:DBGV("showaggrochat", true) and HealerProtection:AllowedTo() then
-									HealerProtection:ToCurrentChat("{rt8} %s", "LID_ihaveaggro")
-								end
+								if CanAnnounce("AGGRO") then
+									if HealerProtection:DBGV("showaggrochat", true) and HealerProtection:AllowedTo() then
+										HealerProtection:ToCurrentChat("{rt8} %s", "LID_ihaveaggro")
+									end
 
-								if HealerProtection:DBGV("showaggroemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-									DoEmote("helpme")
+									if HealerProtection:DBGV("showaggroemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+										DoEmote("helpme")
+									end
 								end
 
 								aggro = true
@@ -310,20 +333,35 @@ function HealerProtection:PrintChat()
 				if powerToken == "MANA" then
 					local mana = UnitPower("player")
 					local manamax = UnitPowerMax("player")
-					local manaperc = HealerProtection:MathR((mana / manamax) * 100, 1)
+					if manamax > maxManaPeak or not InCombatLockdown() then
+						maxManaPeak = manamax
+					end
+
+					local manadrained = IsMaxManaDrained(manamax)
+					local manaperc = 0
+					if manamax > 0 then
+						manaperc = HealerProtection:MathR((mana / manamax) * 100, 1)
+					end
+
 					local health = UnitHealth("player")
 					local healthmax = UnitHealthMax("player")
-					local healthperc = HealerProtection:MathR(health / healthmax * 100, 1)
+					local healthperc = 0
+					if healthmax > 0 then
+						healthperc = HealerProtection:MathR(health / healthmax * 100, 1)
+					end
+
 					-- OOM
-					if HealerProtection:DBGV("OOM", true) then
+					if HealerProtection:DBGV("OOM", true) and not manadrained then
 						if manaperc <= HealerProtection:DBGV("OOMPercentage", 10) and not oom then
 							oom = true
-							if HealerProtection:DBGV("showoomchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat("(%s) %s", "LID_xmana", manaperc, "LID_outofmana")
-							end
+							if CanAnnounce("OOM") then
+								if HealerProtection:DBGV("showoomchat", true) and HealerProtection:AllowedTo() then
+									HealerProtection:ToCurrentChat("(%s) %s", "LID_xmana", manaperc, "LID_outofmana")
+								end
 
-							if HealerProtection:DBGV("showoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-								DoEmote("oom")
+								if HealerProtection:DBGV("showoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+									DoEmote("oom")
+								end
 							end
 						elseif manaperc > HealerProtection:DBGV("OOMPercentage", 10) + 20 and oom then
 							oom = false
@@ -331,15 +369,17 @@ function HealerProtection:PrintChat()
 					end
 
 					-- Near OOM
-					if HealerProtection:DBGV("NEAROOM", true) and not oom then
+					if HealerProtection:DBGV("NEAROOM", true) and not oom and not manadrained then
 						if manaperc <= HealerProtection:DBGV("NEAROOMPercentage", 30) and not nearoom then
 							nearoom = true
-							if HealerProtection:DBGV("shownearoomchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat("(%s) %s", "LID_xmana", manaperc, "LID_nearoutofmana")
-							end
+							if CanAnnounce("NEAROOM") then
+								if HealerProtection:DBGV("shownearoomchat", true) and HealerProtection:AllowedTo() then
+									HealerProtection:ToCurrentChat("(%s) %s", "LID_xmana", manaperc, "LID_nearoutofmana")
+								end
 
-							if HealerProtection:DBGV("shownearoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-								DoEmote("incoming")
+								if HealerProtection:DBGV("shownearoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+									DoEmote("incoming")
+								end
 							end
 						elseif manaperc > HealerProtection:DBGV("NEAROOMPercentage", 30) + 20 and nearoom then
 							nearoom = false
@@ -352,14 +392,16 @@ function HealerProtection:PrintChat()
 							neardeath = true
 							local tab = {}
 							tab["HEALTH"] = healthperc
-							if HealerProtection:DBGV("showneardeathchat", true) and HealerProtection:AllowedTo() then
-								HealerProtection:ToCurrentChat("%s (%s)", "LID_neardeath", nil, "LID_xhealth", healthperc)
-							end
+							if CanAnnounce("NEARDEATH") then
+								if HealerProtection:DBGV("showneardeathchat", true) and HealerProtection:AllowedTo() then
+									HealerProtection:ToCurrentChat("%s (%s)", "LID_neardeath", nil, "LID_xhealth", healthperc)
+								end
 
-							if HealerProtection:DBGV("showneardeathemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-								DoEmote("flee")
+								if HealerProtection:DBGV("showneardeathemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+									DoEmote("flee")
+								end
 							end
-						elseif healthperc > HealerProtection:DBGV("NEAROOMPercentage", 30) + 20 and neardeath then
+						elseif healthperc > HealerProtection:DBGV("NEARDEATHPercentage", 30) + 20 and neardeath then
 							neardeath = false
 						end
 					end
@@ -370,12 +412,14 @@ function HealerProtection:PrintChat()
 					local active = HealerProtection:IsUnitDrinking()
 					if active and not isdrinkingeating then
 						isdrinkingeating = true
-						if HealerProtection:DBGV("showdrinkingeatingchat", true) and HealerProtection:AllowedTo() then
-							HealerProtection:ToCurrentChat("%s", "LID_drinkingeating")
-						end
+						if CanAnnounce("DRINKINGEATING") then
+							if HealerProtection:DBGV("showdrinkingeatingchat", true) and HealerProtection:AllowedTo() then
+								HealerProtection:ToCurrentChat("%s", "LID_drinkingeating")
+							end
 
-						if HealerProtection:DBGV("showdrinkingeatingemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-							DoEmote("drink")
+							if HealerProtection:DBGV("showdrinkingeatingemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+								DoEmote("drink")
+							end
 						end
 					elseif not active and isdrinkingeating then
 						isdrinkingeating = false

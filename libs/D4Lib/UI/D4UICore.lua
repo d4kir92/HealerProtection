@@ -64,7 +64,7 @@ function UI:IsNew(added)
     local currentYear, currentMonth, currentDay = CurrentDate()
     if not currentYear or not currentMonth or not currentDay then return false end
     local age = DateToDays(currentYear, currentMonth, currentDay) - DateToDays(year, month, day)
-    return age >= 0 and age <= NEW_DAYS
+    return age >= -1 and age <= NEW_DAYS
 end
 
 function UI:AddNewBadge(frame, added)

@@ -6,7 +6,7 @@ UI.SPACING = 5
 UI.ROW = 24
 UI.INDENT = 16
 UI.WindowMixin = {}
-local NEW_DAYS = 14
+local NEW_DAYS = 7
 local NEW_SECONDS = NEW_DAYS * 24 * 60 * 60
 
 function UI:Text(key, ...)
@@ -205,6 +205,24 @@ function UI.WindowMixin:SetElementShown(frame, shown)
     self:Layout()
 end
 
+function UI.WindowMixin:AddRequirement(frame, requiredFrame)
+    local element = frame and (frame.uiElement or frame.element)
+    local required = requiredFrame and (requiredFrame.uiElement or requiredFrame.element)
+    if element == nil or required == nil or element == required then return end
+    element.requires = element.requires or {}
+    tinsert(element.requires, required)
+end
+
+function UI:MatchRequirements(element)
+    if element.requires == nil then return end
+    for _, required in ipairs(element.requires) do
+        if not required.match then
+            required.match = true
+            UI:MatchRequirements(required)
+        end
+    end
+end
+
 function UI.WindowMixin:SetCategoryOrder(keys)
     local elements = {}
     local blocks = {}
@@ -304,6 +322,10 @@ function UI.WindowMixin:Filter(text)
                     if UI:HasAncestor(child, category) then child.match = true end
                 end
             end
+        end
+
+        for _, element in ipairs(self.elements) do
+            if element.match and not element.hidden then UI:MatchRequirements(element) end
         end
 
         for _, category in ipairs(self.elements) do

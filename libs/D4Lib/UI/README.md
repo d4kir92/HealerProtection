@@ -145,6 +145,11 @@ any of its children match, a category whose own label matches pulls in all of it
 children, and while a search is active collapsed categories are shown anyway so a
 hit is never hidden behind a closed group.
 
+`win:AddRequirement(frame, requiredFrame)` marks `requiredFrame` (e.g. the checkbox that
+enables an option) as required by `frame`. Both are frames an `Add*` call returned. While
+a search is active, every shown hit also shows the elements it requires, transitively,
+so a dependent option is never found without the switch that turns it on.
+
 ## Elements
 
 All `Add*` calls take one options table and return the created frame. Search box,
@@ -154,7 +159,7 @@ does not, because it is a fixed box with a label next to it.
 Every `Add*` also takes `search`: an extra string the search box matches against,
 on top of the translated label. Pass `added = "YYYY-MM-DD"` (or a Unix timestamp)
 for every newly introduced setting. D4UI shows a localized `[NEW]` badge for the
-first 14 days, including the added date, in light blue before the label. Existing settings without `added` remain
+first 7 days, including the added date, in light blue before the label. Existing settings without `added` remain
 unmarked; invalid dates are also ignored. Date strings are compared with the realm date
 (`C_DateAndTime.GetCurrentCalendarTime`), which can lag the local date around midnight,
 so a date one day in the future still counts as new; later dates are ignored.
@@ -174,6 +179,11 @@ so a date one day in the future still counts as new; later dates are ignored.
   after clamping to `min`/`max` and rounding to `decimals`.
   `holder.slider` is the slider itself, `holder.Low` / `holder.High` are the two range
   labels — set both when you change the range with `SetMinMaxValues` at runtime.
+  A small edit box right of the slider (`holder.Box`) shows the current value and takes
+  typed input: on Enter or focus loss the number (comma or dot as decimal separator) is
+  clamped to the slider's current range, snapped to the nearest `step` counted from `min`,
+  rounded to `decimals` and set on the slider, which fires `func` as a drag would.
+  Invalid input and Escape restore the current value.
 - `AddDropdown`: `label`, `value`, `width`, `choices`, `maxVisible`, `func(value)`.
   `choices` is an ordered array of `{value = ..., label = "LID_..."}`;
   `UI:ChoicesFromMap(map, current)` builds one from a sparse `value → label` table,

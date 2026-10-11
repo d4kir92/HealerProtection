@@ -6,7 +6,7 @@ UI.SPACING = 5
 UI.ROW = 24
 UI.INDENT = 16
 UI.WindowMixin = {}
-local NEW_DAYS = 7
+local NEW_DAYS = 5
 local NEW_SECONDS = NEW_DAYS * 24 * 60 * 60
 
 function UI:Text(key, ...)
@@ -54,7 +54,7 @@ function UI:IsNew(added)
         local ok, now = pcall(getTime)
         if not ok or type(now) ~= "number" then return false end
         local age = now - added
-        return age >= 0 and age <= NEW_SECONDS
+        return age >= 0 and age < NEW_SECONDS
     end
 
     if type(added) ~= "string" then return false end
@@ -64,7 +64,7 @@ function UI:IsNew(added)
     local currentYear, currentMonth, currentDay = CurrentDate()
     if not currentYear or not currentMonth or not currentDay then return false end
     local age = DateToDays(currentYear, currentMonth, currentDay) - DateToDays(year, month, day)
-    return age >= -1 and age <= NEW_DAYS
+    return age >= -1 and age < NEW_DAYS
 end
 
 function UI:AddNewBadge(frame, added)
@@ -77,9 +77,14 @@ function UI:AddNewBadge(frame, added)
     badge:SetPoint(point, relativeTo, relativePoint, xOffset, yOffset)
     frame.Label:SetPoint("LEFT", badge, "RIGHT", 4, 0)
     badge:SetWordWrap(false)
-    badge:SetText("|cff66ccff[" .. tostring(_G["NEW_CAPS"] or UI:Text("LID_NEW")) .. "]|r")
     frame.NewBadge = badge
+    UI:RefreshNewBadge(frame)
     return badge
+end
+
+function UI:RefreshNewBadge(frame)
+    if frame == nil or frame.NewBadge == nil then return end
+    frame.NewBadge:SetText("|cff66ccff[" .. tostring(UI:Text("LID_NEW")) .. "]|r")
 end
 
 function UI:NextName(win, kind)
@@ -133,6 +138,7 @@ end
 function UI:SetLabel(element, text)
     if element == nil then return end
     element.label = string.lower(text or "")
+    UI:RefreshNewBadge(element.frame)
 end
 
 function UI:ChoicesFromMap(map, current)
@@ -211,6 +217,36 @@ function UI.WindowMixin:AddRequirement(frame, requiredFrame)
     if element == nil or required == nil or element == required then return end
     element.requires = element.requires or {}
     tinsert(element.requires, required)
+end
+
+function UI.WindowMixin:AddDependency(frame, isEnabled, depth)
+    if frame == nil then return nil end
+    local element = frame.uiElement or frame.element
+    if element ~= nil then element.depth = (element.depth or 0) + (depth or 1) end
+    self.dependencies = self.dependencies or {}
+    tinsert(self.dependencies, {
+        ["frame"] = frame,
+        ["isEnabled"] = isEnabled,
+    })
+
+    return frame
+end
+
+function UI.WindowMixin:UpdateDependencies()
+    for _, dependency in ipairs(self.dependencies or {}) do
+        local frame = dependency.frame
+        local enabled = dependency.isEnabled == nil or dependency.isEnabled() == true
+        if frame.slider and enabled then
+            frame.slider:Enable()
+        elseif frame.slider then
+            frame.slider:Disable()
+        else
+            frame:SetEnabled(enabled)
+        end
+
+        local holder = frame.holder or frame
+        holder:SetAlpha(enabled and 1 or 0.5)
+    end
 end
 
 function UI:MatchRequirements(element)

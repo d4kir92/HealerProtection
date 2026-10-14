@@ -107,7 +107,7 @@ function HealerProtection:InitSetting()
 			end,
 			["getCollapsed"] = function(key) return GetCollapsed(key) end,
 			["setCollapsed"] = function(key, collapsed) SetCollapsed(key, collapsed) end,
-			["title"] = string.format("|T135923:16:16:0:0|t HealerProtection by |cff55d2ffD4KiR |T132115:16:16:0:0|t v%s", HealerProtection:GetVersion())
+			["title"] = string.format("|T%s:16:16:0:0|t HealerProtection by |cff55d2ffD4KiR |T132115:16:16:0:0|t v%s", HealerProtection:GetAddonIcon(), HealerProtection:GetVersion())
 		}
 	)
 
@@ -237,13 +237,13 @@ function fra:OnEvent(event, addonName, ...)
 				HPTABPC["MMBTN"] = HealerProtection:GetWoWBuild() ~= "RETAIL"
 			end
 
-			HealerProtection:SetVersion(135923, "1.2.105")
+			HealerProtection:SetVersion()
 			HealerProtection:CreateMinimapButton(
 				{
 					["name"] = "HealerProtection",
-					["icon"] = 135923,
+					["icon"] = HealerProtection:GetAddonIcon(),
 					["dbtab"] = HPTABPC,
-					["vTT"] = {{"|T135923:16:16:0:0|t HealerProtection", "v" .. HealerProtection:GetVersion()}, {HealerProtection:Trans("LID_LEFTCLICK"), HealerProtection:Trans("LID_OPENSETTINGS")}, {HealerProtection:Trans("LID_RIGHTCLICK"), HealerProtection:Trans("LID_HIDEMINIMAPBUTTON")}},
+					["vTT"] = {{string.format("|T%s:16:16:0:0|t HealerProtection", HealerProtection:GetAddonIcon()),"v" .. HealerProtection:GetVersion()}, {HealerProtection:Trans("LID_LEFTCLICK"), HealerProtection:Trans("LID_OPENSETTINGS")}, {HealerProtection:Trans("LID_RIGHTCLICK"), HealerProtection:Trans("LID_HIDEMINIMAPBUTTON")}},
 					["funcL"] = function()
 						HealerProtection:ToggleSettings()
 					end,

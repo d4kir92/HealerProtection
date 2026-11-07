@@ -260,13 +260,19 @@ local drinkRegex = "%f[%a]" .. drinkWord .. "%f[%A]"
 function HealerProtection:IsUnitDrinking(unit)
 	--HealerProtection:EasyFind("Trinken", true)
 	unit = unit or "player"
+	if C_Secrets and C_Secrets.ShouldAurasBeSecret then
+		local ok, secret = pcall(C_Secrets.ShouldAurasBeSecret)
+		if not ok or secret then return false end
+	end
+
 	if C_TooltipInfo and C_TooltipInfo.GetUnitAura then
 		for i = 1, 32 do
-			local tooltipData = C_TooltipInfo.GetUnitAura(unit, i, "HELPFUL")
-			if not tooltipData then break end
-			for _, line in ipairs(tooltipData.lines) do
+			local ok, tooltipData = pcall(C_TooltipInfo.GetUnitAura, unit, i, "HELPFUL")
+			if not ok or not tooltipData or HealerProtection:IsSecret(tooltipData) then break end
+			for _, line in ipairs(tooltipData.lines or {}) do
 				if line == nil then break end
-				if line.leftText and line.leftText:find(drinkRegex) then return true end
+				local text = line.leftText
+				if text and not HealerProtection:IsSecret(text) and text:find(drinkRegex) then return true end
 			end
 		end
 	else

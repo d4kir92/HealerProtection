@@ -179,11 +179,11 @@ function HealerProtection:InitSetting()
 	AddCheckbox("deathmessage", true)
 	AddCheckbox("notinsight", false)
 	AddSlider("REPEATCOOLDOWN", 20, 0, 120, 1, 0)
-	if HealerProtection:GetWoWBuildNr() < 120000 then
-		AddCategory("aggro", 2)
-		AddCheckbox("AGGRO", true)
-		AddCheckbox("showaggrochat", true)
-		AddCheckbox("showaggroemote", true)
+	AddCategory("aggro", 2)
+	AddCheckbox("AGGRO", true)
+	AddCheckbox("showaggrochat", true)
+	AddCheckbox("showaggroemote", true)
+	if not HealerProtection:IsSecretClient() then
 		AddSlider("AGGROPercentage", 50, 20, 100, 1, 0)
 	end
 

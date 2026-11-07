@@ -166,31 +166,51 @@ function HealerProtection:Setup()
 			warning_aggro.text:SetTextColor(1, 0, 0, 1)
 			warning_aggro:SetPoint("CENTER", 0, 0)
 			warning_aggro:Hide()
-			local function OnEvent(sel, event)
-				local _, eventtype, _, _, _, _, _, _, _, _, _, _, mm, _, reason = CombatLogGetCurrentEventInfo()
+			local function IsSecret(val)
+				return HealerProtection:IsSecret(val)
+			end
+
+			local function AnnounceNotInSight(reason, checkSpell)
+				if not HealerProtection:DBGV("notinsight", false) then return end
 				local TName = UnitName("target")
+				if TName == nil or IsSecret(TName) then return end
 				if lasttarget ~= TName or delayrange < GetTime() then
 					delayrange = GetTime() + 1
 					lasttarget = TName
 					local targetFriend = UnitIsFriend("player", "target")
-					if eventtype == "SPELL_CAST_FAILED" and HealerProtection:IsSpellInRange(mm) and HealerProtection:DBGV("notinsight", false) and targetFriend then
-						local tex = "Target is not in the field of view (" .. TName .. ")"
-						if HealerProtection:DBGV("showtranslation", true) and GetLocale() ~= "enUS" then
-							if HealerProtection:DBGV("showonlytranslation", false) then
-								tex = tex .. " [" .. reason .. " (" .. TName .. ")]"
-							else
-								tex = tex .. " [" .. reason .. " (" .. TName .. ")]"
-							end
-						end
-
-						HealerProtection:ToCurrentChat("%s", tex)
+					if IsSecret(targetFriend) or not targetFriend then return end
+					if checkSpell and not checkSpell() then return end
+					local tex = "Target is not in the field of view (" .. TName .. ")"
+					if reason and HealerProtection:DBGV("showtranslation", true) and GetLocale() ~= "enUS" then
+						tex = tex .. " [" .. reason .. " (" .. TName .. ")]"
 					end
+
+					HealerProtection:ToCurrentChat("%s", tex)
+				end
+			end
+
+			local function OnEvent(sel, event, ...)
+				if event == "UI_ERROR_MESSAGE" then
+					local _, message = ...
+					if message == nil or IsSecret(message) or SPELL_FAILED_LINE_OF_SIGHT == nil then return end
+					if message == SPELL_FAILED_LINE_OF_SIGHT then
+						AnnounceNotInSight(message)
+					end
+
+					return
+				end
+
+				local _, eventtype, _, _, _, _, _, _, _, _, _, _, mm, _, reason = CombatLogGetCurrentEventInfo()
+				if eventtype == "SPELL_CAST_FAILED" then
+					AnnounceNotInSight(reason, function() return HealerProtection:IsSpellInRange(mm) end)
 				end
 			end
 
 			local f = CreateFrame("Frame")
 			if not HealerProtection:IsForever() and HealerProtection:GetWoWBuildNr() < 120000 then
 				f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+			else
+				f:RegisterEvent("UI_ERROR_MESSAGE")
 			end
 
 			f:SetScript("OnEvent", OnEvent)
@@ -205,6 +225,17 @@ function HealerProtection:Setup()
 					elseif event == "UNIT_SPELLCAST_CHANNEL_STOP" then
 						isChanneling = false
 					end
+				end
+			)
+
+			HealerProtection.manaSpellsDirty = true
+			local spells = CreateFrame("Frame")
+			spells:RegisterEvent("SPELLS_CHANGED")
+			spells:RegisterEvent("PLAYER_ENTERING_WORLD")
+			spells:SetScript(
+				"OnEvent",
+				function()
+					HealerProtection.manaSpellsDirty = true
 				end
 			)
 
@@ -271,6 +302,139 @@ local function IsMaxManaDrained(manamax)
 	return false
 end
 
+local function PublicCall(fn, ...)
+	if type(fn) ~= "function" then return nil end
+	local ok, value = pcall(fn, ...)
+	if not ok or HealerProtection:IsSecret(value) then return nil end
+
+	return value
+end
+
+function HealerProtection:IsSecretClient()
+	return HealerProtection:IsForever() or HealerProtection:GetWoWBuildNr() >= 120000
+end
+
+function HealerProtection:PublicNumber(unit, fn)
+	local value = PublicCall(fn, unit)
+	if type(value) ~= "number" then return nil end
+
+	return value
+end
+
+function HealerProtection:GetPublicHealthPercent()
+	local hp = HealerProtection:PublicNumber("player", UnitHealth)
+	local hpmax = HealerProtection:PublicNumber("player", UnitHealthMax)
+	if hp == nil or hpmax == nil or hpmax <= 0 then return nil end
+
+	return HealerProtection:MathR(hp / hpmax * 100, 1)
+end
+
+function HealerProtection:IsEnemyTargetingPlayer(token)
+	if PublicCall(UnitExists, token) ~= true then return false end
+	if PublicCall(UnitCanAttack, "player", token) ~= true then return false end
+
+	return PublicCall(UnitIsUnit, token .. "target", "player") == true
+end
+
+function HealerProtection:IsTargetedByEnemy()
+	for _, token in ipairs({"target", "focus", "mouseover", "boss1", "boss2", "boss3", "boss4", "boss5"}) do
+		if HealerProtection:IsEnemyTargetingPlayer(token) then return true end
+	end
+
+	if C_NamePlate and type(C_NamePlate.GetNamePlates) == "function" then
+		local ok, plates = pcall(C_NamePlate.GetNamePlates)
+		if ok and type(plates) == "table" then
+			for _, plate in ipairs(plates) do
+				local token = plate.namePlateUnitToken or plate.unitToken or plate.UnitFrame and plate.UnitFrame.unit
+				if type(token) == "string" and not HealerProtection:IsSecret(token) and HealerProtection:IsEnemyTargetingPlayer(token) then return true end
+			end
+		end
+	end
+
+	return false
+end
+
+function HealerProtection:GetAggroStatus()
+	local ok, status = pcall(UnitThreatSituation, "player")
+	if ok and not HealerProtection:IsSecret(status) then return status end
+	if HealerProtection:IsTargetedByEnemy() then return 3 end
+
+	return 0
+end
+
+function HealerProtection:GetManaCost(spellID)
+	local getCost = C_Spell and C_Spell.GetSpellPowerCost or GetSpellPowerCost
+	local costs = PublicCall(getCost, spellID)
+	if type(costs) ~= "table" then return nil end
+	local manaType = Enum and Enum.PowerType and Enum.PowerType.Mana or 0
+	for _, entry in ipairs(costs) do
+		local cost = entry.cost
+		if entry.type == manaType and type(cost) == "number" and not HealerProtection:IsSecret(cost) and cost > 0 then return cost end
+	end
+
+	return nil
+end
+
+function HealerProtection:ForEachSpellbookSpell(callback)
+	if C_SpellBook and type(C_SpellBook.GetNumSpellBookSkillLines) == "function" and Enum and Enum.SpellBookSpellBank then
+		for i = 1, C_SpellBook.GetNumSpellBookSkillLines() do
+			local line = C_SpellBook.GetSpellBookSkillLineInfo(i)
+			if line and not line.offSpecID then
+				for slot = line.itemIndexOffset + 1, line.itemIndexOffset + line.numSpellBookItems do
+					local item = C_SpellBook.GetSpellBookItemInfo(slot, Enum.SpellBookSpellBank.Player)
+					if item and item.itemType == Enum.SpellBookItemType.Spell and not item.isPassive and item.spellID then
+						callback(item.spellID)
+					end
+				end
+			end
+		end
+	elseif type(GetNumSpellTabs) == "function" then
+		for i = 1, GetNumSpellTabs() do
+			local _, _, offset, numSlots = GetSpellTabInfo(i)
+			for slot = offset + 1, offset + numSlots do
+				local spellType, spellID = GetSpellBookItemInfo(slot, "spell")
+				if spellType == "SPELL" and spellID and not IsPassiveSpell(slot, "spell") then
+					callback(spellID)
+				end
+			end
+		end
+	end
+end
+
+function HealerProtection:ScanManaSpells()
+	local lowCost, highCost
+	HealerProtection.manaSpellLow = nil
+	HealerProtection.manaSpellHigh = nil
+	HealerProtection:ForEachSpellbookSpell(
+		function(spellID)
+			local cost = HealerProtection:GetManaCost(spellID)
+			if cost then
+				if lowCost == nil or cost < lowCost then
+					lowCost = cost
+					HealerProtection.manaSpellLow = spellID
+				end
+
+				if highCost == nil or cost > highCost then
+					highCost = cost
+					HealerProtection.manaSpellHigh = spellID
+				end
+			end
+		end
+	)
+
+	HealerProtection.manaSpellsDirty = false
+end
+
+function HealerProtection:IsSpellOutOfMana(spellID)
+	if spellID == nil then return nil end
+	local isUsable = C_Spell and C_Spell.IsSpellUsable or IsUsableSpell
+	if type(isUsable) ~= "function" then return nil end
+	local ok, _, noMana = pcall(isUsable, spellID)
+	if not ok or HealerProtection:IsSecret(noMana) then return nil end
+
+	return noMana == true
+end
+
 function HealerProtection:PrintChat()
 	local _channel = HealerProtection:GetCurrentChannel()
 	if not HealerProtection:CanWriteToChat(_channel) then return end
@@ -285,30 +449,24 @@ function HealerProtection:PrintChat()
 			if not UnitIsDead("player") then
 				isdead = false
 				-- Aggro Logic
-				if HealerProtection:GetWoWBuildNr() < 120000 and HealerProtection:DBGV("AGGRO", true) then
-					local status = nil
-					status = UnitThreatSituation("player")
-					local hp = UnitHealth("player")
-					local hpmax = UnitHealthMax("player")
-					if hpmax > 0 then
-						local hpperc = hp / hpmax * 100
-						if status ~= nil then
-							if status > 0 and not aggro and hpperc < HealerProtection:DBGV("AGGROPercentage", 50) then
-								if CanAnnounce("AGGRO") then
-									if HealerProtection:DBGV("showaggrochat", true) and HealerProtection:AllowedTo() then
-										HealerProtection:ToCurrentChat("{rt8} %s", "LID_ihaveaggro")
-									end
-
-									if HealerProtection:DBGV("showaggroemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-										DoEmote("helpme")
-									end
+				if HealerProtection:DBGV("AGGRO", true) then
+					local status = HealerProtection:GetAggroStatus()
+					local hpperc = HealerProtection:GetPublicHealthPercent()
+					local healthOk = HealerProtection:IsSecretClient() or hpperc == nil or hpperc < HealerProtection:DBGV("AGGROPercentage", 50)
+					if status ~= nil then
+						if status > 0 and not aggro and healthOk then
+							if CanAnnounce("AGGRO") then
+								if HealerProtection:DBGV("showaggrochat", true) and HealerProtection:AllowedTo() then
+									HealerProtection:ToCurrentChat("{rt8} %s", "LID_ihaveaggro")
 								end
 
-								aggro = true
-							elseif status == 0 and aggro then
-								aggro = false
+								if HealerProtection:DBGV("showaggroemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+									DoEmote("helpme")
+								end
 							end
-						else
+
+							aggro = true
+						elseif status == 0 and aggro then
 							aggro = false
 						end
 					else
@@ -331,27 +489,58 @@ function HealerProtection:PrintChat()
 				-- MANA Logic
 				local _, powerToken, _, _, _ = UnitPowerType("player")
 				if powerToken == "MANA" then
-					local mana = UnitPower("player")
-					local manamax = UnitPowerMax("player")
-					if manamax > maxManaPeak or not InCombatLockdown() then
+					local mana = HealerProtection:PublicNumber("player", UnitPower)
+					local manamax = HealerProtection:PublicNumber("player", UnitPowerMax)
+					if manamax ~= nil and (manamax > maxManaPeak or not InCombatLockdown()) then
 						maxManaPeak = manamax
 					end
 
-					local manadrained = IsMaxManaDrained(manamax)
-					local manaperc = 0
-					if manamax > 0 then
+					local manadrained = manamax ~= nil and IsMaxManaDrained(manamax)
+					local manaperc = nil
+					if mana ~= nil and manamax ~= nil and manamax > 0 then
 						manaperc = HealerProtection:MathR((mana / manamax) * 100, 1)
 					end
 
-					local health = UnitHealth("player")
-					local healthmax = UnitHealthMax("player")
-					local healthperc = 0
-					if healthmax > 0 then
-						healthperc = HealerProtection:MathR(health / healthmax * 100, 1)
+					local healthperc = HealerProtection:GetPublicHealthPercent()
+					if manaperc == nil then
+						if HealerProtection.manaSpellsDirty and not InCombatLockdown() then
+							HealerProtection:ScanManaSpells()
+						end
+
+						if not InCombatLockdown() and HealerProtection:IsSpellOutOfMana(HealerProtection.manaSpellHigh) == false then
+							oom = false
+							nearoom = false
+						end
+
+						if HealerProtection:DBGV("OOM", true) and not oom and HealerProtection:IsSpellOutOfMana(HealerProtection.manaSpellLow) then
+							oom = true
+							if CanAnnounce("OOM") then
+								if HealerProtection:DBGV("showoomchat", true) and HealerProtection:AllowedTo() then
+									HealerProtection:ToCurrentChat("%s", "LID_outofmana")
+								end
+
+								if HealerProtection:DBGV("showoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+									DoEmote("oom")
+								end
+							end
+						end
+
+						if HealerProtection:DBGV("NEAROOM", true) and not oom and not nearoom and HealerProtection:IsSpellOutOfMana(HealerProtection.manaSpellHigh) then
+							nearoom = true
+							if CanAnnounce("NEAROOM") then
+								if HealerProtection:DBGV("shownearoomchat", true) and HealerProtection:AllowedTo() then
+									HealerProtection:ToCurrentChat("%s", "LID_nearoutofmana")
+								end
+
+								if HealerProtection:DBGV("shownearoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
+									DoEmote("incoming")
+								end
+							end
+						end
 					end
 
 					-- OOM
-					if HealerProtection:DBGV("OOM", true) and not manadrained then
+					if manaperc ~= nil and HealerProtection:DBGV("OOM", true) and not manadrained then
 						if manaperc <= HealerProtection:DBGV("OOMPercentage", 10) and not oom then
 							oom = true
 							if CanAnnounce("OOM") then
@@ -369,7 +558,7 @@ function HealerProtection:PrintChat()
 					end
 
 					-- Near OOM
-					if HealerProtection:DBGV("NEAROOM", true) and not oom and not manadrained then
+					if manaperc ~= nil and HealerProtection:DBGV("NEAROOM", true) and not oom and not manadrained then
 						if manaperc <= HealerProtection:DBGV("NEAROOMPercentage", 30) and not nearoom then
 							nearoom = true
 							if CanAnnounce("NEAROOM") then
@@ -387,11 +576,9 @@ function HealerProtection:PrintChat()
 					end
 
 					-- Near Death
-					if HealerProtection:DBGV("NEARDEATH", true) then
+					if healthperc ~= nil and HealerProtection:DBGV("NEARDEATH", true) then
 						if healthperc <= HealerProtection:DBGV("NEARDEATHPercentage", 30) and not neardeath then
 							neardeath = true
-							local tab = {}
-							tab["HEALTH"] = healthperc
 							if CanAnnounce("NEARDEATH") then
 								if HealerProtection:DBGV("showneardeathchat", true) and HealerProtection:AllowedTo() then
 									HealerProtection:ToCurrentChat("%s (%s)", "LID_neardeath", nil, "LID_xhealth", healthperc)

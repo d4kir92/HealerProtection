@@ -189,7 +189,7 @@ function HealerProtection:Setup()
 			end
 
 			local f = CreateFrame("Frame")
-			if HealerProtection:GetWoWBuildNr() < 120000 then
+			if not HealerProtection:IsForever() and HealerProtection:GetWoWBuildNr() < 120000 then
 				f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 			end
 

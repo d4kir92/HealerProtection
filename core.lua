@@ -408,22 +408,14 @@ function HealerProtection:ForEachSpellbookSpell(callback)
 end
 
 function HealerProtection:ScanManaSpells()
-	local lowCost, highCost
-	HealerProtection.manaSpellLow = nil
+	local highCost
 	HealerProtection.manaSpellHigh = nil
 	HealerProtection:ForEachSpellbookSpell(
 		function(spellID)
 			local cost = HealerProtection:GetManaCost(spellID)
-			if cost then
-				if lowCost == nil or cost < lowCost then
-					lowCost = cost
-					HealerProtection.manaSpellLow = spellID
-				end
-
-				if highCost == nil or cost > highCost then
-					highCost = cost
-					HealerProtection.manaSpellHigh = spellID
-				end
+			if cost and (highCost == nil or cost > highCost) then
+				highCost = cost
+				HealerProtection.manaSpellHigh = spellID
 			end
 		end
 	)
@@ -518,7 +510,7 @@ function HealerProtection:PrintChat()
 							nearoom = false
 						end
 
-						if HealerProtection:DBGV("OOM", true) and not oom and HealerProtection:IsSpellOutOfMana(HealerProtection.manaSpellLow) then
+						if HealerProtection:DBGV("OOM", true) and not oom and HealerProtection:IsSpellOutOfMana(HealerProtection.manaSpellHigh) then
 							oom = true
 							if CanAnnounce("OOM") then
 								if HealerProtection:DBGV("showoomchat", true) and HealerProtection:AllowedTo() then

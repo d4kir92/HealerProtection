@@ -160,7 +160,7 @@ function D4:CreateGuildInvite(options)
 
     local frame = CreateFrame("Frame")
     for _, event in ipairs(GUILDINVITE_EVENTS) do
-        frame:RegisterEvent(event)
+        if not options.whisperOnly or event == "CHAT_MSG_WHISPER" then frame:RegisterEvent(event) end
     end
 
     frame:SetScript("OnEvent", function(_, _, msg, name, _, _, _, _, _, _, _, _, _, guid) Invite:OnChat(msg, name, guid) end)

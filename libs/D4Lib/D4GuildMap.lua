@@ -40,6 +40,7 @@ function D4:CreateGuildMap(options)
     _G[GUILDMAP_HOOKS][owner] = {
         isHidden = options.isHidden,
         getClip = options.getClip,
+        getZoneSpace = options.getZoneSpace,
         setPinScale = options.setPinScale,
         attach = options.attach
     }
@@ -82,6 +83,8 @@ function D4:CreateGuildMap(options)
         rects = {},
         online = {},
         ranks = {},
+        rosterLevels = {},
+        rosterZones = {},
         kinship = {},
         elapsed = 0,
         sincePrune = 0,
@@ -161,11 +164,32 @@ function D4:CreateGuildMap(options)
         return sender
     end
 
-    function Guild.IsSelfSender(sender)
-        local name, realm = UnitFullName("player")
-        if name == nil or sender == name then return true end
+    function Guild.GetOwnRosterName()
+        if Guild.ownRosterName ~= nil then return Guild.ownRosterName end
+        if not D4:IsForever() or UnitGUID == nil or GetNumGuildMembers == nil or GetGuildRosterInfo == nil then return nil end
+        local guid = UnitGUID("player")
+        if guid == nil or Guild.IsSecret(guid) then return nil end
+        for index = 1, GetNumGuildMembers() or 0 do
+            local memberName, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, memberGUID = GetGuildRosterInfo(index)
+            if memberGUID == guid and type(memberName) == "string" then
+                Guild.ownRosterName = strlower(strsplit("-", memberName))
 
-        return realm ~= nil and realm ~= "" and sender == name .. "-" .. realm
+                return Guild.ownRosterName
+            end
+        end
+    end
+
+    function Guild.IsSelfSender(sender)
+        local key, ownName = D4:GetPlayerCharacterKey()
+        if key and (sender == key or sender == ownName) then return true end
+        if not key or D4:IsForever() then
+            local name, realm = UnitFullName("player")
+            if not D4:CanAccessValues(name, realm) or name == nil then return key == nil end
+            if sender == name or (realm ~= nil and realm ~= "" and sender == name .. "-" .. realm) then return true end
+        end
+        local own = type(sender) == "string" and Guild.GetOwnRosterName()
+
+        return own ~= nil and own == strlower(strsplit("-", sender))
     end
 
     function Guild.IsSelf(sender, name)
@@ -353,17 +377,24 @@ function D4:CreateGuildMap(options)
     function Guild.UpdateRoster()
         if GetNumGuildMembers == nil or GetGuildRosterInfo == nil then return end
         local count = GetNumGuildMembers()
-        if Guild.IsSecret(count) or type(count) ~= "number" or count <= 0 then return end
+        if Guild.IsSecret(count) or type(count) ~= "number" then return end
+        wipe(Guild.rosterZones)
+        Guild.dirty = true
         wipe(Guild.online)
         wipe(Guild.ranks)
+        wipe(Guild.rosterLevels)
         local leader
         for index = 1, count do
-            local name, rank, rankIndex, _, _, _, _, _, online = GetGuildRosterInfo(index)
+            local name, rank, rankIndex, level, _, zone, _, _, online, _, class, _, _, mobile = GetGuildRosterInfo(index)
             if not Guild.IsSecret(name, rank, rankIndex, online) and type(name) == "string" then
                 name = Guild.GetName(name)
                 Guild.online[name] = online and true or false
                 Guild.ranks[name] = type(rank) == "string" and rank or nil
+                if not Guild.IsSecret(level) and type(level) == "number" and level > 0 then Guild.rosterLevels[name] = level end
                 if rankIndex == 0 then leader = name end
+                if online and not Guild.IsSecret(zone, class, mobile) and not mobile and type(zone) == "string" and zone ~= "" and not Guild.IsSelf(name, name) then
+                    Guild.rosterZones[name] = {name = name, zone = zone, class = class}
+                end
             end
         end
 
@@ -458,6 +489,40 @@ function D4:CreateGuildMap(options)
     end
 
     function Guild.OnPinEnter(pin)
+        if pin.zoneMembers ~= nil then
+            GameTooltip:SetOwner(pin, "ANCHOR_RIGHT")
+            local zones = {}
+            local commonZone
+            for index, member in ipairs(pin.zoneMembers) do
+                local info = member.mapID and C_Map.GetMapInfo(member.mapID)
+                local rosterMember = Guild.rosterZones[member.name]
+                local zone = member.zone or (info and info.name) or (rosterMember and rosterMember.zone)
+                zones[index] = zone
+                if index == 1 then
+                    commonZone = zone
+                elseif zone ~= commonZone then
+                    commonZone = nil
+                end
+            end
+
+            GameTooltip:SetText(commonZone or GUILD)
+            for index, member in ipairs(pin.zoneMembers) do
+                local color = RAID_CLASS_COLORS[member.class or ""] or Guild.fallbackColor
+                local details = {}
+                local rank = member.rank or Guild.ranks[member.name]
+                local level = Guild.rosterLevels[member.name] or member.level
+                if rank ~= nil and rank ~= "" then details[#details + 1] = rank end
+                if level ~= nil then details[#details + 1] = format("%s %d", LEVEL or "Level", level) end
+                if commonZone == nil and zones[index] ~= nil then details[#details + 1] = zones[index] end
+                local text = member.name
+                if #details > 0 then text = text .. " (" .. table.concat(details, ", ") .. ")" end
+                GameTooltip:AddLine(text, color.r, color.g, color.b, true)
+            end
+            GameTooltip:Show()
+
+            return
+        end
+
         local member = pin.member
         if member == nil then return end
         GameTooltip:SetOwner(pin, "ANCHOR_RIGHT")
@@ -666,6 +731,242 @@ function D4:CreateGuildMap(options)
         end)
     end
 
+    function Guild.GetZoneSpace(mapID)
+        if mapID == nil or not Guild.GetConfig("GUILDMEMBERZONES", true) then return nil end
+        for _, hooks in pairs(_G[GUILDMAP_HOOKS]) do
+            if hooks.getZoneSpace ~= nil then
+                local space = hooks.getZoneSpace(mapID)
+                if space ~= nil then return space end
+            end
+        end
+    end
+
+    function Guild.GetZonePoints(mapID, space)
+        if Guild.zoneMapID == mapID and Guild.zoneSpaceID == space then return Guild.zonePoints end
+        Guild.zoneMapID, Guild.zoneSpaceID = mapID, space
+        local points = {}
+        Guild.zonePoints = points
+        local zoneType = Enum and Enum.UIMapType and Enum.UIMapType.Zone
+        if zoneType == nil or C_Map.GetMapChildrenInfo == nil then return points end
+        local info = C_Map.GetMapInfo(mapID)
+        local currentZone = info and info.mapType == zoneType and info.name
+        if currentZone then points[currentZone] = {x = 0.5, y = 0.5} end
+        local hostRect = space ~= nil and space ~= mapID and Guild.GetRect(mapID, space)
+        local sourceMap = hostRect and space or mapID
+        for _, zone in ipairs(C_Map.GetMapChildrenInfo(sourceMap, zoneType, true) or {}) do
+            if zone.name ~= currentZone then
+                local x, y = Guild.Project(zone.mapID, sourceMap, 0.5, 0.5)
+                if x and x >= 0 and x <= 1 and y >= 0 and y <= 1 then
+                    if hostRect then
+                        x = (x - hostRect[1]) / (hostRect[2] - hostRect[1])
+                        y = (y - hostRect[3]) / (hostRect[4] - hostRect[3])
+                    end
+                    if points[zone.name] == nil then
+                        points[zone.name] = {x = x, y = y}
+                    else
+                        points[zone.name] = false
+                    end
+                end
+            end
+        end
+
+        return points
+    end
+
+    function Guild.DrawZonePie(pin, members, size, inset, fontSize)
+        local classes, counts = {}, {}
+        for _, member in ipairs(members) do
+            local class = member.class or ""
+            if counts[class] == nil then
+                classes[#classes + 1] = class
+                counts[class] = 0
+            end
+            counts[class] = counts[class] + 1
+        end
+        table.sort(classes)
+
+        if pin.pie == nil then
+            pin.pie = CreateFrame("Frame", nil, pin)
+            pin.pie:SetAllPoints()
+            pin.pie:SetFrameLevel(pin:GetFrameLevel() + 1)
+            pin.pie.count = pin.pie:CreateFontString(nil, "OVERLAY")
+            pin.pie.count:SetPoint("CENTER")
+            pin.pie.runs = {}
+        end
+
+        local pie = pin.pie
+        pie:SetFrameLevel(pin:GetFrameLevel() + 1)
+        pie:Show()
+        Guild.SetLabel(pie.count, #members > 1 and #members or nil, fontSize, Guild.textColor)
+        local signature = {}
+        local sectors, total = {}, 0
+        for _, class in ipairs(classes) do
+            total = total + counts[class]
+            sectors[#sectors + 1] = total / #members
+            signature[#signature + 1] = class .. counts[class]
+        end
+        local key = table.concat(signature, ":")
+        if pie.key == key and pie.size == size and pie.inset == inset then return end
+        pie.key, pie.size, pie.inset = key, size, inset
+
+        local resolution = 24
+        local pixel = size / resolution
+        local radius = resolution / 2 - inset / pixel
+        local used = 0
+        for row = 0, resolution - 1 do
+            local y = row + 0.5 - resolution / 2
+            local start, previous
+            for column = 0, resolution do
+                local x = column + 0.5 - resolution / 2
+                local sector
+                if x * x + y * y < radius ^ 2 then
+                    local angle = (math.atan2(x, -y) / (2 * math.pi)) % 1
+                    sector = 1
+                    while angle >= sectors[sector] do sector = sector + 1 end
+                end
+                if sector ~= previous then
+                    if previous ~= nil then
+                        used = used + 1
+                        local run = pie.runs[used]
+                        if run == nil then
+                            run = pie:CreateTexture(nil, "ARTWORK")
+                            pie.runs[used] = run
+                        end
+                        local color = RAID_CLASS_COLORS[classes[previous]] or Guild.fallbackColor
+                        run:SetColorTexture(color.r, color.g, color.b)
+                        run:SetPoint("TOPLEFT", pie, "TOPLEFT", start * pixel, -row * pixel)
+                        run:SetSize((column - start) * pixel, pixel)
+                        run:Show()
+                    end
+                    start, previous = column, sector
+                end
+            end
+        end
+        for index = used + 1, #pie.runs do pie.runs[index]:Hide() end
+    end
+
+    function Guild.SetGroupPin(pin, members, zone, size, scale)
+        table.sort(members, function(a, b) return a.name < b.name end)
+        pin.member, pin.zone, pin.zoneMembers = nil, zone, members
+        pin.dot:Hide()
+        pin.level:Hide()
+        pin.name:Hide()
+        pin.crown:Hide()
+        Guild.DrawZonePie(pin, members, size, Guild.border / scale, Guild.levelFontSize / scale)
+    end
+
+    function Guild.MergeOverlappingPins(canvas, count, size, scale)
+        local points = {}
+        for index = 1, count do
+            local pin = Guild.pins[index]
+            if not (pin.member and pin.member.debug) then
+                local _, _, _, x, y = pin:GetPoint(1)
+                local point = {pin = pin, x = x, y = y, index = index}
+                point.root = point
+                points[#points + 1] = point
+            end
+        end
+        table.sort(points, function(a, b)
+            if a.x == b.x then return a.index < b.index end
+
+            return a.x < b.x
+        end)
+
+        local function GetRoot(point)
+            while point.root ~= point do
+                point.root = point.root.root
+                point = point.root
+            end
+
+            return point
+        end
+
+        local diameterSquared = size * size
+        for index, point in ipairs(points) do
+            for otherIndex = index + 1, #points do
+                local other = points[otherIndex]
+                local dx = other.x - point.x
+                if dx >= size then break end
+                local dy = other.y - point.y
+                if dx * dx + dy * dy < diameterSquared then GetRoot(other).root = GetRoot(point) end
+            end
+        end
+
+        local groups = {}
+        for _, point in ipairs(points) do
+            local root = GetRoot(point)
+            local group = groups[root]
+            if group == nil then
+                group = {}
+                groups[root] = group
+            end
+            group[#group + 1] = point
+        end
+
+        for _, group in pairs(groups) do
+            if #group > 1 then
+                local members = {}
+                local x, y = 0, 0
+                local pin = group[1].pin
+                for _, point in ipairs(group) do
+                    local other = point.pin
+                    if other.zoneMembers then
+                        for _, member in ipairs(other.zoneMembers) do
+                            members[#members + 1] = member
+                        end
+                    else
+                        members[#members + 1] = other.member
+                    end
+                    x, y = x + point.x, y + point.y
+                    if other ~= pin then other:Hide() end
+                end
+                Guild.SetGroupPin(pin, members, nil, size, scale)
+                pin:ClearAllPoints()
+                pin:SetPoint("CENTER", canvas, "TOPLEFT", x / #group, y / #group)
+            end
+        end
+    end
+
+    function Guild.UpdateZonePins(canvas, mapID, count, scale, width, height, level, size)
+        if not Guild.GetConfig("GUILDMEMBERZONES", true) then return count end
+        local now = GetTime()
+        local groups = {}
+        for name, member in pairs(Guild.rosterZones) do
+            local tracked = Guild.members[name]
+            if (tracked == nil or tracked.expire <= now) and not Guild.IsGrouped(name) then
+                local group = groups[member.zone]
+                if group == nil then
+                    group = {}
+                    groups[member.zone] = group
+                end
+                group[#group + 1] = member
+            end
+        end
+        if next(groups) == nil then return count end
+
+        local points = Guild.GetZonePoints(mapID, Guild.GetZoneSpace(mapID))
+        for zone, members in pairs(groups) do
+            local point = points[zone]
+            if point then
+                count = count + 1
+                local pin = Guild.pins[count]
+                if pin == nil then
+                    pin = Guild.CreatePin(canvas)
+                    Guild.pins[count] = pin
+                end
+                if pin:GetFrameLevel() ~= level then pin:SetFrameLevel(level) end
+                pin:SetSize(size, size)
+                Guild.SetGroupPin(pin, members, zone, size, scale)
+                Guild.SetPinScale(pin, scale)
+                pin:ClearAllPoints()
+                pin:SetPoint("CENTER", canvas, "TOPLEFT", width * point.x, -height * point.y)
+                pin:Show()
+            end
+        end
+
+        return count
+    end
+
     function Guild.HidePins()
         Guild.SetDebugArrowHidden(false)
         for _, pin in ipairs(Guild.pins) do
@@ -699,8 +1000,9 @@ function D4:CreateGuildMap(options)
         local low, high = Guild.GetClip(mapID)
         local count = 0
         local debugVisible = false
+        local now = GetTime()
         for name, member in pairs(Guild.members) do
-            if member.debug or not Guild.IsGrouped(name) then
+            if member.debug or (member.expire > now and not Guild.IsGrouped(name)) then
                 local x, y = Guild.Project(member.mapID, mapID, member.x, member.y)
                 if x ~= nil and x >= low and x <= high and y >= low and y <= high then
                     count = count + 1
@@ -710,7 +1012,9 @@ function D4:CreateGuildMap(options)
                         Guild.pins[count] = pin
                     end
 
-                    pin.member = member
+                    pin.member, pin.zone, pin.zoneMembers = member, nil, nil
+                    pin.dot:Show()
+                    if pin.pie ~= nil then pin.pie:Hide() end
                     if pin:GetFrameLevel() ~= level then pin:SetFrameLevel(level) end
                     pin:SetSize(size, size)
                     pin.dot:ClearAllPoints()
@@ -749,6 +1053,8 @@ function D4:CreateGuildMap(options)
             end
         end
 
+        count = Guild.UpdateZonePins(canvas, mapID, count, scale, width, height, level, size)
+        Guild.MergeOverlappingPins(canvas, count, size, scale)
         Guild.SetDebugArrowHidden(debugVisible)
         for index = count + 1, #Guild.pins do
             Guild.pins[index]:Hide()
@@ -764,16 +1070,18 @@ function D4:CreateGuildMap(options)
         if Guild.sincePrune >= Guild.pruneInterval then
             Guild.sincePrune = 0
             Guild.Prune()
+            if Guild.GetConfig("GUILDMEMBERZONES", true) and IsInGuild() then Guild.RequestRoster() end
         end
 
         local canvas = WorldMapFrame:GetCanvas()
         local mapID = WorldMapFrame:GetMapID()
         local scale = canvas and canvas:GetScale()
         local width = canvas and canvas:GetWidth()
+        local zoneSpace = Guild.GetZoneSpace(mapID)
         Guild.UpdateDebugMember()
-        if not Guild.debug.enabled and not Guild.dirty and mapID == Guild.lastMapID and scale == Guild.lastScale and width == Guild.lastWidth then return end
+        if not Guild.debug.enabled and not Guild.dirty and mapID == Guild.lastMapID and scale == Guild.lastScale and width == Guild.lastWidth and zoneSpace == Guild.lastZoneSpace then return end
         Guild.dirty = false
-        Guild.lastMapID, Guild.lastScale, Guild.lastWidth = mapID, scale, width
+        Guild.lastMapID, Guild.lastScale, Guild.lastWidth, Guild.lastZoneSpace = mapID, scale, width, zoneSpace
         Guild.UpdatePins()
     end
 
@@ -813,6 +1121,15 @@ function D4:CreateGuildMap(options)
             return
         end
 
+        if event == "PLAYER_GUILD_UPDATE" then
+            wipe(Guild.rosterZones)
+            wipe(Guild.rosterLevels)
+            wipe(Guild.ranks)
+            wipe(Guild.members)
+            Guild.lastRoster = nil
+            Guild.dirty = true
+            if IsInGuild() then Guild.RequestRoster() end
+        end
         Guild.RefreshTicker()
     end
 

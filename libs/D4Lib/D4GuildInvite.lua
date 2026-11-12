@@ -108,9 +108,13 @@ function D4:CreateGuildInvite(options)
 
     function Invite:IsOwnMessage(name, guid)
         if type(guid) == "string" and guid ~= "" and UnitGUID then return guid == UnitGUID("player") end
+        local key, ownName = D4:GetPlayerCharacterKey()
+        if key and (name == key or name == ownName) then return true end
         local short = strsplit("-", name)
+        if key and not D4:IsForever() then return short == ownName end
 
-        return short == UnitName("player")
+        local legacyName = UnitName("player")
+        return D4:CanAccessValue(legacyName) and short == legacyName
     end
 
     function Invite:IsRequest(msg)

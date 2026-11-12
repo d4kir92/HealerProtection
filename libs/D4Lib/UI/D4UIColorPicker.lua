@@ -115,7 +115,7 @@ function UI.WindowMixin:AddColorPicker(tab)
         end
     )
 
-    UI:Add(win, holder, UI.ROW, text, true, tab.search, tab.added)
+    UI:Add(win, holder, UI.ROW, text, true, tab.search, tab.added, tab)
 
     return holder
 end

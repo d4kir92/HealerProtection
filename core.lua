@@ -597,7 +597,11 @@ function HealerProtection:PrintChat()
 					local active = HealerProtection:IsUnitDrinking()
 					if active and not isdrinkingeating then
 						isdrinkingeating = true
-						if CanAnnounce("DRINKINGEATING") then
+						if HealerProtection.manaSpellsDirty and not InCombatLockdown() then
+							HealerProtection:ScanManaSpells()
+						end
+
+						if CanAnnounce("DRINKINGEATING") and HealerProtection:IsSpellOutOfMana(HealerProtection.manaSpellHigh) ~= false then
 							if HealerProtection:DBGV("showdrinkingeatingchat", true) and HealerProtection:AllowedTo() then
 								HealerProtection:ToCurrentChat("%s", "LID_drinkingeating")
 							end

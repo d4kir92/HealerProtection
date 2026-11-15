@@ -147,7 +147,7 @@ local function StylePin(pin, row, media)
     end
 end
 
-local TOGGLES = {{"boss", {{}, "Interface\\TargetingFrame\\UI-RaidTargetingIcons"}, {0.75, 1, 0.25, 0.5}}, {"item", {{}, "Interface\\Icons\\INV_Misc_Bag_10"}}, {"entrance", PIN_ICONS["entrance"]}, {"level", PIN_ICONS["up"]}}
+local TOGGLES = {{"boss", {{}, "Interface\\TargetingFrame\\UI-RaidTargetingIcons"}, {0.75, 1, 0.25, 0.5}}, {"item", {{}, "Interface\\Icons\\INV_Misc_Bag_10"}}, {"quest", {{}, "Interface\\GossipFrame\\AvailableQuestIcon"}},{"entrance", PIN_ICONS["entrance"]}, {"level", PIN_ICONS["up"]}}
 local InstancePins = {}
 InstancePins.__index = InstancePins
 function InstancePins:IsKindEnabled(kind)

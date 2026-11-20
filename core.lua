@@ -335,16 +335,31 @@ function HealerProtection:GetPublicHealthPercent()
 	return HealerProtection:MathR(hp / hpmax * 100, 1)
 end
 
-function HealerProtection:IsEnemyTargetingPlayer(token)
+function HealerProtection:IsTankingEnemy(token)
 	if PublicCall(UnitExists, token) ~= true then return false end
 	if PublicCall(UnitCanAttack, "player", token) ~= true then return false end
+	if PublicCall(UnitIsUnit, token .. "target", "player") == true then return true end
+	if type(UnitDetailedThreatSituation) == "function" then
+		local ok, tanking, status = pcall(UnitDetailedThreatSituation, "player", token)
+		if ok then
+			if tanking == true and not HealerProtection:IsSecret(tanking) then return true end
+			if type(status) == "number" and not HealerProtection:IsSecret(status) and status >= 2 then return true end
+		end
+	end
 
-	return PublicCall(UnitIsUnit, token .. "target", "player") == true
+	return false
 end
 
-function HealerProtection:IsTargetedByEnemy()
-	for _, token in ipairs({"target", "focus", "mouseover", "boss1", "boss2", "boss3", "boss4", "boss5"}) do
-		if HealerProtection:IsEnemyTargetingPlayer(token) then return true end
+function HealerProtection:GetEnemyTokens()
+	local tokens = {"target", "focus", "mouseover", "boss1", "boss2", "boss3", "boss4", "boss5"}
+	if IsInRaid() then
+		for i = 1, GetNumGroupMembers() do
+			tokens[#tokens + 1] = "raid" .. i .. "target"
+		end
+	else
+		for i = 1, GetNumSubgroupMembers() do
+			tokens[#tokens + 1] = "party" .. i .. "target"
+		end
 	end
 
 	if C_NamePlate and type(C_NamePlate.GetNamePlates) == "function" then
@@ -352,9 +367,19 @@ function HealerProtection:IsTargetedByEnemy()
 		if ok and type(plates) == "table" then
 			for _, plate in ipairs(plates) do
 				local token = plate.namePlateUnitToken or plate.unitToken or plate.UnitFrame and plate.UnitFrame.unit
-				if type(token) == "string" and not HealerProtection:IsSecret(token) and HealerProtection:IsEnemyTargetingPlayer(token) then return true end
+				if type(token) == "string" and not HealerProtection:IsSecret(token) then
+					tokens[#tokens + 1] = token
+				end
 			end
 		end
+	end
+
+	return tokens
+end
+
+function HealerProtection:IsTargetedByEnemy()
+	for _, token in ipairs(HealerProtection:GetEnemyTokens()) do
+		if HealerProtection:IsTankingEnemy(token) then return true end
 	end
 
 	return false
@@ -362,7 +387,7 @@ end
 
 function HealerProtection:GetAggroStatus()
 	local ok, status = pcall(UnitThreatSituation, "player")
-	if ok and not HealerProtection:IsSecret(status) then return status end
+	if ok and type(status) == "number" and not HealerProtection:IsSecret(status) and status >= 2 then return status end
 	if HealerProtection:IsTargetedByEnemy() then return 3 end
 
 	return 0
@@ -408,19 +433,48 @@ function HealerProtection:ForEachSpellbookSpell(callback)
 end
 
 function HealerProtection:ScanManaSpells()
-	local highCost
-	HealerProtection.manaSpellHigh = nil
+	local byName = {}
+	local getName = C_Spell and C_Spell.GetSpellName or GetSpellInfo
 	HealerProtection:ForEachSpellbookSpell(
 		function(spellID)
 			local cost = HealerProtection:GetManaCost(spellID)
-			if cost and (highCost == nil or cost > highCost) then
-				highCost = cost
-				HealerProtection.manaSpellHigh = spellID
+			if cost then
+				local name = PublicCall(getName, spellID) or spellID
+				local entry = byName[name]
+				if entry == nil or cost > entry.cost then
+					byName[name] = {
+						id = spellID,
+						cost = cost
+					}
+				end
 			end
 		end
 	)
 
+	local list = {}
+	for _, entry in pairs(byName) do
+		list[#list + 1] = entry
+	end
+
+	table.sort(list, function(a, b) return a.cost < b.cost end)
+	HealerProtection.manaSpellHigh = list[#list] and list[#list].id or nil
+	HealerProtection.manaSpellsLow = {}
+	for i = 1, math.min(3, #list) do
+		HealerProtection.manaSpellsLow[i] = list[i].id
+	end
+
 	HealerProtection.manaSpellsDirty = false
+end
+
+function HealerProtection:AreLowSpellsOutOfMana()
+	local spells = HealerProtection.manaSpellsLow
+	if spells == nil or #spells == 0 then return nil end
+	for _, spellID in ipairs(spells) do
+		local noMana = HealerProtection:IsSpellOutOfMana(spellID)
+		if noMana ~= true then return noMana end
+	end
+
+	return true
 end
 
 function HealerProtection:IsSpellOutOfMana(spellID)
@@ -510,7 +564,7 @@ function HealerProtection:PrintChat()
 							nearoom = false
 						end
 
-						if HealerProtection:DBGV("OOM", true) and not oom and HealerProtection:IsSpellOutOfMana(HealerProtection.manaSpellHigh) then
+						if HealerProtection:DBGV("OOM", true) and not oom and HealerProtection:AreLowSpellsOutOfMana() then
 							oom = true
 							if CanAnnounce("OOM") then
 								if HealerProtection:DBGV("showoomchat", true) and HealerProtection:AllowedTo() then

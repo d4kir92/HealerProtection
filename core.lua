@@ -342,12 +342,18 @@ function HealerProtection:IsTankingEnemy(token)
 	if type(UnitDetailedThreatSituation) == "function" then
 		local ok, tanking, status = pcall(UnitDetailedThreatSituation, "player", token)
 		if ok then
-			if tanking == true and not HealerProtection:IsSecret(tanking) then return true end
-			if type(status) == "number" and not HealerProtection:IsSecret(status) and status >= 2 then return true end
+			if not HealerProtection:IsSecret(tanking) and tanking == true then return true end
+			if not HealerProtection:IsSecret(status) and type(status) == "number" and status >= 2 then return true end
 		end
 	end
 
 	return false
+end
+
+function HealerProtection:Emote(token)
+	if type(DoEmote) ~= "function" then return end
+	if HealerProtection:IsSecretClient() and InCombatLockdown() then return end
+	DoEmote(token)
 end
 
 function HealerProtection:GetEnemyTokens()
@@ -513,7 +519,7 @@ function HealerProtection:PrintChat()
 								end
 
 								if HealerProtection:DBGV("showaggroemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-									DoEmote("helpme")
+									HealerProtection:Emote("helpme")
 								end
 							end
 
@@ -572,7 +578,7 @@ function HealerProtection:PrintChat()
 								end
 
 								if HealerProtection:DBGV("showoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-									DoEmote("oom")
+									HealerProtection:Emote("oom")
 								end
 							end
 						end
@@ -585,7 +591,7 @@ function HealerProtection:PrintChat()
 								end
 
 								if HealerProtection:DBGV("shownearoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-									DoEmote("incoming")
+									HealerProtection:Emote("incoming")
 								end
 							end
 						end
@@ -601,7 +607,7 @@ function HealerProtection:PrintChat()
 								end
 
 								if HealerProtection:DBGV("showoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-									DoEmote("oom")
+									HealerProtection:Emote("oom")
 								end
 							end
 						elseif manaperc > HealerProtection:DBGV("OOMPercentage", 10) + 20 and oom then
@@ -619,7 +625,7 @@ function HealerProtection:PrintChat()
 								end
 
 								if HealerProtection:DBGV("shownearoomemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-									DoEmote("incoming")
+									HealerProtection:Emote("incoming")
 								end
 							end
 						elseif manaperc > HealerProtection:DBGV("NEAROOMPercentage", 30) + 20 and nearoom then
@@ -637,7 +643,7 @@ function HealerProtection:PrintChat()
 								end
 
 								if HealerProtection:DBGV("showneardeathemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-									DoEmote("flee")
+									HealerProtection:Emote("flee")
 								end
 							end
 						elseif healthperc > HealerProtection:DBGV("NEARDEATHPercentage", 30) + 20 and neardeath then
@@ -666,7 +672,7 @@ function HealerProtection:PrintChat()
 							end
 
 							if HealerProtection:DBGV("showdrinkingeatingemote", true) and HealerProtection:AllowedTo() and not isChanneling then
-								DoEmote("drink")
+								HealerProtection:Emote("drink")
 							end
 						end
 					elseif not active and isdrinkingeating then

@@ -138,6 +138,7 @@ function HealerProtection:ToCurrentChat(formatStr, val1text, val1val, val2text, 
 
 		local mes = prefix .. msg .. "." .. suffix
 		if mes ~= nil then
+			if C_ChatInfo and type(C_ChatInfo.InChatMessagingLockdown) == "function" and C_ChatInfo.InChatMessagingLockdown() then return end
 			if C_ChatInfo and C_ChatInfo.SendChatMessage then
 				C_ChatInfo.SendChatMessage(mes, _channel)
 			else

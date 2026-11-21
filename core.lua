@@ -463,6 +463,7 @@ function HealerProtection:ScanManaSpells()
 	end
 
 	table.sort(list, function(a, b) return a.cost < b.cost end)
+	HealerProtection.manaSpellList = list
 	HealerProtection.manaSpellHigh = list[#list] and list[#list].id or nil
 	HealerProtection.manaSpellsLow = {}
 	for i = 1, math.min(3, #list) do
@@ -470,6 +471,22 @@ function HealerProtection:ScanManaSpells()
 	end
 
 	HealerProtection.manaSpellsDirty = false
+end
+
+function HealerProtection:GetManaThresholdSpell(percent)
+	local list = HealerProtection.manaSpellList
+	if list == nil or #list == 0 or maxManaPeak <= 0 then return nil end
+	local target = maxManaPeak * percent / 100
+	local best, bestDiff = nil, nil
+	for _, entry in ipairs(list) do
+		local diff = math.abs(entry.cost - target)
+		if bestDiff == nil or diff < bestDiff then
+			best = entry.id
+			bestDiff = diff
+		end
+	end
+
+	return best
 end
 
 function HealerProtection:AreLowSpellsOutOfMana()
@@ -565,12 +582,26 @@ function HealerProtection:PrintChat()
 							HealerProtection:ScanManaSpells()
 						end
 
-						if not InCombatLockdown() and HealerProtection:IsSpellOutOfMana(HealerProtection.manaSpellHigh) == false then
+						local oomPerc = HealerProtection:DBGV("OOMPercentage", 10)
+						local nearPerc = HealerProtection:DBGV("NEAROOMPercentage", 30)
+						local oomSpell = HealerProtection:GetManaThresholdSpell(oomPerc)
+						local nearSpell = HealerProtection:GetManaThresholdSpell(nearPerc) or HealerProtection.manaSpellHigh
+						if oom and HealerProtection:IsSpellOutOfMana(HealerProtection:GetManaThresholdSpell(oomPerc + 20) or HealerProtection.manaSpellHigh) == false then
 							oom = false
+						end
+
+						if nearoom and HealerProtection:IsSpellOutOfMana(HealerProtection:GetManaThresholdSpell(nearPerc + 20) or HealerProtection.manaSpellHigh) == false then
 							nearoom = false
 						end
 
-						if HealerProtection:DBGV("OOM", true) and not oom and HealerProtection:AreLowSpellsOutOfMana() then
+						local oomNow
+						if oomSpell then
+							oomNow = HealerProtection:IsSpellOutOfMana(oomSpell)
+						else
+							oomNow = HealerProtection:AreLowSpellsOutOfMana()
+						end
+
+						if HealerProtection:DBGV("OOM", true) and not oom and oomNow then
 							oom = true
 							if CanAnnounce("OOM") then
 								if HealerProtection:DBGV("showoomchat", true) and HealerProtection:AllowedTo() then
@@ -583,7 +614,7 @@ function HealerProtection:PrintChat()
 							end
 						end
 
-						if HealerProtection:DBGV("NEAROOM", true) and not oom and not nearoom and HealerProtection:IsSpellOutOfMana(HealerProtection.manaSpellHigh) then
+						if HealerProtection:DBGV("NEAROOM", true) and not oom and not nearoom and HealerProtection:IsSpellOutOfMana(nearSpell) then
 							nearoom = true
 							if CanAnnounce("NEAROOM") then
 								if HealerProtection:DBGV("shownearoomchat", true) and HealerProtection:AllowedTo() then

@@ -191,13 +191,19 @@ function HealerProtection:InitSetting()
 	AddCheckbox("OOM", true)
 	AddCheckbox("showoomchat", true)
 	AddCheckbox("showoomemote", true)
-	AddSlider("OOMPercentage", 10, 1, 30, 1, 0)
+	local manaReadable = HealerProtection:PublicNumber("player", UnitPowerMax) ~= nil
+	if manaReadable then
+		AddSlider("OOMPercentage", 10, 1, 30, 1, 0)
+	end
+
 	AddCheckbox("IGNOREMAXMANADRAIN", true)
 	AddCategory("nearoutofmana", 2)
 	AddCheckbox("NEAROOM", true)
 	AddCheckbox("shownearoomchat", true)
 	AddCheckbox("shownearoomemote", true)
-	AddSlider("NEAROOMPercentage", 50, 10, 50, 1, 0)
+	if manaReadable then
+		AddSlider("NEAROOMPercentage", 50, 10, 50, 1, 0)
+	end
 	AddCategory("neardeath", 2)
 	AddCheckbox("NEARDEATH", true)
 	AddCheckbox("showneardeathchat", true)

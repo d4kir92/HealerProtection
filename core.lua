@@ -17,6 +17,11 @@ local delayrange = GetTime()
 local outsideOfGroup = false
 local maxManaPeak = 0
 local lastAnnounce = {}
+function HealerProtection:ToggleDebug()
+	HPDEBUG = not HPDEBUG
+	HealerProtection:MSG("Debug: " .. (HPDEBUG and "ON" or "OFF"))
+end
+
 function HealerProtection:AllowedTo()
 	if (GetNumGroupMembers() > 0 or GetNumSubgroupMembers() > 0 or HPDEBUG) and HealerProtection:DBGV("printnothing", false) == false then return true end
 	if outsideOfGroup == false then
@@ -78,11 +83,24 @@ function HealerProtection:CanWriteToChat(chan)
 	return false
 end
 
+function HealerProtection:GetLangMode()
+	local fallback = "ENGLISH"
+	if HealerProtection:DBGV("showonlyenglish", false) then
+		fallback = "ENGLISH"
+	elseif HealerProtection:DBGV("showonlytranslation", false) then
+		fallback = "TRANSLATION"
+	elseif HealerProtection:DBGV("showtranslation", true) then
+		fallback = "BOTH"
+	end
+
+	return HealerProtection:DBGV("LANGMODE", fallback)
+end
+
 function HealerProtection:GetLang()
 	if GetLocale() == "enUS" then return GetLocale() end
-	if HealerProtection:DBGV("showonlyenglish", false) then return "enUS" end
-	if HealerProtection:DBGV("showonlytranslation", false) then return GetLocale() end
-	if HealerProtection:DBGV("showtranslation", true) then return "enUS," .. GetLocale() end
+	local mode = HealerProtection:GetLangMode()
+	if mode == "TRANSLATION" then return GetLocale() end
+	if mode == "BOTH" then return "enUS," .. GetLocale() end
 
 	return "enUS"
 end
@@ -138,6 +156,12 @@ function HealerProtection:ToCurrentChat(formatStr, val1text, val1val, val2text, 
 
 		local mes = prefix .. msg .. "." .. suffix
 		if mes ~= nil then
+			if HPDEBUG and not IsInGroup() then
+				HealerProtection:MSG("[" .. _channel .. "] " .. mes)
+
+				return
+			end
+
 			if C_ChatInfo and type(C_ChatInfo.InChatMessagingLockdown) == "function" and C_ChatInfo.InChatMessagingLockdown() then return end
 			if C_ChatInfo and C_ChatInfo.SendChatMessage then
 				C_ChatInfo.SendChatMessage(mes, _channel)
@@ -182,7 +206,7 @@ function HealerProtection:Setup()
 					if IsSecret(targetFriend) or not targetFriend then return end
 					if checkSpell and not checkSpell() then return end
 					local tex = "Target is not in the field of view (" .. TName .. ")"
-					if reason and HealerProtection:DBGV("showtranslation", true) and GetLocale() ~= "enUS" then
+					if reason and HealerProtection:GetLangMode() ~= "ENGLISH" and GetLocale() ~= "enUS" then
 						tex = tex .. " [" .. reason .. " (" .. TName .. ")]"
 					end
 

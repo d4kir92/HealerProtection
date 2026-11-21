@@ -1,8 +1,109 @@
 -- By D4KiR
 local AddonName, HealerProtection = ...
 local hpset = nil
-local DEFAULT_WIDTH = 520
+local DEFAULT_WIDTH = 640
 local DEFAULT_HEIGHT = 520
+local LANGUAGES = {{"English", "enUS"}, {"Deutsch", "deDE"}, {"Español (España)", "esES"}, {"Español (México)", "esMX"}, {"Français", "frFR"}, {"Italiano", "itIT"}, {"한국어", "koKR"}, {"Português (Brasil)", "ptBR"}, {"Русский", "ruRU"}, {"简体中文", "zhCN"}, {"繁體中文", "zhTW"}}
+local languageNames = {}
+for _, info in ipairs(LANGUAGES) do
+	languageNames[info[2]] = info[1]
+end
+
+function HealerProtection:GetLanguage()
+	local lang = type(HPTAB) == "table" and HPTAB["LANGUAGE"] or nil
+	if lang ~= nil and languageNames[lang] ~= nil then return lang end
+	if languageNames[GetLocale()] ~= nil then return GetLocale() end
+
+	return "enUS"
+end
+
+HealerProtection.LibTrans = HealerProtection.Trans
+function HealerProtection:Trans(key, lang, ...)
+	return HealerProtection.LibTrans(self, key, lang or HealerProtection:GetLanguage(), ...)
+end
+
+function HealerProtection:SetLanguage(lang)
+	if languageNames[lang] == nil or lang == HealerProtection:GetLanguage() then return end
+	HPTAB = HPTAB or {}
+	if lang == GetLocale() then
+		HPTAB["LANGUAGE"] = nil
+	else
+		HPTAB["LANGUAGE"] = lang
+	end
+
+	if hpset ~= nil then
+		hpset:RefreshLanguage()
+		if hpset.hpRefreshLanguageButton then hpset.hpRefreshLanguageButton() end
+	end
+end
+
+local function LanguageMenu(_, root)
+	root:CreateTitle(HealerProtection:Trans("LID_language"))
+	for _, info in ipairs(LANGUAGES) do
+		local lang = info[2]
+		root:CreateRadio(string.format("%s (%s)", info[1], lang), function() return HealerProtection:GetLanguage() == lang end, function() HealerProtection:SetLanguage(lang) end)
+	end
+end
+
+function HealerProtection:AddLanguageButton(win)
+	local parent = win.titleBar or win
+	local button
+	if HealerProtection:GetWoWBuild() == "RETAIL" and HealerProtection:CheckTemplates("WowStyle1DropdownTemplate") then
+		button = CreateFrame("DropdownButton", nil, parent, "WowStyle1DropdownTemplate")
+		button:SetScale(0.8)
+		button:SetSize(162.5, 25)
+		button:SetPoint("TOPLEFT", parent, "TOPLEFT", 10, -1.25)
+		button:SetSelectionText(function() return languageNames[HealerProtection:GetLanguage()] end)
+		button:SetTooltip(function(tooltip) tooltip:SetText(HealerProtection:Trans("LID_language")) end)
+		button:SetupMenu(LanguageMenu)
+	else
+		button = HealerProtection:CreateButton(nil, parent)
+		button:SetSize(130, 20)
+		button:SetPoint("TOPLEFT", parent, "TOPLEFT", 7, -2)
+		button.Arrow = button:CreateTexture(nil, "OVERLAY")
+		button.Arrow:SetTexture("Interface\\ChatFrame\\UI-ChatIcon-ScrollDown-Up")
+		button.Arrow:SetSize(16, 16)
+		button.Arrow:SetPoint("RIGHT", button, "RIGHT", -2, 0)
+		button:SetScript(
+			"OnClick",
+			function(sel)
+				if MenuUtil and MenuUtil.CreateContextMenu then
+					MenuUtil.CreateContextMenu(sel, LanguageMenu)
+				else
+					local current = 1
+					for index, info in ipairs(LANGUAGES) do
+						if info[2] == HealerProtection:GetLanguage() then
+							current = index
+						end
+					end
+
+					HealerProtection:SetLanguage(LANGUAGES[current % #LANGUAGES + 1][2])
+				end
+			end
+		)
+
+		button:SetScript(
+			"OnEnter",
+			function(sel)
+				GameTooltip:SetOwner(sel, "ANCHOR_RIGHT")
+				GameTooltip:SetText(HealerProtection:Trans("LID_language"))
+				GameTooltip:Show()
+			end
+		)
+
+		button:SetScript("OnLeave", function() GameTooltip:Hide() end)
+	end
+
+	local function RefreshButton()
+		button:SetText(languageNames[HealerProtection:GetLanguage()])
+	end
+
+	RefreshButton()
+	win.Language = button
+
+	return RefreshButton
+end
+
 function HealerProtection:ToggleSettings()
 	if hpset == nil then return end
 	hpset:Toggle()
@@ -91,16 +192,25 @@ function HealerProtection:InitSetting()
 		HPTABPC["MMBTN"] = HealerProtection:GetWoWBuild() ~= "RETAIL"
 	end
 
-	HealerProtection:AddSlash("hp", HealerProtection.ToggleSettings)
-	HealerProtection:AddSlash("healerprotection", HealerProtection.ToggleSettings)
+	local function OnSlash(args)
+		if type(args) == "string" and string.lower(strtrim(args)) == "debug" then
+			HealerProtection:ToggleDebug()
+		else
+			HealerProtection:ToggleSettings()
+		end
+	end
+
+	HealerProtection:AddSlash("hp", OnSlash)
+	HealerProtection:AddSlash("healerprotection", OnSlash)
 	hpset = HealerProtection:CreateUIWindow(
 		{
 			["name"] = "HealerProtectionSettings",
 			["pTab"] = {"CENTER"},
 			["width"] = HealerProtection:DBGV("WINDOWWIDTH", DEFAULT_WIDTH),
 			["height"] = HealerProtection:DBGV("WINDOWHEIGHT", DEFAULT_HEIGHT),
-			["minWidth"] = 360,
+			["minWidth"] = 460,
 			["minHeight"] = 240,
+			["navigation"] = true,
 			["onResize"] = function(width, height)
 				HealerProtection:DBSV("WINDOWWIDTH", width)
 				HealerProtection:DBSV("WINDOWHEIGHT", height)
@@ -111,6 +221,7 @@ function HealerProtection:InitSetting()
 		}
 	)
 
+	hpset.hpRefreshLanguageButton = HealerProtection:AddLanguageButton(hpset)
 	hpset:SetFrameLevel(110)
 	hpset:SuspendLayout()
 	hpset:AddSearch()
@@ -172,9 +283,28 @@ function HealerProtection:InitSetting()
 	AddEditbox("prefix", "[Healer Protection]")
 	AddEditbox("suffix", "")
 	AddCategory("language", 2)
-	AddCheckbox("showtranslation", true)
-	AddCheckbox("showonlyenglish", false)
-	AddCheckbox("showonlytranslation", false)
+	hpset:AddDropdown(
+		{
+			["label"] = "LID_LANGMODE",
+			["search"] = "LANGMODE",
+			["value"] = HealerProtection:GetLangMode(),
+			["choices"] = {
+				{
+					["value"] = "BOTH",
+					["label"] = "LID_englishandtranslation"
+				},
+				{
+					["value"] = "ENGLISH",
+					["label"] = "LID_showonlyenglish"
+				},
+				{
+					["value"] = "TRANSLATION",
+					["label"] = "LID_showonlytranslation"
+				},
+			},
+			["func"] = function(value) HealerProtection:DBSV("LANGMODE", value) end
+		}
+	)
 	AddCategory("alerts")
 	AddCheckbox("deathmessage", true)
 	AddCheckbox("notinsight", false)

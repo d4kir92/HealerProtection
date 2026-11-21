@@ -156,7 +156,8 @@ function HealerProtection:ToCurrentChat(formatStr, val1text, val1val, val2text, 
 
 		local mes = prefix .. msg .. "." .. suffix
 		if mes ~= nil then
-			if HPDEBUG and not IsInGroup() then
+			local openChannel = (_channel == "SAY" or _channel == "YELL") and IsInInstance()
+			if HPDEBUG and not IsInGroup() and not openChannel then
 				HealerProtection:MSG("[" .. _channel .. "] " .. mes)
 
 				return

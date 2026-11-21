@@ -441,11 +441,21 @@ end
 
 function HealerProtection:ScanManaSpells()
 	local byName = {}
+	local allRanks = {}
+	local seen = {}
 	local getName = C_Spell and C_Spell.GetSpellName or GetSpellInfo
 	HealerProtection:ForEachSpellbookSpell(
 		function(spellID)
 			local cost = HealerProtection:GetManaCost(spellID)
 			if cost then
+				if not seen[spellID] then
+					seen[spellID] = true
+					allRanks[#allRanks + 1] = {
+						id = spellID,
+						cost = cost
+					}
+				end
+
 				local name = PublicCall(getName, spellID) or spellID
 				local entry = byName[name]
 				if entry == nil or cost > entry.cost then
@@ -464,7 +474,8 @@ function HealerProtection:ScanManaSpells()
 	end
 
 	table.sort(list, function(a, b) return a.cost < b.cost end)
-	HealerProtection.manaSpellList = list
+	table.sort(allRanks, function(a, b) return a.cost < b.cost end)
+	HealerProtection.manaSpellList = allRanks
 	HealerProtection.manaSpellHigh = list[#list] and list[#list].id or nil
 	HealerProtection.manaSpellsLow = {}
 	for i = 1, math.min(3, #list) do
